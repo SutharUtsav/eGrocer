@@ -1,0 +1,15 @@
+.header{
+    height:6.4vh;
+    background-color: aquamarine;
+}
+
+.footer{
+    position:fixed;
+    left:0;
+    bottom:0;
+    width:100%;
+    text-align: center;
+    background-color: black;
+    color: aqua;
+}
+
