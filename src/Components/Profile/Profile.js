@@ -1,78 +1,52 @@
-import React, { useState, useRef,useEffect } from 'react'
+import React, { useState, useRef } from 'react'
 import { ToastContainer, toast } from 'react-toastify';
+import api from '../../api';
 
-
-export const Profile = (props) => {
+export const Profile = () => {
     const closeModalRef = useRef()
-
-    const [uname, setuname] = useState(props.user.name)
-    const [email, setemail] = useState(props.user.email)
+    const user = JSON.parse(localStorage.getItem('User'));
+    const [uname, setuname] = useState(user.name)
+    const [email, setemail] = useState(user.email)
+    const [profilePic, setprofilePic] = useState(user.profile)
     const [selectedFile, setselectedFile] = useState()
-    const [profilePic, setprofilePic] = useState(props.user.profile)
 
-useEffect(() => {
-    return () => {
-        console.log(props.user)
-    };
-}, [props.user])
-
-    // function getUpdatedUser() {
-    //     var myHeaders = new Headers();
-    //     myHeaders.append("x-access-key", "903361");
-    //     myHeaders.append("Authorization", "Bearer " + localStorage.getItem('access_token'));
-    //     myHeaders.append("Cookie", "egrocer_session=ZGyZlEheLKDTFHnAsVnSpethgG5vROAwF2PeSUBz");
-
-    //     //var formdata = new FormData();
-
-    //     var requestOptions = {
-    //         method: 'GET',
-    //         headers: myHeaders,
-    //         //body: formdata,
-    //         redirect: 'follow'
-    //     };
-
-    //     fetch("http://egrocer.netsofters.net/customer/user_details", requestOptions)
-    //         .then(response => response.json())
-    //         .then(result => props.setuser(result.user))
-    //         .catch(error => console.log('error', error));
-    // }
-
-   
-    const handleEditProfile = (e) => {
-        e.preventDefault();
-        // console.log(uname)
-        // console.log(email)
-
-        var myHeaders = new Headers();
-        myHeaders.append("x-access-key", "903361");
-        myHeaders.append("Authorization", "Bearer " + localStorage.getItem('access_token'));
-        myHeaders.append("Cookie", "egrocer_session=ZGyZlEheLKDTFHnAsVnSpethgG5vROAwF2PeSUBz");
-
-        var formdata = new FormData();
-        formdata.append("name", uname);
-        formdata.append("email", email);
-        if(selectedFile!==null)
-            formdata.append("profile", selectedFile);
-        else
-            formdata.append("profile", "http://egrocer.netsofters.net/imhtmlages/user_default_profile.png");
-        // 
-
-
-        var requestOptions = {
-            method: 'POST',
-            headers: myHeaders,
-            body: formdata,
-            redirect: 'follow'
-        };
-
-        fetch("http://egrocer.netsofters.net/customer/edit_profile", requestOptions)
+    function getUpdatedUser() {
+        api.getUser()
             .then(response => response.json())
             .then(result => {
-                // toast.success(result.message, {
-                //     position: toast.POSITION.TOP_RIGHT
-                // });
-                
-                 //getUpdatedUser();
+                if (result.status === 1){
+                    setuname(result.user.name)
+                    setemail(result.user.email)
+                    setprofilePic(result.user.profile)
+                    localStorage.setItem('User', JSON.stringify(result.user))
+                }
+                else if (result.status === 0) {
+                    toast.error(result.message, {
+                        position: toast.POSITION.TOP_RIGHT
+                    });
+                }
+            })
+            .catch(error => console.log('error', error));
+    }
+
+
+    const handleEditProfile = (e) => {
+        e.preventDefault()
+        api.editProfile(uname,email,selectedFile)
+            .then(response => response.json())
+            .then(result => {
+                if (result.status === 1) {
+                    toast.success(result.message, {
+                        position: toast.POSITION.TOP_RIGHT
+                    });
+
+                    getUpdatedUser();
+                }
+                else if (result.status === 0) {
+                    toast.error(result.message, {
+                        position: toast.POSITION.TOP_RIGHT
+                    });
+                }
                 // closeModalRef.current.click()
 
             })
@@ -82,7 +56,7 @@ useEffect(() => {
     }
     return (
         <div className="modal-body">
-            <button id='closemodal' type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" style={{ position: "absolute", color: "white", top: "12px", left: "29pc" }} ref={closeModalRef}></button>
+            <button id='closemodal' type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" ref={closeModalRef}></button>
 
             <section className="vh-50" >
                 <div className="container py-5 h-100 ">
@@ -90,11 +64,10 @@ useEffect(() => {
                         <div className="col col-xl-10">
                             <div className="card" style={{ borderRadius: "1rem" }}>
                                 <div className="">
-                                    <img src={profilePic} className="rounded-circle" style={{ width: "150px",height:"140px",marginTop:"1pc" }} alt="Avatar" />
+                                    <img src={profilePic} className="rounded-circle" style={{ width: "150px", height: "140px", marginTop: "1pc" }} alt="Avatar" />
                                 </div>
                                 <div className="col-md-6 col-lg-7 align-items-center w-auto">
                                     <div className="card-body p-4 p-lg-5 text-black">
-
                                         <form onSubmit={handleEditProfile}>
                                             <div className="mb-3">
                                                 <input className="form-control" type="file" id="formFile" onChange={(e) => { setselectedFile(e.target.files[0]) }} />
@@ -109,7 +82,7 @@ useEffect(() => {
                                             </div>
                                             <div className="input-group mb-3">
                                                 <span className="input-group-text" id="phone-addon1"><i className="fa fa-phone" aria-hidden="true"></i></span>
-                                                <input type="tel" className="form-control" placeholder="Phone Number" id="editPhoneNum" value={props.user.mobile} aria-label="PhoneNum" aria-describedby="phone-addon1" readOnly />
+                                                <input type="tel" className="form-control" placeholder="Phone Number" id="editPhoneNum" value={user.mobile} aria-label="PhoneNum" aria-describedby="phone-addon1" readOnly />
                                             </div>
 
                                             <button type="submit" className="btn btn-dark btn-block">Update Profile</button>

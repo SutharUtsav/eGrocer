@@ -38,3 +38,15 @@
   }
 }
 
+.btn.focus, .btn:focus {
+  -webkit-box-shadow: none!important;
+  box-shadow: none!important;
+  outline: 0;
+}
+
+#closemodal{
+  position: absolute;
+  color: white;
+  top: 12px; 
+  left: 29pc 
+}

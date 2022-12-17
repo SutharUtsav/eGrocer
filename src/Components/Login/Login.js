@@ -1,4 +1,4 @@
-import React, { useState,useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import 'react-phone-number-input/style.css';
 import PhoneInput from 'react-phone-number-input';
 import { ToastContainer, toast } from 'react-toastify';
@@ -8,10 +8,10 @@ import OTPInput, { ResendOTP } from 'otp-input-react';
 import { authentication } from '../../firebase-config';
 import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
 import { parsePhoneNumber } from 'react-phone-number-input';
+import api from '../../api'
+
 
 // import { useNavigate } from "react-router-dom";
-
-
 
 export const Login = (props) => {
     // const navigate = useNavigate();
@@ -79,40 +79,23 @@ export const Login = (props) => {
         let confirmationResult = window.confirmationResult;
         confirmationResult.confirm(OTP).then((result) => {
             // User verified successfully.
-            
+
             const countrycode = parsePhoneNumber(mobilenum).countryCallingCode;
             const num = parsePhoneNumber(mobilenum).nationalNumber;
 
-            var myHeaders = new Headers();
-            myHeaders.append("x-access-key", "903361");
-            myHeaders.append("Authorization", "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxIiwianRpIjoiNGM3ZGQ5NTVmNjhlZTA0Nzg0YmViNjNhZDc5MjY5NWU3ZTFhMzVkNDhjODllMGZkMjM0OGI2YzY2NTA1NmFhNWEwZDU5MTExMmZiZjRkNzIiLCJpYXQiOjE2NzAyMjM1NjUuMzA2NTQyLCJuYmYiOjE2NzAyMjM1NjUuMzA2NTQ2LCJleHAiOjE3MDE3NTk1NjUuMzAzMDU3LCJzdWIiOiIyIiwic2NvcGVzIjpbXX0.LZNn6N4E07ZQbmqDQ33pmK01jS09APpgAPYOArXkSk8zqSFzF258RthHs0VN3UWpK5J2di9-4RKREKDLcbQ7a4_T_ayrXPit-cH6uBQPEYqPqBL9b2W49ZSWbJjhoZdh2oZlUDJiIlu4kjxKJoZef7gtZKne7twoY0Um7rzl1bvFPoUn8Yq2ev_Jhnp0JkwRF3Bq1RMbimwIHKxyMFUsp0Gyvx3bnUbJTCYwhX7xZvfrPHuh0ZVTZiEbprDx8pUg0H-_smmmzbb1IW-aVt7ZOCMllb3mDJEkX0O_IpJ_FAam8e8eACbVIAVVfyrUjZCvBnTI9SIxVacoTR5i2fKb-60EN85hEtW_rKfCYfK31sH-wL-Xas3ML6x5ei9GQVr8agsPBngMV32M1P1LIOw0xIb0dVaZHHckCjHZcEKAb_8-qYHWVjJhlxnnjo61OknDbVmo8m5IA_mNerQsO5jr3L92XQOl4PdChtdLhl0mSMak19TBXPhveX2OxUxL1FgAfaJ2IpkG9EW3JVwwiU_c9MilyJc54Nhu2dMD0RdIVVPTDgNu-e1CZF9NYsvCLlkCqQTQdFOYLaWOrbeFFJkf2Tme8a3ujklURdGafRa4HSbPdviXe2VwdfDavThj_EsSSgs8TgW1zw2cQeKb0i6nWTDIMq0avTei29R1XVKmFWg");
-            myHeaders.append("Cookie", "egrocer_session=m9jPWurA0M2mY06MAM2cdJcij9vbGEpYsvxR2Jz6");
-
-            var formdata = new FormData();
-            formdata.append("mobile", num);
-            formdata.append("auth_uid", OTP);
-            formdata.append("fcm_token", "murarisingh");
-            formdata.append("country_code", countrycode);
-
-            var requestOptions = {
-                method: 'POST',
-                headers: myHeaders,
-                body: formdata,
-                redirect: 'follow'
-            };
-
-            fetch("http://egrocer.netsofters.net/customer/login", requestOptions)
-                .then(response => response.json())
+            //API call
+            api.login(num, OTP, countrycode).then(response => response.json())
                 .then(result => {
                     localStorage.setItem('access_token', result.data.access_token);
+                    localStorage.setItem('User', JSON.stringify(result.data.user));
                     closeModalRef.current.click()
                     props.setuser(result.data.user)
                     props.setisloggedin(true)
-                    
-
                 })
-                .catch(error => console.log('error', error));
+                .catch(error => {
+                    console.log('error', error)
 
+                });
             setOTP("");
             setMobilenum("");
 
@@ -121,8 +104,9 @@ export const Login = (props) => {
             });
 
         }).catch((error) => {
+            console.log(error)
             // User couldn't sign in (bad verification code?)
-            toast.error('Wrong OTP', {
+            toast.error(error, {
                 position: toast.POSITION.TOP_RIGHT
             });
         });
@@ -131,7 +115,7 @@ export const Login = (props) => {
 
     return (
         <div className="modal-body">
-            <button id='closemodal' type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" style={{ position: "absolute", color: "white", top: "12px", left: "29pc" }} onClick={() => { setIsOTP(false); setTermsChecked(false) }} ref={closeModalRef} ></button>
+            <button id='closemodal' type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" onClick={() => { setIsOTP(false); setTermsChecked(false) }} ref={closeModalRef} ></button>
 
             <section className="vh-50" >
                 <div className="container py-5 h-100 ">

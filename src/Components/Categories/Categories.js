@@ -1,45 +1,130 @@
-import React, { useEffect, useState } from 'react';
-
+import React, { useState, useRef } from 'react';
+import OwlCarousel from 'react-owl-carousel';
+import 'owl.carousel/dist/assets/owl.carousel.css';
+import 'owl.carousel/dist/assets/owl.theme.default.css';
+import { Shimmer } from 'react-shimmer';
+// import { useNavigate } from "react-router-dom";
+import api from '../../api';
+import GeoLocation from '../GeoLocation/GeoLocation';
 
 export const Categories = (props) => {
-    const [categories, setcategories] = useState([])
+    // const navigate = useNavigate();
+    const deliveryRef = useRef();
 
-    const getCategory = () => {
-        var myHeaders = new Headers();
-        myHeaders.append("x-access-key", "903361");
-        myHeaders.append("Authorization", "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxIiwianRpIjoiNGM3ZGQ5NTVmNjhlZTA0Nzg0YmViNjNhZDc5MjY5NWU3ZTFhMzVkNDhjODllMGZkMjM0OGI2YzY2NTA1NmFhNWEwZDU5MTExMmZiZjRkNzIiLCJpYXQiOjE2NzAyMjM1NjUuMzA2NTQyLCJuYmYiOjE2NzAyMjM1NjUuMzA2NTQ2LCJleHAiOjE3MDE3NTk1NjUuMzAzMDU3LCJzdWIiOiIyIiwic2NvcGVzIjpbXX0.LZNn6N4E07ZQbmqDQ33pmK01jS09APpgAPYOArXkSk8zqSFzF258RthHs0VN3UWpK5J2di9-4RKREKDLcbQ7a4_T_ayrXPit-cH6uBQPEYqPqBL9b2W49ZSWbJjhoZdh2oZlUDJiIlu4kjxKJoZef7gtZKne7twoY0Um7rzl1bvFPoUn8Yq2ev_Jhnp0JkwRF3Bq1RMbimwIHKxyMFUsp0Gyvx3bnUbJTCYwhX7xZvfrPHuh0ZVTZiEbprDx8pUg0H-_smmmzbb1IW-aVt7ZOCMllb3mDJEkX0O_IpJ_FAam8e8eACbVIAVVfyrUjZCvBnTI9SIxVacoTR5i2fKb-60EN85hEtW_rKfCYfK31sH-wL-Xas3ML6x5ei9GQVr8agsPBngMV32M1P1LIOw0xIb0dVaZHHckCjHZcEKAb_8-qYHWVjJhlxnnjo61OknDbVmo8m5IA_mNerQsO5jr3L92XQOl4PdChtdLhl0mSMak19TBXPhveX2OxUxL1FgAfaJ2IpkG9EW3JVwwiU_c9MilyJc54Nhu2dMD0RdIVVPTDgNu-e1CZF9NYsvCLlkCqQTQdFOYLaWOrbeFFJkf2Tme8a3ujklURdGafRa4HSbPdviXe2VwdfDavThj_EsSSgs8TgW1zw2cQeKb0i6nWTDIMq0avTei29R1XVKmFWg");
-        myHeaders.append("Cookie", "egrocer_session=VWx2trOpEJrXgOcGu1TF0SyN4lfQVRdieHDj5HND");
-
-        // var formdata = new FormData();
-
-        var requestOptions = {
-            method: 'GET',
-            headers: myHeaders,
-            //body: formdata,
-            redirect: 'follow'
-        };
-
-        fetch("http://egrocer.netsofters.net/customer/categories", requestOptions)
-            .then(response => response.json())
-            .then(result => setcategories(result.data))
-            .catch(error => console.log('error', error));
+    const Option = {
+        items: (window.innerWidth >= 1024) ? 5 : 3,
+        loop: true,
+        autoplay: true,
+        autoplayHoverPause: true,
+        autoplayTimeout: 2000,
+        dots: true,
+        nav: true,
+        navText: [`<div style=position:absolute;top:30%;font-size:xx-large;right:97%><i class="fa fa-angle-left" aria-hidden="true"></i></div>
+        `, `<div style=position:absolute;top:30%;font-size:xx-large;left:97%><i class="fa fa-angle-right" aria-hidden="true"></i></div>`]
     }
 
 
-    useEffect(() => {
-        getCategory();
-    }, [])
+    const [categorybyid, setcategorybyid] = useState([])
+    const [location, setlocation] = useState({
+        formatted_address: "",
+        loaded: false,
+        coordinates: {
+            lattitude: "",
+            longitude: "",
+        }
+    })
+
+    const getbyCategory = (id) => {
+        api.getCategory(id).then(response => response.json())
+            .then(result => {
+                if (result.status === 1) {
+                    setcategorybyid(result.data)
+                }
+                else {
+                    console.log(result.message)
+                }
+            })
+            .catch(error => console.log('error', error));
+    }
 
     return (
-        <div className='d-inline-flex m-5'>
-            {categories.map(ctg => (
-                <button key={ctg.id} className='me-3 p-2 border-0 '  style={{ height: "9pc", width: "9pc", background:"none" }} onClick={()=>{
-                    window.alert(ctg.name)
-                }}>
-                    <img src={ctg.image_url} className='img-thumbnail d-block' alt='' style={{ width: '100%', height: '100%' }} />
-                    <p>{ctg.name}</p>
-                </button>
-            ))}
-        </div>
+        <>
+            {/*Category Navbar on Top*/}
+            {props.category_nav ?
+                (<>
+                    {props.loading ? (
+                        <div className='d-inline-flex'>
+                            <Shimmer width={200} height={50} />
+                            <Shimmer width={200} height={50} />
+                            <Shimmer width={200} height={50} />
+                            <Shimmer width={200} height={50} />
+                            <Shimmer width={200} height={50} />
+                            <Shimmer width={200} height={50} />
+                            <Shimmer width={200} height={50} />
+
+                        </div>
+                    ) : (
+                        <div className="container-fluid bg-light">
+                            <div className="d-flex justify-content-evenly m-3">
+                                <div className='dropdown'>
+                                    <button className="btn btn-outline-dark dropdown-toggle border-0 rounded-0" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" ref={deliveryRef} style={{maxWidth:"300px", overflowX:"clip"}} >
+                                        <i className="fa fa-map-marker" aria-hidden="true"></i> Deliver to {location.formatted_address}
+                                    </button>
+                                    <GeoLocation labelby="dropdownMenuButton" google_place_api_key={props.google_place_api_key} setlocation={setlocation} deliveryRef={deliveryRef} />
+                                </div>
+                                {props.category.map(ctg => (
+                                    <div key={ctg.id} >
+                                        {ctg.has_child ? (
+                                            <div className='dropdown'>
+                                                <button className="btn btn-outline-dark dropdown-toggle border-0 rounded-0" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" >
+                                                    {ctg.name}
+                                                </button>
+                                                <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                    {getbyCategory(ctg.id)}
+                                                    {categorybyid.map(ctg_by_id => (
+                                                        <span key={ctg_by_id.id} className="dropdown-item" >{ctg_by_id.name}</span>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <button className='btn btn-outline-dark border-0 rounded-0' >{ctg.name}</button>
+                                        )}
+
+                                    </div>
+                                ))}
+
+                            </div>
+                        </div>)}
+                </>) : (
+                    <div className='p-3'>
+                        <div className='container'>
+                            <h2>Categories</h2>
+                        </div>
+
+                        {props.loading ? (
+                            <div className='d-inline-flex'>
+                                <Shimmer width={248} height={200} />
+                                <Shimmer width={248} height={200} />
+                                <Shimmer width={248} height={200} />
+                                <Shimmer width={248} height={200} />
+
+                            </div>
+                        ) : (
+                            <OwlCarousel {...Option}>
+                                {props.category.map(ctg => (
+                                    <div key={ctg.id}>
+                                        <button className='me-3 p-2 border-0 ' style={{ height: "9pc", width: "9pc", background: "none" }} onClick={() => {
+                                            window.alert(ctg.name)
+                                        }}>
+                                            <img src={ctg.image_url} className='img-thumbnail d-block' alt='' style={{ width: '100%', height: '100%' }} />
+                                            <p>{ctg.name}</p>
+                                        </button>
+                                    </div>
+                                ))}
+                            </OwlCarousel>
+                        )}
+                    </div>
+                )}
+        </>
     );
 };

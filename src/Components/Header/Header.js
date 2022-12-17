@@ -1,46 +1,56 @@
-import React from 'react';
+import React, { useRef } from 'react';
 //import styles from '../component.module.css'
 import { Login } from '../Login/Login';
 import { Profile } from '../Profile/Profile';
 import { ToastContainer, toast } from 'react-toastify';
-
+import api from '../../api';
+import { useNavigate } from "react-router-dom";
 
 //Header
 export const Header = (props) => {
+    const navigate = useNavigate();
+    const LoginButtonRef = useRef();
 
+    //Logout
     const handleLogout = () => {
-        var myHeaders = new Headers();
-        myHeaders.append("x-access-key", "903361");
-        myHeaders.append("Authorization", "Bearer " + localStorage.getItem('access_token'));
-        myHeaders.append("Cookie", "egrocer_session=OqYqjWnvp7vS6R80R2Kv9UdF2uG8kB6wii1myWmu");
 
-        var formdata = new FormData();
-        formdata.append("fcm_token", "sdasdasd");
+        api.logout().then(response => response.json())
+            .then(result => {
+                //console.log(result)
+                if (result.status === 1) {
+                    toast.success(result.message, {
+                        position: toast.POSITION.TOP_RIGHT
+                    });
+                    localStorage.removeItem('User')
+                    localStorage.removeItem('access_token')
+                    props.setuser(null)
+                    props.setisloggedin(false)
+                }
+                else if (result.status === 0) {
+                    toast.error(result.message, {
+                        position: toast.POSITION.TOP_RIGHT
+                    });
+                }
 
-        var requestOptions = {
-            method: 'POST',
-            headers: myHeaders,
-            body: formdata,
-            redirect: 'follow'
-        };
-
-        fetch("http://egrocer.netsofters.net/customer/logout", requestOptions)
-            .then(response => response.json())
-            .then(result => () => {
-                toast.success(result.message, {
-                    position: toast.POSITION.TOP_RIGHT
-                });
             })
             .catch(error => console.log('error', error));
-        props.setuser(null)
-        localStorage.removeItem('access_token')
-        props.setisloggedin(false)
+
+    }
+
+    //Cart
+    const handleCart = (e) => {
+        if (props.user === null) {
+            LoginButtonRef.current.click();
+        }
+        else {
+            navigate('/viewcart')
+        }
     }
 
     return (
         <>
-            <nav className="navbar bg-light">
-                <div className="container container-fluid d-flex flex-row">
+            <nav className="navbar">
+                <div className="container container-fluid d-inline-flex flex-row">
                     <div>
                         <a href='/' className="navbar-brand">e-Grocery</a>
                     </div>
@@ -53,11 +63,12 @@ export const Header = (props) => {
 
                     <div className='d-flex'>
                         {
-                            (props.isloggedin === false && props.user===null) ? (
+                            //props.isloggedin === false && props.user===null
+                            (props.user === null) ? (
                                 <div className='btn-group'>
 
                                     {/* Login Button trigger Modal  */}
-                                    <button className="btn" type="button" data-bs-toggle="modal" data-bs-target='#setlogin'>Login</button>
+                                    <button className="btn" type="button" data-bs-toggle="modal" data-bs-target='#setlogin' ref={LoginButtonRef}>Login</button>
 
                                     {/* Login Modal  */}
                                     <div className="modal fade" id='setlogin' tabIndex="-1" role="dialog" aria-labelledby="setloginTitle" aria-hidden="true" >
@@ -69,13 +80,7 @@ export const Header = (props) => {
                                         </div>
                                     </div>
 
-                                    {/* <button type="button" className='btn dropdown-toggle dropdown-toggle-split' id='loginDropdown' data-bs-toggle='dropdown' aria-haspopup="true" aria-expanded="false"></button>
-                                    <ul className='dropdown-menu' aria-labelledby='loginDropdown'>
-                                        <li><button className="dropdown-item" ><i className="fa fa-shopping-bag mx-2" aria-hidden="true"></i>
-                                            Orders</button></li>
-                                        <li><button className="dropdown-item" ><i className="fa fa-heart mx-2" aria-hidden="true"></i>
-                                            Wishlist</button></li>
-                                    </ul> */}
+
                                 </div>) : (
                                 <div className='btn-group'>
 
@@ -85,8 +90,7 @@ export const Header = (props) => {
                                     <div className="modal fade" id='profile' tabIndex="-1" role="dialog" aria-labelledby="profileTitle" aria-hidden="true" >
                                         <div className="modal-dialog modal-dialog-centered" role="document">
                                             <div className="modal-content" style={{ backgroundColor: "teal" }}>
-                                                <Profile user={props.user} setuser={props.setuser} ></Profile>
-
+                                                <Profile ></Profile>
                                             </div>
                                         </div>
                                     </div>
@@ -106,10 +110,9 @@ export const Header = (props) => {
 
                                 </div>
                             )}
-                        <button className='btn '><i className="fa fa-shopping-cart m-2" aria-hidden="true"></i>
+                        <button className='btn btn-outline-dark' onClick={handleCart}><i className="fa fa-shopping-cart m-2" aria-hidden="true" ></i>
                             Cart</button>
                     </div>
-
                 </div>
             </nav>
             <ToastContainer />
