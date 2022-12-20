@@ -1,6 +1,12 @@
 const access_key_param = 'x-access-key';
 const access_key = "903361";
 const token_prefix = "Bearer "
+
+
+const default_City = "Bhuj"
+const default_latitude = 23.239616593244413
+const default_longitude = 69.66953795403242
+
 const api = {
 
     login(num, OTP, countrycode) {
@@ -52,7 +58,29 @@ const api = {
             redirect: 'follow'
         };
 
-        return fetch("http://egrocer.netsofters.net/customer/settings", requestOptions)
+        return fetch(process.env.REACT_APP_URL + process.env.REACT_APP_SUBURL+"/settings", requestOptions)
+    },
+    getCity(city_name = default_City, latitude = default_latitude, longitude = default_longitude) {
+        var myHeaders = new Headers();
+        myHeaders.append(access_key_param, access_key);
+        var requestOptions = {
+            method: 'GET',
+            headers: myHeaders,
+            redirect: 'follow'
+        };
+
+        var params = {
+            name:city_name,
+            latitude:latitude,
+            longitude:longitude,
+        }
+        var url = new URL(process.env.REACT_APP_URL + process.env.REACT_APP_SUBURL + "/city");
+        for (let k in params) {
+            url.searchParams.append(k, params[k])
+        };
+
+        return fetch(url, requestOptions)
+
     },
     getShop(city_id) {
         var myHeaders = new Headers();
@@ -154,7 +182,7 @@ const api = {
 
         return fetch(process.env.REACT_APP_URL + process.env.REACT_APP_SUBURL + "/cart", requestOptions)
     },
-    getUser(){
+    getUser() {
         var myHeaders = new Headers();
         myHeaders.append(access_key_param, access_key);
         myHeaders.append("Authorization", token_prefix + localStorage.getItem('access_token'));
@@ -169,9 +197,9 @@ const api = {
             redirect: 'follow'
         };
 
-        return fetch(process.env.REACT_APP_URL + process.env.REACT_APP_SUBURL +"/user_details", requestOptions)
+        return fetch(process.env.REACT_APP_URL + process.env.REACT_APP_SUBURL + "/user_details", requestOptions)
     },
-    editProfile(uname,email,selectedFile){
+    editProfile(uname, email, selectedFile) {
         var myHeaders = new Headers();
         myHeaders.append(access_key_param, access_key);
         myHeaders.append("Authorization", token_prefix + localStorage.getItem('access_token'));
@@ -191,7 +219,7 @@ const api = {
             redirect: 'follow'
         };
 
-        return fetch(process.env.REACT_APP_URL + process.env.REACT_APP_SUBURL +"/edit_profile", requestOptions)
+        return fetch(process.env.REACT_APP_URL + process.env.REACT_APP_SUBURL + "/edit_profile", requestOptions)
     }
 }
 export default api;

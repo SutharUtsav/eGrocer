@@ -6,11 +6,11 @@ import { Shimmer } from 'react-shimmer';
 // import { useNavigate } from "react-router-dom";
 import api from '../../api';
 import GeoLocation from '../GeoLocation/GeoLocation';
+import { Spinner } from 'react-bootstrap';
 
 export const Categories = (props) => {
     // const navigate = useNavigate();
     const deliveryRef = useRef();
-
     const Option = {
         items: (window.innerWidth >= 1024) ? 5 : 3,
         loop: true,
@@ -25,20 +25,22 @@ export const Categories = (props) => {
 
 
     const [categorybyid, setcategorybyid] = useState([])
-    const [location, setlocation] = useState({
-        formatted_address: "",
-        loaded: false,
-        coordinates: {
-            lattitude: "",
-            longitude: "",
-        }
-    })
+    const [isloadingCategory, setisloadingCategory] = useState(true)
+    // const [location, setlocation] = useState({
+    //     formatted_address: "",
+    //     loaded: false,
+    //     coordinates: {
+    //         latitude: "",
+    //         longitude: "",
+    //     }
+    // })
 
     const getbyCategory = (id) => {
         api.getCategory(id).then(response => response.json())
             .then(result => {
                 if (result.status === 1) {
                     setcategorybyid(result.data)
+                    setisloadingCategory(false)
                 }
                 else {
                     console.log(result.message)
@@ -67,24 +69,32 @@ export const Categories = (props) => {
                         <div className="container-fluid bg-light">
                             <div className="d-flex justify-content-evenly m-3">
                                 <div className='dropdown'>
-                                    <button className="btn btn-outline-dark dropdown-toggle border-0 rounded-0" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" ref={deliveryRef} style={{maxWidth:"300px", overflowX:"clip"}} >
-                                        <i className="fa fa-map-marker" aria-hidden="true"></i> Deliver to {location.formatted_address}
+                                    <button className="btn btn-outline-dark dropdown-toggle border-0 rounded-0" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" ref={deliveryRef} style={{ maxWidth: "300px", overflowX: "clip" }} >
+                                        <i className="fa fa-map-marker" aria-hidden="true"></i> Deliver to {props.location.formatted_address}
                                     </button>
-                                    <GeoLocation labelby="dropdownMenuButton" google_place_api_key={props.google_place_api_key} setlocation={setlocation} deliveryRef={deliveryRef} />
+                                    <GeoLocation labelby="dropdownMenuButton" setlocation={props.setlocation} location={props.location} deliveryRef={deliveryRef}/>
                                 </div>
                                 {props.category.map(ctg => (
-                                    <div key={ctg.id} >
+                                    <div key={ctg.id}>
                                         {ctg.has_child ? (
                                             <div className='dropdown'>
-                                                <button className="btn btn-outline-dark dropdown-toggle border-0 rounded-0" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" >
+                                                <button className="btn btn-outline-dark dropdown-toggle border-0 rounded-0" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" onClick={() => { getbyCategory(ctg.id) }}>
                                                     {ctg.name}
                                                 </button>
+
                                                 <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                                    {getbyCategory(ctg.id)}
-                                                    {categorybyid.map(ctg_by_id => (
-                                                        <span key={ctg_by_id.id} className="dropdown-item" >{ctg_by_id.name}</span>
-                                                    ))}
+                                                    {isloadingCategory ? (
+                                                    <div className='text-center'>
+                                                        <Spinner />
+                                                    </div>) : (
+                                                        <>{
+                                                            categorybyid.map(ctg_by_id => (
+                                                                <span key={ctg_by_id.id} className="dropdown-item" >{ctg_by_id.name}</span>
+                                                            ))
+                                                        }</>
+                                                    )}
                                                 </div>
+
                                             </div>
                                         ) : (
                                             <button className='btn btn-outline-dark border-0 rounded-0' >{ctg.name}</button>

@@ -36,7 +36,7 @@ const Section = (props) => {
                     {sct.products.map(prod => (
                       <div className='col' key={prod.id}>
                         <div className='card m-3'>
-                          <img src={prod.image_url} className="card-img-top" alt="product" height={300} width={300} />
+                          <img src={prod.image_url} className="card-img-top" alt="product" height={200} width={300} />
                           <div className='card-body'>
                             <h5 >{prod.name}</h5>
                             <p >{prod.slug}</p>

@@ -28,7 +28,7 @@ export const Content = (props) => {
 
     return (
         <div style={{ paddingBottom: "2pc", minHeight: "87.1vh" }}>
-            <Categories category={category} setcategory={setcategory} loading={loading} category_nav={true} google_place_api_key={props.google_place_api_key}/>
+            <Categories category={category} setcategory={setcategory} loading={loading} category_nav={true} location={props.location} setlocation={props.setlocation}/>
             <Sliders slider={slider} setslider={setslider} loading={loading} />
             <Offers offers={offers} setoffers={setoffers} loading={loading} />
             <Categories category={category} setcategory={setcategory} loading={loading}  category_nav={false}/>
