@@ -7,6 +7,8 @@ import { Shimmer } from 'react-shimmer';
 import api from '../../api';
 import GeoLocation from '../GeoLocation/GeoLocation';
 import { Spinner } from 'react-bootstrap';
+import { useSelector } from 'react-redux';
+
 
 export const Categories = (props) => {
     // const navigate = useNavigate();
@@ -23,6 +25,7 @@ export const Categories = (props) => {
         `, `<div style=position:absolute;top:30%;font-size:xx-large;left:97%><i class="fa fa-angle-right" aria-hidden="true"></i></div>`]
     }
 
+    const categories = useSelector((state) => state.shop.categories);
 
     const [categorybyid, setcategorybyid] = useState([])
     const [isloadingCategory, setisloadingCategory] = useState(true)
@@ -54,7 +57,7 @@ export const Categories = (props) => {
             {/*Category Navbar on Top*/}
             {props.category_nav ?
                 (<>
-                    {props.loading ? (
+                    {categories===undefined ? (
                         <div className='d-inline-flex'>
                             <Shimmer width={200} height={50} />
                             <Shimmer width={200} height={50} />
@@ -66,15 +69,15 @@ export const Categories = (props) => {
 
                         </div>
                     ) : (
-                        <div className="container-fluid bg-light">
-                            <div className="d-flex justify-content-evenly m-3">
+                        <div className="container-fluid">
+                            <div className="d-flex justify-content-evenly">
                                 <div className='dropdown'>
-                                    <button className="btn btn-outline-dark dropdown-toggle border-0 rounded-0" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" ref={deliveryRef} style={{ maxWidth: "300px", overflowX: "clip" }} >
+                                    <button className="btn btn-warning dropdown-toggle border-0 rounded-0" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" ref={deliveryRef} style={{ maxWidth: "300px", overflowX: "clip" }} >
                                         <i className="fa fa-map-marker" aria-hidden="true"></i> Deliver to {props.location.formatted_address}
                                     </button>
                                     <GeoLocation labelby="dropdownMenuButton" setlocation={props.setlocation} location={props.location} deliveryRef={deliveryRef}/>
                                 </div>
-                                {props.category.map(ctg => (
+                                {categories.map(ctg => (
                                     <div key={ctg.id}>
                                         {ctg.has_child ? (
                                             <div className='dropdown'>
@@ -111,7 +114,7 @@ export const Categories = (props) => {
                             <h2>Categories</h2>
                         </div>
 
-                        {props.loading ? (
+                        {categories===undefined ? (
                             <div className='d-inline-flex'>
                                 <Shimmer width={248} height={200} />
                                 <Shimmer width={248} height={200} />
@@ -121,7 +124,7 @@ export const Categories = (props) => {
                             </div>
                         ) : (
                             <OwlCarousel {...Option}>
-                                {props.category.map(ctg => (
+                                {categories.map(ctg => (
                                     <div key={ctg.id}>
                                         <button className='me-3 p-2 border-0 ' style={{ height: "9pc", width: "9pc", background: "none" }} onClick={() => {
                                             window.alert(ctg.name)

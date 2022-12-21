@@ -37,8 +37,18 @@ export const Header = (props) => {
 
     }
 
-    //Cart
-    const handleCart = (e) => {
+    //Cart click
+    const handleCart = () => {
+        if (props.user === null) {
+            LoginButtonRef.current.click();
+        }
+        else {
+            navigate('/viewcart')
+        }
+    }
+
+    //Wishlist click 
+    const handleWishlist = () => {
         if (props.user === null) {
             LoginButtonRef.current.click();
         }
@@ -49,15 +59,15 @@ export const Header = (props) => {
 
     return (
         <>
-            <nav className="navbar">
+            <nav className="navbar" style={{borderBottom:"1px solid lightgray"}}>
                 <div className="container container-fluid d-inline-flex flex-row">
                     <div>
                         <a href='/' className="navbar-brand">e-Grocery</a>
                     </div>
 
                     <div className="d-flex" role="search">
-                        <input className="form-control me-2 col-1" type="search" placeholder="Search" aria-label="Search" />
-                        <button className="btn" style={{ position: "relative", right: "75px" }} type="submit"><i className="fa fa-search btn " aria-hidden="true"></i></button>
+                        <input className="form-control me-2 col-4" placeholder="Search" aria-label="Search" />
+                        <button className="btn" style={{ position: "relative", right: "50px" }} type="submit"><i className="bi bi-search"></i></button>
 
                     </div>
 
@@ -68,14 +78,13 @@ export const Header = (props) => {
                                 <div className='btn-group'>
 
                                     {/* Login Button trigger Modal  */}
-                                    <button className="btn" type="button" data-bs-toggle="modal" data-bs-target='#setlogin' ref={LoginButtonRef}>Login</button>
+                                    <button className="btn fs-4" type="button" data-bs-toggle="modal" data-bs-target='#setlogin' ref={LoginButtonRef} ><i className="bi bi-person"></i></button>
 
                                     {/* Login Modal  */}
                                     <div className="modal fade" id='setlogin' tabIndex="-1" role="dialog" aria-labelledby="setloginTitle" aria-hidden="true" >
                                         <div className="modal-dialog modal-dialog-centered" role="document">
                                             <div className="modal-content" style={{ backgroundColor: "teal" }}>
                                                 <Login user={props.user} setuser={props.setuser} isloggedin={props.isloggedin} setisloggedin={props.setisloggedin}></Login>
-
                                             </div>
                                         </div>
                                     </div>
@@ -109,9 +118,13 @@ export const Header = (props) => {
                                     </ul>
 
                                 </div>
-                            )}
-                        <button className='btn btn-outline-dark' onClick={handleCart}><i className="fa fa-shopping-cart m-2" aria-hidden="true" ></i>
-                            Cart</button>
+                            )
+                        }
+                        <button className='btn fs-4' onClick={handleWishlist}>
+                            <i class="bi bi-heart"></i></button>
+
+                        <button className='btn fs-4' onClick={handleCart}>
+                            <i className="bi bi-cart"></i></button>
                     </div>
                 </div>
             </nav>

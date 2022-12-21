@@ -53,18 +53,18 @@ function App() {
         setloading(false)
         if (result.status === 1) {
           setlocation({
-            city:result.data.name,
-            formatted_address:result.data.formatted_address,
-            coordinates:{
-              latitude:result.data.latitude,
-              longitude:result.data.longitude,
+            city: result.data.name,
+            formatted_address: result.data.formatted_address,
+            coordinates: {
+              latitude: result.data.latitude,
+              longitude: result.data.longitude,
             }
           })
         }
         else {
           setlocation({
-            status:0,
-            message:result.message
+            status: 0,
+            message: result.message
           })
           console.log(result.message)
         }
@@ -76,7 +76,7 @@ function App() {
 
   return (
 
-    <div className="App">
+    <>
       {loading ? (
         <div className='d-flex justify-content-center align-items-center' style={{ height: "100vh" }}>
           <Spinner animation="grow p-1" variant="danger" />
@@ -87,28 +87,27 @@ function App() {
         </div>
       ) : (
         <Router>
+          <Header user={user} setuser={setuser} isloggedin={isloggedin} setisloggedin={setisloggedin} />
           <Routes>
             <Route exact path="/" element={
               <>
-                <Header user={user} setuser={setuser} isloggedin={isloggedin} setisloggedin={setisloggedin} />
                 <Content location={location} setlocation={setlocation} />
-                <Footer />
               </>}>
             </Route>
             <Route exact path="/viewcart" element={
               <>
-                <Header user={user} setuser={setuser} isloggedin={isloggedin} setisloggedin={setisloggedin} />
                 <ViewCart />
-                <Footer />
-              </>}>
+              </>
+            }>
             </Route>
             {/* <Route exact path="/customer" element={<Home />}>
           </Route> */}
           </Routes>
+          <Footer />
         </Router>
       )}
       {/* <ToastContainer/> */}
-    </div>
+    </>
 
 
   );
