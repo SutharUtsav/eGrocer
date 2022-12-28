@@ -2,114 +2,86 @@ import './App.css';
 import { Header } from './Components/Header/Header';
 import { Footer } from './Components/Footer/Footer';
 import { Content } from './Components/Content/Content';
-import React, { useState, useEffect } from 'react';
-import api from './api';
+import React, { useEffect, useState } from 'react';
 import {
   BrowserRouter as Router,
   Routes,
-  Route
+  Route,
 } from "react-router-dom";
 import ViewCart from './Components/Cart/ViewCart';
-import { Spinner } from 'react-bootstrap';
-// import { ToastContainer, toast } from 'react-toastify';
-
+// import { Spinner } from 'react-bootstrap';
+import { useDispatch, useSelector } from 'react-redux';
+// import { fetchCity } from './Model/action/cityAction'
+import Alert from './Components/Alert/Alert';
+import { SelectedCategory } from './Components/Categories/SelectedCategory';
+import { setLocation, clearLocation } from './Model/action/locationAction';
 
 function App() {
 
-  const [user, setuser] = useState(null);
-  const [isloggedin, setisloggedin] = useState(false)
-  const [loading, setloading] = useState(true)
-  // const [settings, setsettings] = useState([])
-  const [location, setlocation] = useState({
-    city: process.env.REACT_APP_DEFAULT_CITY,
-    formatted_address: process.env.REACT_APP_DEFAULT_CITY,
-    coordinates: {
-      latitude: process.env.REACT_APP_DEFAULT_LATITUDE,
-      longitude: process.env.REACT_APP_DEFAULT_LONGITUDE,
-    }
-  })
+  const alert = useSelector((state) => state.alert)
+
+  const dispatch = useDispatch();
+
+  const [islocation, setislocation] = useState(true)
+  
 
   useEffect(() => {
-    const usr = localStorage.getItem('User');
-    if (usr !== null) {
-      setuser(JSON.parse(usr));
-      setisloggedin(true)
+    //if location is not provided then first get it from user
+
+    if (localStorage.getItem('location') === null) {
+      setislocation(false)
+    }
+    else {
+      if (Object.keys(JSON.parse(localStorage.getItem('location')).location).length === 0 && Object.keys(JSON.parse(localStorage.getItem('location')).city).length === 0) {
+        setislocation(false);
+      }
+      else {
+        dispatch(setLocation(JSON.parse(localStorage.getItem('location')).location));
+        setislocation(true)
+      }
     }
 
-    // api.getSettings().then(response => response.json())
-    //   .then(result => {
-    //     setloading(false)
-    //     if(result.status===1){
-    //       setsettings(result.data)
-    //     }
-    //     else{
-    //       console.log(result.error)
-    //     }
-    //   })
-    //   .catch(error => console.log('error', error));
+    return () => {
+      dispatch(clearLocation());
+    };
 
-    api.getCity().then(response => response.json())
-      .then(result => {
-        setloading(false)
-        if (result.status === 1) {
-          setlocation({
-            city: result.data.name,
-            formatted_address: result.data.formatted_address,
-            coordinates: {
-              latitude: result.data.latitude,
-              longitude: result.data.longitude,
-            }
-          })
-        }
-        else {
-          setlocation({
-            status: 0,
-            message: result.message
-          })
-          console.log(result.message)
-        }
-      })
-      .catch(error => console.log('error', error));
-
-  }, [])
+  }, [dispatch])
 
 
   return (
 
     <>
-      {loading ? (
-        <div className='d-flex justify-content-center align-items-center' style={{ height: "100vh" }}>
-          <Spinner animation="grow p-1" variant="danger" />
-          <Spinner animation="grow p-1" variant="warning" />
-          <Spinner animation="grow p-1" variant="info" />
-          <Spinner animation="grow p-1" variant="success" />
+      {Object.keys(alert).length !== 0 ? <Alert type={alert.alert.type} message={alert.alert.message} /> : ""}
 
-        </div>
-      ) : (
-        <Router>
-          <Header user={user} setuser={setuser} isloggedin={isloggedin} setisloggedin={setisloggedin} />
-          <Routes>
-            <Route exact path="/" element={
-              <>
-                <Content location={location} setlocation={setlocation} />
-              </>}>
-            </Route>
-            <Route exact path="/viewcart" element={
-              <>
-                <ViewCart />
-              </>
-            }>
-            </Route>
-            {/* <Route exact path="/customer" element={<Home />}>
-          </Route> */}
-          </Routes>
-          <Footer />
-        </Router>
-      )}
+      <Router>
+
+        <Header setislocation={setislocation} islocation={islocation} />
+        {/* <Header user={user} setuser={setuser} isloggedin={isloggedin} setisloggedin={setisloggedin} /> */}
+        <Routes>
+          <Route exact path="/" element={
+            <>
+              <Content islocation={islocation}/>
+            </>
+          }>
+          </Route>
+          <Route exact path="cid/:cid" element={
+            <>
+              <SelectedCategory />
+            </>
+          }></Route>
+          <Route exact path="/viewcart" element={
+            <>
+              <ViewCart />
+            </>
+          }>
+          </Route>
+
+        </Routes>
+        <Footer />
+      </Router>
+
       {/* <ToastContainer/> */}
     </>
-
-
   );
 }
 

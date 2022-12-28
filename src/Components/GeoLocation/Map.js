@@ -50,7 +50,6 @@ const Map = (props) => {
         status: 0,
         message: message
       })
-      props.setloadingAddress(false)
     }
   }
 

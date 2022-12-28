@@ -1,13 +1,14 @@
 import { ActionTypes } from "../constants/action-type";
 
-export const userReducer  =(state={},{type,payload})=>{
+export const brandReducer = (state={},{type,payload})=>{
     switch (type) {
-        case ActionTypes.GET_USER_DETAILS:
+        case ActionTypes.SET_BRANDS:
             return {
                 ...state,
-                user:payload,
+                brands:payload,
             }
+    
         default:
             return state
     }
-}
+} 

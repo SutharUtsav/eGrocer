@@ -27,14 +27,7 @@ export const shopReducer = (state = {}, { type, payload }) => {
                 ...state,
                 sliders: payload,
             }
-        // case ActionTypes.GET_CATEGORY:
-        //     return state
-        // case ActionTypes.GET_OFFERS:
-        //     return state
-        // case ActionTypes.GET_SECTIONS:
-        //     return state
-        // case ActionTypes.GET_SLIDERS:
-        //     return state
+        
         default:
             return state
     }

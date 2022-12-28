@@ -1,0 +1,309 @@
+<div className='d-flex'>
+    {
+        //props.isloggedin === false && props.user===null
+        (props.user === null) ? (
+            <div className='btn-group'>
+
+                {/* Login Button trigger Modal  */}
+                <button className="btn fs-4" type="button" data-bs-toggle="modal" data-bs-target='#setlogin' ref={LoginButtonRef} ><i className="bi bi-person"></i></button>
+
+                {/* Login Modal  */}
+                <div className="modal fade" id='setlogin' tabIndex="-1" role="dialog" aria-labelledby="setloginTitle" aria-hidden="true" >
+                    <div className="modal-dialog modal-dialog-centered" role="document">
+                        <div className="modal-content" style={{ backgroundColor: "teal" }}>
+                            <Login user={props.user} setuser={props.setuser} isloggedin={props.isloggedin} setisloggedin={props.setisloggedin}></Login>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>) : (
+            <div className='btn-group'>
+
+                {/* Profile Button trigger Modal  */}
+                <button className="btn " type="button" data-bs-toggle="modal" data-bs-target='#profile' ><i className="fa fa-user mx-2" aria-hidden="true"></i>Profile</button>
+                {/* Profile Modal  */}
+                <div className="modal fade" id='profile' tabIndex="-1" role="dialog" aria-labelledby="profileTitle" aria-hidden="true" >
+                    <div className="modal-dialog modal-dialog-centered" role="document">
+                        <div className="modal-content" style={{ backgroundColor: "teal" }}>
+                            <Profile ></Profile>
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <button type="button" className='btn dropdown-toggle dropdown-toggle-split' id='profileDropdown' data-bs-toggle='dropdown' aria-haspopup="true" aria-expanded="false"></button>
+                <ul className='dropdown-menu' aria-labelledby='profileDropdown'>
+                    <li><button className="dropdown-item" ><i className="fa fa-shopping-bag mx-2" aria-hidden="true"></i>
+                        Orders</button></li>
+                    <li><button className="dropdown-item" ><i className="fa fa-heart mx-2" aria-hidden="true"></i>
+                        Wishlist</button></li>
+                    <div className="dropdown-divider"></div>
+                    <li><button className="dropdown-item text-danger" onClick={handleLogout}><i className="fa fa-sign-out mx-2" aria-hidden="true"></i>
+                        Logout</button></li>
+                </ul>
+
+            </div>
+        )
+    }
+    <button className='btn fs-4' onClick={handleWishlist}>
+        <i className="bi bi-heart"></i></button>
+
+    <button className='btn fs-4' onClick={handleCart}>
+        <i className="bi bi-cart"></i></button>
+</div>
+
+
+
+
+
+//Login.js
+
+<div className="modal-body">
+            <button id='closemodal' type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" onClick={() => { setIsOTP(false); setTermsChecked(false) }} ref={closeModalRef} ></button>
+
+            <section className="vh-50" >
+                <div className="container py-5 h-100 ">
+                    <div className="row d-flex justify-content-center align-items-center h-100">
+                        <div className="col col-xl-10">
+                            <div className="card" style={{ borderRadius: "1rem" }}>
+                                <div className="">
+                                    <div className="col-md-6 col-lg-4 w-auto">
+                                        <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw2.webp"
+                                            alt="login form" className="img-fluid" style={{ borderRadius: "1rem 0 0 1rem" }} />
+                                    </div>
+                                    <div className="col-md-6 col-lg-7 align-items-center w-auto">
+                                        <div className="card-body p-4 p-lg-5 text-black">
+
+                                            {!isOTP ? (
+                                                <form onSubmit={handleLogin}>
+                                                    <h5 className="fw-normal mb-3 pb-3" style={{ letterSpacing: "1px" }}>Sign into your account</h5>
+
+                                                    <div className="form-outline mb-4">
+
+                                                        <PhoneInput placeholder="Enter phone number" defaultCountry="IN" value={mobilenum} id="mobile_code" onChange={setMobilenum} />
+                                                    </div>
+                                                    <div className='d-inline-flex'>
+                                                        <div className="form-check">
+                                                            <input className="form-check-input" type="checkbox" value="" id="flexCheckChecked" onChange={handleCheckbox} />
+                                                        </div>
+                                                        <div>
+                                                            <p>I Agree to the<a href="#!" className="small text-muted p-2">Terms of Service</a>and<a href="#!" className="small text-muted p-2">Privacy policy</a></p>
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="pt-3 mb-4">
+                                                        <button className="btn btn-dark btn-lg btn-block" type="submit">Login</button>
+                                                    </div>
+                                                </form>
+
+                                            ) : (
+                                                <div>
+                                                    <form onSubmit={verifyOTP}>
+                                                        <h5 className="fw-normal mb-3 pb-3" style={{ letterSpacing: "1px" }}>Verify Your Code</h5>
+
+                                                        <OTPInput className='justify-content-center' value={OTP} onChange={setOTP} autoFocus OTPLength={6} otpType="number" disabled={false} secure />
+                                                        <ResendOTP className='px-5 py-3' onResendClick={resendOTP} />
+
+                                                        <div className="pt-3 mb-4">
+                                                            <button id="verifyOTP" className="btn btn-dark btn-lg btn-block" type="submit" >Verify</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="recaptcha-container" ></div>
+
+                <ToastContainer />
+            </section>
+        </div>
+
+
+//Profile.js
+<div className="modal-body">
+            <button id='closemodal' type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" ref={closeModalRef}></button>
+
+            <section className="vh-50" >
+                <div className="container py-5 h-100 ">
+                    <div className="row d-flex justify-content-center align-items-center h-100">
+                        <div className="col col-xl-10">
+                            <div className="card" style={{ borderRadius: "1rem" }}>
+                                <div className="">
+                                    <img src={profilePic} className="rounded-circle" style={{ width: "150px", height: "140px", marginTop: "1pc" }} alt="Avatar" />
+                                </div>
+                                <div className="col-md-6 col-lg-7 align-items-center w-auto">
+                                    <div className="card-body p-4 p-lg-5 text-black">
+                                        <form onSubmit={handleEditProfile}>
+                                            <div className="mb-3">
+                                                <input className="form-control" type="file" id="formFile" onChange={(e) => { setselectedFile(e.target.files[0]) }} />
+                                            </div>
+                                            <div className="input-group mb-3">
+                                                <span className="input-group-text" id="uname-addon1"><i className="fa fa-user" aria-hidden="true"></i></span>
+                                                <input type="text" className="form-control" placeholder="User Name" id="editName" value={uname} onChange={(e) => { setuname(e.target.value) }} aria-label="Username" aria-describedby="uname-addon1" />
+                                            </div>
+                                            <div className="input-group mb-3">
+                                                <span className="input-group-text" id="email-addon1"><i className="fa fa-envelope" aria-hidden="true"></i></span>
+                                                <input type="email" className="form-control" placeholder="Email" id="editEmail" value={email} onChange={(e) => { setemail(e.target.value) }} aria-label="Email" aria-describedby="email-addon1" />
+                                            </div>
+                                            <div className="input-group mb-3">
+                                                <span className="input-group-text" id="phone-addon1"><i className="fa fa-phone" aria-hidden="true"></i></span>
+                                                <input type="tel" className="form-control" placeholder="Phone Number" id="editPhoneNum" value={user.mobile} aria-label="PhoneNum" aria-describedby="phone-addon1" readOnly />
+                                            </div>
+
+                                            <button type="submit" className="btn btn-dark btn-block">Update Profile</button>
+                                        </form>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <ToastContainer />
+            </section>
+        </div>
+
+
+
+
+//Categories.js
+<>
+            {/*Category Navbar on Top*/}
+            {props.category_nav ?
+                (<>
+                    {categories===undefined ? (
+                        <div className='d-inline-flex'>
+                            <Shimmer width={200} height={50} />
+                            <Shimmer width={200} height={50} />
+                            <Shimmer width={200} height={50} />
+                            <Shimmer width={200} height={50} />
+                            <Shimmer width={200} height={50} />
+                            <Shimmer width={200} height={50} />
+                            <Shimmer width={200} height={50} />
+
+                        </div>
+                    ) : (
+                        <div className="container-fluid">
+                            <div className="d-flex justify-content-evenly">
+                                <div className='dropdown'>
+                                    <button className="btn btn-warning dropdown-toggle border-0 rounded-0" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" ref={deliveryRef} style={{ maxWidth: "300px", overflowX: "clip" }} >
+                                        <i className="fa fa-map-marker" aria-hidden="true"></i> Deliver to {props.location.formatted_address}
+                                    </button>
+                                    {/* <GeoLocation labelby="dropdownMenuButton" setlocation={props.setlocation} location={props.location} deliveryRef={deliveryRef}/> */}
+                                </div>
+                                {categories.map(ctg => (
+                                    <div key={ctg.id}>
+                                        {ctg.has_child ? (
+                                            <div className='dropdown'>
+                                                <button className="btn btn-outline-dark dropdown-toggle border-0 rounded-0" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" onClick={() => { getbyCategory(ctg.id) }}>
+                                                    {ctg.name}
+                                                </button>
+
+                                                <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                    {isloadingCategory ? (
+                                                    <div className='text-center'>
+                                                        <Spinner />
+                                                    </div>) : (
+                                                        <>{
+                                                            categorybyid.map(ctg_by_id => (
+                                                                <span key={ctg_by_id.id} className="dropdown-item" >{ctg_by_id.name}</span>
+                                                            ))
+                                                        }</>
+                                                    )}
+                                                </div>
+
+                                            </div>
+                                        ) : (
+                                            <button className='btn btn-outline-dark border-0 rounded-0' >{ctg.name}</button>
+                                        )}
+
+                                    </div>
+                                ))}
+
+                            </div>
+                        </div>)}
+                </>) : (
+                    <div className='p-3'>
+                        <div className='container'>
+                            <h2>Categories</h2>
+                        </div>
+
+                        {categories===undefined ? (
+                            <div className='d-inline-flex'>
+                                <Shimmer width={248} height={200} />
+                                <Shimmer width={248} height={200} />
+                                <Shimmer width={248} height={200} />
+                                <Shimmer width={248} height={200} />
+
+                            </div>
+                        ) : (
+                            <OwlCarousel {...Option}>
+                                {categories.map(ctg => (
+                                    <div key={ctg.id}>
+                                        <button className='me-3 p-2 border-0 ' style={{ height: "9pc", width: "9pc", background: "none" }} onClick={() => {
+                                            window.alert(ctg.name)
+                                        }}>
+                                            <img src={ctg.image_url} className='img-thumbnail d-block' alt='' style={{ width: '100%', height: '100%' }} />
+                                            <p>{ctg.name}</p>
+                                        </button>
+                                    </div>
+                                ))}
+                            </OwlCarousel>
+                        )}
+                    </div>
+                )}
+        </>
+
+
+
+//Brands
+<div className='p-3'>
+            <div className='container'>
+                <h2>Top Brands</h2>
+            </div>
+            {loading ? (
+                <div className='d-inline-flex'>
+                    <Shimmer width={248} height={200} />
+                    <Shimmer width={248} height={200} />
+                    <Shimmer width={248} height={200} />
+                    <Shimmer width={248} height={200} />
+
+                </div>
+            ) : (
+                <div className='d-inline-flex'>
+                    {brands.map(brnd => (
+
+                        <button key={brnd.id} className='p-2 border-0' style={{ width: "200px", height: "200px", background: "none" }} onMouseOver={() => {
+                            document.getElementById('span-' + brnd.id).style.display = ""
+                            document.getElementById('span-' + brnd.id).style.background = "black"
+                            document.getElementById('span-' + brnd.id).style.color = "white"
+                            document.getElementById('span-' + brnd.id).style.opacity = ".5"
+                            document.getElementById('span-' + brnd.id).style.position = "relative"
+                            document.getElementById('span-' + brnd.id).style.bottom = "3pc"
+
+                        }} onMouseOut={() => {
+                            document.getElementById('span-' + brnd.id).style.display = "none"
+                        }}>
+                            <img src={brnd.image_url} className='img-thumbnail rounded d-block' alt='brands' style={{height:"90%", width:"100%"}} />
+                            <div id={"span-" + brnd.id} style={{ display: "none" }}>
+                                <span >{brnd.name}</span>
+                            </div>
+                        </button>
+
+                    ))}
+                </div>
+            )}
+        </div>
+
+
+
+
+

@@ -2,8 +2,8 @@
 import api from "../../api"
 import { ActionTypes } from "../constants/action-type"
 
-export const fetchShop = (id) => async (dispatch) => {
-    const response = await api.getShop(id);
+export const fetchShop = (id,latitude,longitude) => async (dispatch) => {
+    const response = await api.getShop(id,latitude,longitude).catch(error=>console.log("error:",error));
     const result = await response.json();
 
     dispatch({type: ActionTypes.FETCH_SHOP, payload: result.data})

@@ -8,24 +8,28 @@ export const Offers = () => {
 
     const offers = useSelector((state) => state.shop.offers)
     return (
-        <div className='p-3' >
-            <div className='container'>
-                <h2>Top Offers</h2>
-            </div>
-            {offers===undefined ? (
+
+        <section className='offer-container' id="offers" >
+            {offers === undefined ? (
                 <div className='d-inline-block'>
-                    <Shimmer width={1470} height={340} />
-                </div>) : (
-                <Carousel>
-                    {offers.map((ofr, index) => (
-                        <Carousel.Item interval={3000} key={index}>
-                            <img className='d-block m-auto' src={ofr.image_url} alt={ofr.type} height={400}/>
-                        </Carousel.Item>
-                    ))}
-                </Carousel>
+                    <Shimmer width={2200} height={340} />
+                </div>
+            ) : (
+                <>
+                    <p>Top Offers</p>
+                    <div className='offer-image-container'>
+                        <Carousel>
+                            {offers.map((ofr, index) => (
+                                <Carousel.Item interval={3000} key={index}>
+                                    <img className='offer-image' src={ofr.image_url} alt={ofr.type} width={900} height={250} />
+                                </Carousel.Item>
+                            ))}
+                        </Carousel>
+                    </div>
+                </>
             )}
-            
-        </div>
+
+        </section>
     )
 }
 

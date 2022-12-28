@@ -3,11 +3,14 @@ import { StandaloneSearchBox, LoadScript } from '@react-google-maps/api';
 import Map from './Map';
 import api from '../../api';
 import { Spinner } from 'react-bootstrap';
+import { useDispatch } from 'react-redux';
+import { setLocation, setLocationbyInput } from '../../Model/action/locationAction';
 
 const libraries = ['places'];
 
 const GeoLocation = (props) => {
     const inputRef = useRef();
+    const dispatch = useDispatch();
 
     const [localLocation, setlocalLocation] = useState({
         status: 1,
@@ -24,16 +27,18 @@ const GeoLocation = (props) => {
     const handlePlaceChanged = () => {
         const [place] = inputRef.current.getPlaces();
         if (place) {
-            props.deliveryRef.current.click();
+            props.setLocationClick(false);
 
-            props.setlocation({
-                city: place.address_components[0].long_name,
-                formatted_address: place.formatted_address,
-                coordinates: {
+            dispatch(setLocationbyInput(
+                {
+                    city: place.address_components[0].long_name,
+                    formatted_address: place.formatted_address,
                     latitude: place.geometry.location.lat(),
                     longitude: place.geometry.location.lng()
                 }
-            })
+            ))
+            props.setislocation(true)
+            props.setLocationClick(false)
         }
     }
 
@@ -48,7 +53,7 @@ const GeoLocation = (props) => {
                 component = result.address_components[c];
 
                 //confirm city from server
-                const response = await api.getCity(component.long_name, result.geometry.location.lat(), result.geometry.location.lng());
+                const response = await api.getCity(component.long_name, result.geometry.location.lat(), result.geometry.location.lng()).catch(error => console.log("error: ", error));
                 const res = await response.json();
                 if (res.status === 1) {
                     // console.log(res)
@@ -129,26 +134,28 @@ const GeoLocation = (props) => {
     }
 
     const handleConfirmAddress = () => {
-        props.setlocation({
+
+        dispatch(setLocation({
             city: localLocation.city,
             formatted_address: localLocation.formatted_address,
-            coordinates: {
-                latitude: localLocation.lat,
-                longitude: localLocation.lng
-            }
-        })
+            latitude: localLocation.lat,
+            longitude: localLocation.lng
+        }))
+        props.setislocation(true)
+        props.setLocationClick(false)
+
     }
 
     return (
         <>
             <LoadScript googleMapsApiKey={process.env.REACT_APP_GOOGLE_PLACE_API} libraries={libraries}>
-                <div className="dropdown-menu" aria-labelledby={props.labelby} style={{ width: "17pc" }}>
+                <div className="drop-down" id="locationDropdown" aria-labelledby={props.labelby} style={{ width: "17pc" }}>
 
                     {/* Current location modal trigger */}
                     <button className='btn btn-outline-dark border-0 rounded-0 w-100' onClick={handleCurrentLocationClick} data-bs-toggle="modal" data-bs-target="#currentlocation">
                         <i className="bi bi-geo p-2"></i>Use my current location
                     </button>
-                    <div className="dropdown-divider"></div>
+                    <hr />
                     <div className='p-2'>
                         <StandaloneSearchBox
                             onLoad={ref => inputRef.current = ref}
@@ -165,9 +172,9 @@ const GeoLocation = (props) => {
                     <div className="modal-dialog modal-lg mvh-90 w-100 d-flex flex-column" role="document">
                         <div className="modal-content flex-grow-1">
 
-                            <div className="modal-header">
+                            <div className="modal-header" id="locationMapTitle">
                                 <h5 className="modal-title" id="currentlocationLabel">Confirm Location</h5>
-                                <button id='closemodal' type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" style={{ position: "unset" }}></button>
+                                <button id='closemodal' type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" style={{ position: "unset" }} ></button>
                             </div>
 
                             <div className="modal-body h-100">
@@ -181,20 +188,19 @@ const GeoLocation = (props) => {
 
                             {localLocation.status === 0 ? <p className='text-danger'>{localLocation.message}</p> : (
                                 <>
-                                    <div className='container'><b>Address :</b>
+                                    <div className='container' id="locationMapAddress"><b>Address :</b>
                                         {loadingAddress ? (<div><Spinner animation="grow" size="sm" /><Spinner animation="grow" size="sm" /><Spinner animation="grow" size="sm" /></div>) : (<>{localLocation.formatted_address}</>)}</div>
                                 </>
                             )}
                             {/* <p><b>Latitude : </b>{localLocation.lat}</p>
                                 <p><b>Longitude : </b>{localLocation.lng}</p> */}
-                            <div className="modal-footer">
+                            <div className="modal-footer" id="locationMapConfirm">
 
                                 <button type="button" className="btn btn-primary" data-bs-dismiss="modal" onClick={handleConfirmAddress}>
                                     Confirm
                                 </button>
 
                             </div>
-
                         </div>
                     </div>
                 </div>

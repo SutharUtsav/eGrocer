@@ -1,13 +1,14 @@
 import { ActionTypes } from "../constants/action-type";
 
-export const userReducer  =(state={},{type,payload})=>{
+export const categoryReducer = (state={},{type,payload})=>{
     switch (type) {
-        case ActionTypes.GET_USER_DETAILS:
+        case ActionTypes.SET_CATEGORY_FROM_API:
             return {
                 ...state,
-                user:payload,
+                category:payload,
             }
+    
         default:
             return state
     }
-}
+} 
