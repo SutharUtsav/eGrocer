@@ -15,6 +15,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import Alert from './Components/Alert/Alert';
 import { SelectedCategory } from './Components/Categories/SelectedCategory';
 import { setLocation, clearLocation } from './Model/action/locationAction';
+import { SelectedProduct } from './Components/Section/SelectedProduct';
 
 function App() {
 
@@ -23,7 +24,7 @@ function App() {
   const dispatch = useDispatch();
 
   const [islocation, setislocation] = useState(true)
-  
+
 
   useEffect(() => {
     //if location is not provided then first get it from user
@@ -60,15 +61,22 @@ function App() {
         <Routes>
           <Route exact path="/" element={
             <>
-              <Content islocation={islocation}/>
+              <Content islocation={islocation} />
             </>
           }>
           </Route>
-          <Route exact path="cid/:cid" element={
+          <Route exact path="cn/:cname/cid/:cid" element={
             <>
               <SelectedCategory />
             </>
           }></Route>
+
+          <Route exact path="prn/:pname/pid/:pid" element={
+            <>
+              <SelectedProduct />
+            </>
+          }></Route>
+
           <Route exact path="/viewcart" element={
             <>
               <ViewCart />

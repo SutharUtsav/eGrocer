@@ -14,7 +14,7 @@ const Brands = () => {
 
 
     return (
-        <section className='category' id="brands">
+        <section className='category container' id="brands">
             {Object.keys(brands).length === 0 ? (
                 <div className='d-inline-flex'>
                     <Shimmer width={248} height={200} />

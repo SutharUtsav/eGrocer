@@ -4,9 +4,12 @@ import { Shimmer } from 'react-shimmer';
 import 'owl.carousel/dist/assets/owl.carousel.css';
 import 'owl.carousel/dist/assets/owl.theme.default.css';
 import { useSelector } from 'react-redux';
+import { useNavigate } from "react-router-dom";
 
 
 const Section = () => {
+
+
   // const Option = {
   //   items: 4,
   //   // autoplay: true,
@@ -18,9 +21,10 @@ const Section = () => {
   //       `, `<div style=position:absolute;top:50%;font-size:xx-large;left:103%><i class="fa fa-angle-right" aria-hidden="true"></i></div>`]
   // }
 
-  const sections = useSelector((state) => state.shop.sections)
 
-  console.log(sections)
+  const sections = useSelector((state) => state.shop.sections)
+  const navigate = useNavigate();
+
   return (
     <div className='container' id='products'>
       {sections === undefined ? (
@@ -41,18 +45,56 @@ const Section = () => {
                     {/* <span></span> */}
 
                     <div className='icons'>
-                      <button type="button"><i className="bi bi-heart"></i></button>
-                      <button type="button"><i className="bi bi-cart-plus"></i></button>
-                      <button type="button"><i className="bi bi-eye"></i></button>
+
+                      {/* to add product in wishlist */}
+                      <button type="button"><i className="bi bi-heart"  ></i></button>
+
+
+                      {/* to view product */}
+                      <button type="button" onClick={() => {
+
+                        navigate('/prn/' + prod.name + '/pid/' + prod.id)
+
+                      }}><i className="bi bi-eye"></i></button>
                     </div>
                     <img src={prod.image_url} alt="product" height={200} width={200} />
                     <h3>{prod.name}</h3>
-                    {/* <div className='price'>30.00</div> */}
+                    <div className='price'><i className="fa fa-inr p-2" aria-hidden="true"></i>{prod.variants[0].price} / {prod.variants[0].stock_unit_name}</div>
                     <div className='quantity'>
-                      <span>quantity : </span>
-                      <input type="number" min={1} max={prod.total_allowed_quantity} />
+
+                      <button type="button" onClick={() => {
+                        var dom = document.getElementById("input-" + prod.id);
+                        if (parseInt(dom.value) === 0) {
+                          dom.value = 0;
+                        }
+                        else {
+                          dom.value = parseInt(dom.value) - 1;
+                        }
+
+                      }}>&ndash;</button>
+
+                      <input id={"input-" + prod.id} type='text' defaultValue={0} />
+
+                      <button type='button' onClick={() => {
+                        var dom = document.getElementById("input-" + prod.id);
+
+                        if (parseInt(dom.value) === prod.total_allowed_quantity) {
+                          dom.value = prod.total_allowed_quantity;
+                        }
+                        else {
+                          dom.value = parseInt(dom.value) + 1;
+                        }
+
+
+                      }}>+</button>
                     </div>
-                    <button type='button' className='btn'> add to cart</button>
+                    <button type='button' className='btn' onClick={() => {
+                      var dom = document.getElementById("input-" + prod.id);
+                      console.log(parseInt(dom.value));
+
+                      dom.value = 0;
+
+                    }}> add to cart</button>
                   </div>
                 ))}
               </div>

@@ -50,7 +50,7 @@ export const Categories = (props) => {
     return (
 
 
-        <section className='category' id="category">
+        <section className='category container' id="category">
             {categories === undefined ? (
                 <div className='d-inline-flex'>
                     <Shimmer width={2200} height={200} />
@@ -69,7 +69,7 @@ export const Categories = (props) => {
                                     <h3>{ctg.name}</h3>
                                     <img src={ctg.image_url} alt='' width={100} height={100}></img>
                                     <button type='button' onClick={() => {
-                                        navigate('/cid/' + ctg.id);
+                                        navigate('/cn/'+ctg.name+'/cid/' + ctg.id);
                                         // navigate({
                                         //     pathname: "/category",
                                         //     search: createSearchParams({

@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom'
+import { useParams,useNavigate } from 'react-router-dom'
 import { setCategoryfromAPI } from '../../Model/action/categoryAction';
-import { useNavigate } from "react-router-dom";
 import { clearProducts, fetchProductbyCategory } from '../../Model/action/productAction';
 
 export const SelectedCategory = () => {
 
+  
   const searchparams = useParams();
   const dispatch = useDispatch();
 
@@ -38,57 +38,26 @@ export const SelectedCategory = () => {
   const products = useSelector((state) => state.products)
 
 
-  const addCartLocalStorage = (product)=>{
-    const cart = localStorage.getItem("cart");
-
-    if(cart===null){
-      const parse = [];
-      parse.push({
-        id:product.id,
-        count:1,
-        name:product.name,
-        price:product.variants[0].price
-      }) 
-
-      localStorage.setItem('cart',JSON.stringify(parse))
-    }
-
-    else{
-      const array = JSON.parse(localStorage.getItem('cart'));
-      let found=false;
-
-      array.forEach(ele => {
-        if(ele.id===product.id && !found){
-          ele.count +=1;
-          found=true;
-        }
-      });
-
-      if(!found){
-        array.push({
-          id:product.id,
-        count:1,
-        name:product.name,
-        price:product.variants[0].price
-        })
-      }
-      localStorage.setItem('cart',JSON.stringify(array))
-
-    }
-  }
-
-
-  const removeCartLocalStorage = (product)=>{
-
-  }
-
 
   return (
-    <div id='page-wrapper'>
-      <div id="box">
+    <div id='page-wrapper' className='container'>
 
+      <button id='category-bar' onClick={() => {
+        document.getElementById('box').classList.toggle('active');
+        document.getElementById('close-categorybar').classList.toggle('active');
+        document.getElementById('category-bar').classList.add('active')
+      }}><i className="fa fa-bars" aria-hidden="true"></i></button>
+
+
+      <div id="box">
         {Object.keys(ctgs).length === 0 ? "" : (
           <div id="items">
+
+            <button id='close-categorybar' type='button' onClick={() => {
+              document.getElementById('close-categorybar').classList.remove('active')
+              document.getElementById('box').classList.remove('active');
+              document.getElementById('category-bar').classList.remove('active')
+            }}><i className="bi bi-x-circle"></i></button>
             {
               ctgs.category.map(ctg => (
                 <div key={ctg.id}>
@@ -96,7 +65,7 @@ export const SelectedCategory = () => {
                     <div className="item-active" key={ctg.id}> {ctg.name}</div>
                   ) : (
                     <div className="item" key={ctg.id} onClick={() => {
-                      navigate('/cid/' + ctg.id);
+                      navigate('/cn/'+ctg.name+'/cid/' + ctg.id);
                     }}> {ctg.name}</div>
                   )}
                 </div>
@@ -115,7 +84,7 @@ export const SelectedCategory = () => {
         </div>
       ) : (
         <div className='product'>
-          {products.error ? <p className='text-danger text-size-lg'>{products.error}</p> : (
+          {products.error ? <p className='no-product-found'>{products.error}</p> : (
             <div className='box-container'>
 
               {products.products.map(product => (
@@ -130,18 +99,42 @@ export const SelectedCategory = () => {
                   <h3>{product.name}</h3>
                   <div className='price'><i className="fa fa-inr p-2" aria-hidden="true"></i>{product.variants[0].price}</div>
                   <div className='quantity'>
-                    <div className='ctrl'>
-                      <button className='ctrl__button' type="button" onClick = {removeCartLocalStorage(product)}>&ndash;</button>
-                      <div className='ctrl__counter'>
-                        <input className='ctrl__counter-input' type='number' min={0} max={product.total_allowed_quantity}  />
-                        <div className='ctrl__counter-num'>
-                          {localStorage.getItem('cart')===null ? 0 : JSON.parse(localStorage.getItem('cart'))[0].count}
-                        </div>
-                      </div>
-                      <div className='ctrl__button ctrl__button--increment' onClick = {addCartLocalStorage(product)}>+</div>
-                    </div>
+
+                    <button type="button" onClick={() => {
+                      var dom = document.getElementById("input-" + product.id);
+                      if (parseInt(dom.value) === 0) {
+                        dom.value = 0;
+                      }
+                      else {
+                        dom.value = parseInt(dom.value) - 1;
+                      }
+
+
+                    }}>&ndash;</button>
+
+                    <input id={"input-" + product.id} type='text' defaultValue={0} disabled={true}/>
+
+                    <button type='button' onClick={() => {
+                      var dom = document.getElementById("input-" + product.id);
+
+                      if (parseInt(dom.value) === product.total_allowed_quantity) {
+                        dom.value = product.total_allowed_quantity;
+                      }
+                      else {
+                        dom.value = parseInt(dom.value) + 1;
+                      }
+
+
+
+                    }}>+</button>
                   </div>
-                  <button type='button' className='btn'> add to cart</button>
+                  <button type='button' className='btn' onClick={()=>{
+                    var dom = document.getElementById("input-" + product.id);
+                    console.log(parseInt(dom.value));
+
+                    dom.value =0;
+
+                  }}> add to cart</button>
                 </div>
               ))}
 
