@@ -1,0 +1,55 @@
+.location-header{
+    font-size: 3rem;
+    width: 100%;
+    font-weight: 800;
+    text-align: center;
+}
+.location{
+    padding: 3rem;
+    font-size: 2rem;
+}
+
+.location .options{
+    display: flex;
+    flex-direction: row;
+    gap: 2rem;
+    justify-content: space-between;
+}
+
+.location .options button{
+    background: var(--orange);
+    padding: 1.5rem;
+    color: #eee;
+    cursor: pointer;
+    text-transform: capitalize;
+}
+
+#text-places:focus {
+    box-shadow:  0 8px 8px -4px lightblue;
+}
+
+.pac-container {
+    z-index: 1055 !important;
+}
+
+.else{
+    border: 1px solid #000; 
+    border-radius: 50%;
+    line-height: 0.1em;
+    margin: 10px 0 20px;
+    padding: 6px;
+    text-align: center;
+}
+
+.btn-confirm-location{
+    background: var(--secondary-color);
+    color: var(--primary-color);
+    padding: 8px;
+}
+
+
+@media(max-width:600px) {
+    .header-1 .location-modal .box-modal{
+        width: 100vw;
+    }
+}
