@@ -60,6 +60,8 @@ button{
 
 
 
+
+
 /* media queries */
 
 @media(max-width:1200px) {
@@ -72,4 +74,5 @@ button{
   html {
     font-size: 35%;
   }
+
 }

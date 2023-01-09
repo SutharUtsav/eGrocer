@@ -8,6 +8,11 @@ import "swiper/css";
 import api from '../../api/api';
 
 
+import slider3 from '../../utils/sliders/slider3.jpg'
+import slider4 from '../../utils/sliders/slider4.jpg'
+import slider5 from '../../utils/sliders/slider5.jpg'
+
+
 const Slider = () => {
 
     //useselect
@@ -85,13 +90,30 @@ const Slider = () => {
 
                                     {slider.map((sld, index) => {
                                         return (
+
                                             <SwiperSlide key={index}>
                                                 <div className="slider__image">
-                                                    <img src={sld.image_url} alt={sld.type} height={360}/>
+                                                    <img src={sld.image_url} alt={sld.type} />
                                                 </div>
                                             </SwiperSlide>
+
                                         );
                                     })}
+                                    <SwiperSlide>
+                                        <div className="slider__image">
+                                            <img src={slider3} alt="xyz" />
+                                        </div>
+                                    </SwiperSlide>
+                                    <SwiperSlide>
+                                        <div className="slider__image">
+                                            <img src={slider4} alt="xyz" />
+                                        </div>
+                                    </SwiperSlide>
+                                    <SwiperSlide>
+                                        <div className="slider__image">
+                                            <img src={slider5} alt="xyz" />
+                                        </div>
+                                    </SwiperSlide>
 
                                 </Swiper>
                             </div>
@@ -113,7 +135,7 @@ const Slider = () => {
                                             0: {
                                                 direction: "horizontal"
                                             },
-                                            768: {
+                                            770: {
                                                 direction: "vertical"
                                             }
                                         }}
@@ -128,6 +150,22 @@ const Slider = () => {
                                                 </SwiperSlide>
                                             );
                                         })}
+
+                                        <SwiperSlide>
+                                            <div className="slider__image">
+                                                <img src={slider3} alt="xyz" />
+                                            </div>
+                                        </SwiperSlide>
+                                        <SwiperSlide>
+                                            <div className="slider__image">
+                                                <img src={slider4} alt="xyz" />
+                                            </div>
+                                        </SwiperSlide>
+                                        <SwiperSlide>
+                                            <div className="slider__image">
+                                                <img src={slider5} alt="xyz" />
+                                            </div>
+                                        </SwiperSlide>
                                     </Swiper>
                                 </div>
                             </div>

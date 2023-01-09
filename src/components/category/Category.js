@@ -2,8 +2,11 @@ import React, { useState, useEffect } from 'react'
 import './category.css'
 import api from '../../api/api'
 import { motion } from 'framer-motion'
-import { BsPlusCircle,BsGrid3X3GapFill } from "react-icons/bs";
+import { BsPlusCircle, BsGrid3X3GapFill } from "react-icons/bs";
 import { Shimmer } from 'react-shimmer';
+import category3 from '../../utils/categories/category3.jpg'
+import category4 from '../../utils/categories/category4.jpg'
+import category5 from '../../utils/categories/category5.jpg'
 
 const Category = () => {
 
@@ -24,7 +27,7 @@ const Category = () => {
     }, [])
 
     const [category, setcategory] = useState(null);
-    const [isExpandCategory, setisExpandCategory] = useState(true)
+
     return (
         <>
             {category === null
@@ -33,27 +36,78 @@ const Category = () => {
                 )
                 : (
                     <div className='d-flex flex-column category-wrapper m-2' >
-                        <motion.button whileTap={{ scale: 0.9 }} type='button' className='p-3 expand-category' onClick={() => { setisExpandCategory(!isExpandCategory) }}>
+                        <motion.button whileTap={{ scale: 0.9 }} type='button' className='p-3 expand-category'
+                            onClick={() => {
+                                document.getElementsByClassName('categoties')[0].classList.toggle('active')
+                                if (document.getElementsByClassName('categoties')[0].classList.contains('active')) {
+
+                                    document.getElementsByClassName('show-more-button')[0].classList.add('active')
+                                }
+                                else{
+                                    document.getElementsByClassName('show-more-button')[0].classList.remove('active')
+                                }
+                            }}
+                            >
                             <BsGrid3X3GapFill fill='white' fontSize={"3rem"} className='mx-2' />
-                            browse all categories
+                            <p>browse all categories</p>
                         </motion.button>
-                        {isExpandCategory
-                            ? (
-                                <motion.div className='d-flex flex-column categoties' initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "100%" }}>
-                                    {
-                                        category.map((ctg, index) => (
-                                            <motion.button type='button' className='p-3 border-bottom' key={index}>
-                                                <img src={ctg.image_url} alt={ctg.subtitle} className='mx-3' />
-                                                {ctg.name}
-                                            </motion.button>
-                                        ))
-                                    }
-                                    <motion.button whileTap={{ scale: 0.9 }} type='button' className='p-3 show-more-button'>
-                                        <BsPlusCircle fill='white' fontSize={"2.4rem"} /> show more
-                                    </motion.button>
-                                </motion.div>
-                            )
-                            : ""}
+
+
+
+                        <motion.div className='categoties' initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                            {
+                                category.map((ctg, index) => (
+                                    <div key={index} className='category-container'>
+                                        {ctg.has_child
+                                            ? (
+                                                <div> 
+                                                    <motion.button type='button' className='p-3 border-bottom'>
+                                                        <img src={ctg.image_url} alt={ctg.subtitle} className='mx-3' />
+                                                        {ctg.name}
+                                                    </motion.button>
+                                                    <div >
+                                                        <button type='button' >xyz</button>
+                                                        <button type='button' >abc</button>
+                                                    </div>
+                                                </div>
+                                            )
+                                            : (
+                                                <motion.button type='button' className='p-3 border-bottom'>
+                                                    <img src={ctg.image_url} alt={ctg.subtitle} className='mx-3' />
+                                                    {ctg.name}
+                                                </motion.button>
+                                            )}
+
+                                    </div>
+
+                                ))
+                            }
+                            <div className='category-container'>
+                                <motion.button type='button' className='p-3 border-bottom' >
+                                    <img src={category3} alt="dry fruit" className='mx-3' />
+                                    dry fruit
+                                </motion.button>
+                            </div>
+                            <div className='category-container'>
+                                <motion.button type='button' className='p-3 border-bottom' >
+                                    <img src={category4} alt="eggs" className='mx-3' />
+                                    eggs
+                                </motion.button>
+                            </div>
+                            <div className='category-container'>
+
+                                <motion.button type='button' className='p-3 border-bottom'>
+                                    <img src={category5} alt="meat" className='mx-3' />
+                                    meat
+                                </motion.button>
+                            </div>
+                        </motion.div>
+                        
+                        
+                        <motion.button whileTap={{ scale: 0.9 }} type='button' className='p-3 show-more-button'>
+                            <BsPlusCircle fill='white' fontSize={"2.4rem"} /> show more
+                        </motion.button>
+
                     </div>
                 )}
         </>

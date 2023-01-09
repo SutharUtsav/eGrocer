@@ -1,0 +1,30 @@
+#home {
+    height: 400px;
+}
+
+/* media queries */
+
+.homecontainer{
+    display: flex;
+    flex-direction: row;
+    gap: 3rem;
+}
+
+@media(max-width:450px) {
+
+    #home {
+        height: 225px;
+    }
+}
+
+@media(max-width:350px) {
+    #home{
+        height: 200px;
+    }
+}
+
+@media(max-width:1000px) {
+    .homecontainer{
+        display: block;
+    }
+}
