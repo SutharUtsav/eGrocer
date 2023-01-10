@@ -60,14 +60,14 @@ const Slider = () => {
                         </div>
                     )
                     : (
-                        <div className="slider__flex">
+                        <div className="slider__flex ">
                             <div className="slider__images">
                                 <Swiper
                                     loop={true}
-                                    autoplay={{
-                                        delay: 3000,
-                                        disableOnInteraction: false,
-                                    }}
+                                    // autoplay={{
+                                    //     delay: 3000,
+                                    //     disableOnInteraction: false,
+                                    // }}
                                     centeredSlides={true}
                                     thumbs={{ swiper: imagesNavSlider && !imagesNavSlider.destroyed ? imagesNavSlider : null }}
                                     direction="horizontal"

@@ -13,5 +13,11 @@ export const ActionTypes = {
     SET_CITY:"SET_CITY",
 
 
+    //Categories
+    SET_CATEGORY:"SET_CATEGORY",
+
+    //Current User
+    SET_USER:"SET_USER",
+
 
 }

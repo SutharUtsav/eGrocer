@@ -5,12 +5,38 @@ import Slider from 'react-slick'
 import './product.css'
 import { AiOutlineEye } from 'react-icons/ai'
 import { FaRupeeSign } from "react-icons/fa";
-import { BsHeart,BsShare } from "react-icons/bs";
+import { BsHeart, BsShare } from "react-icons/bs";
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Shimmer } from 'react-shimmer'
 
+import product4 from '../../utils/products/product4.jpg'
+import product5 from '../../utils/products/products5.webp'
+import product6 from '../../utils/products/products6.webp'
+import product7 from '../../utils/products/products7.webp'
 
+
+function SamplePrevArrow(props) {
+    const { className, style, onClick } = props;
+    return (
+      <div
+        className={className}
+        style={{ ...style, display: "block", background: "var(--secondary-color)", borderRadius:"50%",width:"3rem",height:"3rem",textAlign:"center", border:"3px solid #fff" }}
+        onClick={onClick}
+      />
+    );
+  }
+  
+  function SampleNextArrow(props) {
+    const { className, style, onClick } = props;
+    return (
+      <div
+        className={className}
+        style={{ ...style, display: "block", background: "var(--secondary-color)", borderRadius:"50%",width:"3rem",height:"3rem",textAlign:"center", border:"3px solid #fff" }}
+        onClick={onClick}
+      />
+    );
+  }
 
 const ProductContainer = () => {
 
@@ -45,6 +71,8 @@ const ProductContainer = () => {
         slidesToShow: 6,
         slidesToScroll: 1,
         initialSlide: 0,
+        nextArrow: <SampleNextArrow />,
+        prevArrow: <SamplePrevArrow />,
         responsive: [
             {
                 breakpoint: 1024,
@@ -113,22 +141,211 @@ const ProductContainer = () => {
                                                 ))}
                                             </select>
 
-                                            <span className='price'><FaRupeeSign fill='var(--secondary-color)'/>{product.price}</span>
+                                            <span className='price'><FaRupeeSign fill='var(--secondary-color)' />{product.price}</span>
                                         </div>
                                     </div>
-                                    <div className='d-flex flex-row border-top product-card-footer'>
-                                        <div className='border-end col-lg-3'>
-                                            <button type="button" className='w-100'><BsHeart/></button>
+                                    <div className='d-flex flex-row row border-top product-card-footer'>
+                                        <div className='border-end col col-lg-3'>
+                                            <button type="button" className='w-100'><BsHeart /></button>
                                         </div>
-                                        <div className='border-end col-lg-6'>
+                                        <div className='border-end col col-lg-6'>
                                             <button type="button" className='w-100 h-100 add-to-cart'>add to cart</button>
                                         </div>
-                                        <div className='col-lg-3'>
-                                            <button type="button" className='w-100'><BsShare/></button>
+                                        <div className='col col-lg-3'>
+                                            <button type="button" className='w-100'><BsShare /></button>
                                         </div>
                                     </div>
                                 </div>
                             ))}
+
+
+
+                            {/* dummy products */}
+
+                            <div className='d-flex border flex-column product-card'>
+                                <div className='d-flex flex-row image-container'>
+                                    <img src={product4} alt="souce" className='card-img-top' />
+                                    <Link to='/'><AiOutlineEye /></Link>
+                                </div>
+                                <div className="card-body product-card-body p-3">
+                                    <span>Souces</span>
+                                    <div className='d-flex flex-row justify-content-between'>
+                                        <select  >
+
+                                            <option value={300} >3 KG Rs.300</option>
+
+                                        </select>
+
+                                        <span className='price'><FaRupeeSign fill='var(--secondary-color)' />500</span>
+                                    </div>
+                                </div>
+                                <div className='d-flex flex-row border-top product-card-footer'>
+                                    <div className='border-end col-lg-3'>
+                                        <button type="button" className='w-100'><BsHeart /></button>
+                                    </div>
+                                    <div className='border-end col-lg-6'>
+                                        <button type="button" className='w-100 h-100 add-to-cart'>add to cart</button>
+                                    </div>
+                                    <div className='col-lg-3'>
+                                        <button type="button" className='w-100'><BsShare /></button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className='d-flex border flex-column product-card'>
+                                <div className='d-flex flex-row image-container'>
+                                    <img src={product5} alt="souce" className='card-img-top' />
+                                    <Link to='/'><AiOutlineEye /></Link>
+                                </div>
+                                <div className="card-body product-card-body p-3">
+                                    <span>Souces</span>
+                                    <div className='d-flex flex-row justify-content-between'>
+                                        <select  >
+
+                                            <option value={300} >3 KG Rs.300</option>
+
+                                        </select>
+
+                                        <span className='price'><FaRupeeSign fill='var(--secondary-color)' />500</span>
+                                    </div>
+                                </div>
+                                <div className='d-flex flex-row border-top product-card-footer'>
+                                    <div className='border-end col-lg-3'>
+                                        <button type="button" className='w-100'><BsHeart /></button>
+                                    </div>
+                                    <div className='border-end col-lg-6'>
+                                        <button type="button" className='w-100 h-100 add-to-cart'>add to cart</button>
+                                    </div>
+                                    <div className='col-lg-3'>
+                                        <button type="button" className='w-100'><BsShare /></button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className='d-flex border flex-column product-card'>
+                                <div className='d-flex flex-row image-container'>
+                                    <img src={product6} alt="souce" className='card-img-top' />
+                                    <Link to='/'><AiOutlineEye /></Link>
+                                </div>
+                                <div className="card-body product-card-body p-3">
+                                    <span>Souces</span>
+                                    <div className='d-flex flex-row justify-content-between'>
+                                        <select  >
+
+                                            <option value={300} >3 KG Rs.300</option>
+
+                                        </select>
+
+                                        <span className='price'><FaRupeeSign fill='var(--secondary-color)' />500</span>
+                                    </div>
+                                </div>
+                                <div className='d-flex flex-row border-top product-card-footer'>
+                                    <div className='border-end col-lg-3'>
+                                        <button type="button" className='w-100'><BsHeart /></button>
+                                    </div>
+                                    <div className='border-end col-lg-6'>
+                                        <button type="button" className='w-100 h-100 add-to-cart'>add to cart</button>
+                                    </div>
+                                    <div className='col-lg-3'>
+                                        <button type="button" className='w-100'><BsShare /></button>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div className='d-flex border flex-column product-card'>
+                                <div className='d-flex flex-row image-container'>
+                                    <img src={product7} alt="souce" className='card-img-top' />
+                                    <Link to='/'><AiOutlineEye /></Link>
+                                </div>
+                                <div className="card-body product-card-body p-3">
+                                    <span>Souces</span>
+                                    <div className='d-flex flex-row justify-content-between'>
+                                        <select  >
+
+                                            <option value={300} >3 KG Rs.300</option>
+
+                                        </select>
+
+                                        <span className='price'><FaRupeeSign fill='var(--secondary-color)' />500</span>
+                                    </div>
+                                </div>
+                                <div className='d-flex flex-row border-top product-card-footer'>
+                                    <div className='border-end col-lg-3'>
+                                        <button type="button" className='w-100'><BsHeart /></button>
+                                    </div>
+                                    <div className='border-end col-lg-6'>
+                                        <button type="button" className='w-100 h-100 add-to-cart'>add to cart</button>
+                                    </div>
+                                    <div className='col-lg-3'>
+                                        <button type="button" className='w-100'><BsShare /></button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className='d-flex border flex-column product-card'>
+                                <div className='d-flex flex-row image-container'>
+                                    <img src={product4} alt="souce" className='card-img-top' />
+                                    <Link to='/'><AiOutlineEye /></Link>
+                                </div>
+                                <div className="card-body product-card-body p-3">
+                                    <span>Souces</span>
+                                    <div className='d-flex flex-row justify-content-between'>
+                                        <select  >
+
+                                            <option value={300} >3 KG Rs.300</option>
+
+                                        </select>
+
+                                        <span className='price'><FaRupeeSign fill='var(--secondary-color)' />500</span>
+                                    </div>
+                                </div>
+                                <div className='d-flex flex-row border-top product-card-footer'>
+                                    <div className='border-end col-lg-3'>
+                                        <button type="button" className='w-100'><BsHeart /></button>
+                                    </div>
+                                    <div className='border-end col-lg-6'>
+                                        <button type="button" className='w-100 h-100 add-to-cart'>add to cart</button>
+                                    </div>
+                                    <div className='col-lg-3'>
+                                        <button type="button" className='w-100'><BsShare /></button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className='d-flex border flex-column product-card'>
+                                <div className='d-flex flex-row image-container'>
+                                    <img src={product4} alt="souce" className='card-img-top' />
+                                    <Link to='/'><AiOutlineEye /></Link>
+                                </div>
+                                <div className="card-body product-card-body p-3">
+                                    <span>Souces</span>
+                                    <div className='d-flex flex-row justify-content-between'>
+                                        <select  >
+
+                                            <option value={300} >3 KG Rs.300</option>
+
+                                        </select>
+
+                                        <span className='price'><FaRupeeSign fill='var(--secondary-color)' />500</span>
+                                    </div>
+                                </div>
+                                <div className='d-flex flex-row border-top product-card-footer'>
+                                    <div className='border-end col-lg-3'>
+                                        <button type="button" className='w-100'><BsHeart /></button>
+                                    </div>
+                                    <div className='border-end col-lg-6'>
+                                        <button type="button" className='w-100 h-100 add-to-cart'>add to cart</button>
+                                    </div>
+                                    <div className='col-lg-3'>
+                                        <button type="button" className='w-100'><BsShare /></button>
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+
                         </Slider>
                     </div>
 

@@ -16,11 +16,24 @@
 }
 .offer-container .offer-container-body{
    height: fit-content;
-   
+   width: 20vw;
 }
 
 .offer-container .offer-container-body img{
-    
     height: 150px;
+    width: 100%;
     border-radius: 20px;
+}
+
+.offer-container .offer-container-body button{
+    position: relative;
+    bottom: 42px;
+    left: 50px;
+    font-size: 2rem;
+    background: var(--secondary-color);
+    color: #fff;
+    border-radius: 5px;
+    text-transform: capitalize;
+    padding: 5px;
+
 }

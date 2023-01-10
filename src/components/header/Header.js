@@ -12,6 +12,7 @@ import { getLocation } from '../../utils/manageLocalStorage';
 import { useDispatch, useSelector } from 'react-redux';
 import api from '../../api/api';
 import { ActionTypes } from '../../model/action-type';
+import Login from '../login/Login';
 
 // import 'bootstrap/dist/js/bootstrap.bundle.js'
 // import { Modal } from 'bootstrap/dist/js/bootstrap.bundle.js';
@@ -122,7 +123,7 @@ const Header = () => {
                             </div>
                         </motion.button>
 
-                        <div className="modal fade" id="locationModal" tabIndex="-1" data-bs-backdrop="static" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div className="modal fade" id="locationModal" tabIndex="-1" data-bs-backdrop="static" aria-labelledby="locationModalLabel" aria-hidden="true">
                             <div className="modal-dialog modal-dialog-centered">
                                 <div className="modal-content">
                                     <Location isLocationPresent={isLocationPresent} setisLocationPresent={setisLocationPresent} />
@@ -169,7 +170,7 @@ const Header = () => {
                             </span>
                         </motion.div>
 
-                        <motion.div whileTap={{ scale: 0.6 }} className='d-flex flex-row user-profile gap-1'>
+                        <motion.div whileTap={{ scale: 0.6 }} className='d-flex flex-row user-profile gap-1' data-bs-toggle="modal" data-bs-target="#loginModal">
                             <div className='d-flex flex-column user-info my-auto'>
                                 <span className='name'>Utsav Suthar</span>
                                 <span className='number'>7069053544</span>
@@ -177,6 +178,7 @@ const Header = () => {
                             <img src="https://egrocer.wrteam.in/storage/logo/1669957448_21176.png" alt="user" className='rounded-3'></img>
                         </motion.div>
 
+                        <Login modal_id='loginModal'/>
                     </div>
 
 

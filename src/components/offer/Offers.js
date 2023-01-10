@@ -3,6 +3,34 @@ import api from '../../api/api'
 import './offer.css'
 import Slider from 'react-slick'
 import { Shimmer } from 'react-shimmer'
+import {AiOutlineArrowRight} from 'react-icons/ai'
+import offer3 from '../../utils/offers/offer3.jpg'
+import offer4 from '../../utils/offers/offer4.jpg'
+import offer5 from '../../utils/offers/offer5.jpg'
+
+
+function SamplePrevArrow(props) {
+    const { className, style, onClick } = props;
+    return (
+        <div
+            className={className}
+            style={{ ...style, display: "block", background: "var(--secondary-color)", borderRadius: "50%", width: "3rem", height: "3rem", textAlign: "center", border: "3px solid #fff" }}
+            onClick={onClick}
+        />
+    );
+}
+
+function SampleNextArrow(props) {
+    const { className, style, onClick } = props;
+    return (
+        <div
+            className={className}
+            style={{ ...style, display: "block", background: "var(--secondary-color)", borderRadius: "50%", width: "3rem", height: "3rem", textAlign: "center", border: "3px solid #fff" }}
+            onClick={onClick}
+        />
+    );
+}
+
 
 const Offers = () => {
 
@@ -28,11 +56,14 @@ const Offers = () => {
     const [offers, setoffers] = useState(null)
 
 
+
     const settings = {
         infinite: false,
         slidesToShow: 3,
         slidesToScroll: 1,
         initialSlide: 0,
+        nextArrow: <SampleNextArrow />,
+        prevArrow: <SamplePrevArrow />,
         responsive: [
             {
                 breakpoint: 1024,
@@ -80,12 +111,25 @@ const Offers = () => {
                                 <span>choose your offer</span>
                                 <p>one more offer for you!</p>
                             </div>
-                            <Slider {...settings} className='p-2'>
+                            <Slider {...settings} className='p-2 container'>
                                 {offers.map((offer, index) => (
                                     <div key={index} className='offer-container-body'>
                                         <img src={offer.image_url} alt="offers" />
+                                        <button type='button'>shop now <AiOutlineArrowRight fill="#fff"/></button>
                                     </div>
                                 ))}
+                                <div className='offer-container-body'>
+                                    <img src={offer4} alt="offers" />
+                                    <button type='button'>shop now <AiOutlineArrowRight fill="#fff"/></button>
+                                </div>
+                                <div className='offer-container-body'>
+                                    <img src={offer3} alt="offers" />
+                                    <button type='button'>shop now <AiOutlineArrowRight fill="#fff"/></button>
+                                </div>
+                                <div className='offer-container-body'>
+                                    <img src={offer5} alt="offers" />
+                                    <button type='button'>shop now <AiOutlineArrowRight fill="#fff"/></button>
+                                </div>
                             </Slider>
                         </div>
 
