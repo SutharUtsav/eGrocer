@@ -30,6 +30,7 @@ const Header = () => {
 
     const city = useSelector(state => (state.city))
     const cssmode = useSelector(state => (state.cssmode))
+    const user = useSelector(state => (state.user))
 
     useEffect(() => {
         let location = getLocation();
@@ -90,7 +91,7 @@ const Header = () => {
             {/* bottom header */}
             <div className="header-2 border-bottom">
                 <div className='container d-flex justify-content-between flex-row logo'>
-                    <Link to='/' className='p-3'>
+                    <Link to='/' className='py-3'>
                         <img src={logoPath} height="50px" alt="logo" />
                     </Link>
 
@@ -123,9 +124,9 @@ const Header = () => {
                             </div>
                         </motion.button>
 
-                        <div className="modal fade" id="locationModal" tabIndex="-1" data-bs-backdrop="static" aria-labelledby="locationModalLabel" aria-hidden="true">
+                        <div className="modal fade location" id="locationModal" tabIndex="-1" data-bs-backdrop="static" aria-labelledby="locationModalLabel" aria-hidden="true">
                             <div className="modal-dialog modal-dialog-centered">
-                                <div className="modal-content">
+                                <div className="modal-content" style={{borderRadius:"10px"}}>
                                     <Location isLocationPresent={isLocationPresent} setisLocationPresent={setisLocationPresent} />
                                 </div>
                             </div>
@@ -170,15 +171,34 @@ const Header = () => {
                             </span>
                         </motion.div>
 
-                        <motion.div whileTap={{ scale: 0.6 }} className='d-flex flex-row user-profile gap-1' data-bs-toggle="modal" data-bs-target="#loginModal">
-                            <div className='d-flex flex-column user-info my-auto'>
-                                <span className='name'>Utsav Suthar</span>
-                                <span className='number'>7069053544</span>
-                            </div>
-                            <img src="https://egrocer.wrteam.in/storage/logo/1669957448_21176.png" alt="user" className='rounded-3'></img>
-                        </motion.div>
 
-                        <Login modal_id='loginModal'/>
+                        {user.status === 'loading'
+                            ? (
+                                <>
+                                    <motion.div whileTap={{ scale: 0.6 }} className='d-flex flex-row user-profile gap-1' data-bs-toggle="modal" data-bs-target="#loginModal">
+                                        <div className='d-flex flex-column user-info my-auto'>
+                                            <span className='name'> Utsav Suthar</span>
+                                            <span className='number'>+91-9999988888</span>
+                                        </div>
+                                        <img src={user.status === "loading"
+                                            ? "https://egrocer.wrteam.in/storage/logo/1669957448_21176.png"
+                                            : user.user.profile} alt="user" className='rounded-3'></img>
+                                    </motion.div>
+                                    <Login modal_id='loginModal' />
+                                </>
+                            )
+                            : (
+                                <>
+                                    <Link to='/profile' className='d-flex flex-row user-profile gap-1' >
+                                        <div className='d-flex flex-column user-info my-auto'>
+                                            <span className='name'> { user.user.name}</span>
+                                            <span className='number'>{user.user.country_code + "-" + user.user.mobile}</span>
+                                        </div>
+                                        <img src={user.user.profile} alt="user"></img>
+                                    </Link>
+                                </>
+                            )}
+
                     </div>
 
 

@@ -107,9 +107,10 @@
 .user-profile{
   cursor: pointer;
   max-width: 8pc;
+  text-decoration: none;
 }
 .user-info{
-  font-size: 1.7rem;
+  font-size: 1.3rem;
 }
 .user-info .name{
   color:var(--primary-color);
@@ -122,6 +123,7 @@
   width: 40px;
   height: 40px;
   padding: 3px;
+  border-radius: 50%;
 }
 
 

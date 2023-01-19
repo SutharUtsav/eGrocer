@@ -195,10 +195,10 @@ const api = {
 
         return fetch(process.env.REACT_APP_URL + process.env.REACT_APP_SUBURL + "/cart", requestOptions)
     },
-    getUser() {
+    getUser(token) {
         var myHeaders = new Headers();
         myHeaders.append(access_key_param, access_key);
-        myHeaders.append("Authorization", token_prefix + localStorage.getItem('access_token'));
+        myHeaders.append("Authorization", token_prefix + token);
         // myHeaders.append("Cookie", "egrocer_session=ZGyZlEheLKDTFHnAsVnSpethgG5vROAwF2PeSUBz");
 
         //var formdata = new FormData();
@@ -212,10 +212,10 @@ const api = {
 
         return fetch(process.env.REACT_APP_URL + process.env.REACT_APP_SUBURL + "/user_details", requestOptions)
     },
-    editProfile(uname, email, selectedFile) {
+    editProfile(uname, email, selectedFile,token) {
         var myHeaders = new Headers();
         myHeaders.append(access_key_param, access_key);
-        myHeaders.append("Authorization", token_prefix + localStorage.getItem('access_token'));
+        myHeaders.append("Authorization", token_prefix + token);
         // myHeaders.append("Cookie", "egrocer_session=ZGyZlEheLKDTFHnAsVnSpethgG5vROAwF2PeSUBz");
 
         var formdata = new FormData();

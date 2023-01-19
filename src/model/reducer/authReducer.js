@@ -6,14 +6,19 @@ const initialState = {
     user : null,
 }
 
-export const userReducer = (state = initialState, { type, payload }) => {
+export const authReducer = (state = initialState, { type, payload }) => {
     switch (type) {
-        case ActionTypes.SET_USER:
+        case ActionTypes.SET_CURRENT_USER:
             return {
                 status : "fulfill",
                 user: payload,
             }
-    
+        case ActionTypes.LOGOUT_AUTH:
+            return {
+                status:"loading",
+                user:null,
+            }
+        
         default:
             return state;
     }

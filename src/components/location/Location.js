@@ -6,6 +6,8 @@ import api from '../../api/api';
 import { setLocation } from '../../utils/manageLocalStorage';
 import { useDispatch } from 'react-redux';
 import { ActionTypes } from '../../model/action-type';
+import { AiOutlineCloseCircle } from 'react-icons/ai'
+import { BiCurrentLocation } from 'react-icons/bi'
 
 
 const libraries = ['places'];
@@ -266,19 +268,19 @@ const Location = (props) => {
 
   return (
     <LoadScript googleMapsApiKey={process.env.REACT_APP_GOOGLE_PLACE_API} libraries={libraries}>
-      <div className='modal-header'>
-        <p className='location-header'>set delivery location</p>
 
-        <motion.button whileTap={{ scale: 0.6 }} type="button" className="btn-close m-2" data-bs-dismiss="modal" aria-label="Close" ref={closeModalRef}
-          onClick={() => {
-            setisloading(false)
-            setcurrLocationClick(false)
-            setisInputFields(false)
-            setisAddressLoading(false)
-          }}></motion.button>
-
+      <div className="d-flex flex-row justify-content-between header">
+        <h5>set delivery location</h5>
+        <button type="button" className="" data-bs-dismiss="modal" aria-label="Close" ref={closeModalRef} onClick={() => {
+          seterrorMsg("")
+          setisloading(false)
+          setcurrLocationClick(false)
+          setisInputFields(false)
+          setisAddressLoading(false)
+        }}><AiOutlineCloseCircle /></button>
       </div>
-      <div className='location'>
+
+      <div className="modal-body d-flex flex-column gap-3 align-items-center body">
         {isloading
           ? (
             <div className="d-flex justify-content-center">
@@ -291,47 +293,62 @@ const Location = (props) => {
             <>
               {!currLocationClick
                 ? (
-                  <div className='options'>
-                    <motion.button whileTap={{ scale: 0.6 }} id='currLocation' onClick={handleCurrentLocationClick} disabled={isInputFields} style={isInputFields ? { opacity: "0.5" } : null}>your current location</motion.button>
+                  <>
+                    <img src='https://egrocer.wrteam.in/storage/logo/1669957448_21176.png' alt='location'></img>
+                    <h5>select your delivery location</h5>
+                    <span>Implementation of technologies to store unchanged data base on specific.</span>
 
+                    <motion.button whileTap={{ scale: 0.6 }} onClick={handleCurrentLocationClick} disabled={isInputFields} style={isInputFields ? { opacity: "0.5" } : null}>
+                      <BiCurrentLocation className='mx-3' />Use my Current location</motion.button>
 
-                    <div className="px-3 m-auto"><span className="else"> OR </span></div>
+                    <div className='oval-continer'>
+                      <div className='oval'>
+                        <span className='separator-text'>
+                          <div className='or'>OR</div>
+                        </span>
+                      </div>
+                    </div>
 
-                    {/* Input Places Fields */}
-                    <div className='m-auto'>
+                    <div className='input-container'>
                       <StandaloneSearchBox
                         onLoad={ref => inputRef.current = ref}
                         onPlacesChanged={handlePlaceChanged}
                       >
-                        <input type="text" id='text-places' className='border-bottom' placeholder='Enter City...' onFocus={() => {
+                        <input type="text" id='text-places' className='border-bottom' placeholder='Type location manually' onFocus={() => {
                           setcurrLocationClick(false)
                           setisInputFields(true)
                         }} onBlur={() => { setisInputFields(false); }} />
                       </StandaloneSearchBox>
                     </div>
-                  </div>
+
+                  </>
                 )
                 : (
-
                   <>
+                  <div className='w-100'>
+
                     <GoogleMap zoom={11} center={center} mapContainerStyle={{ height: "400px" }}>
                       <MarkerF position={center} draggable={true} onDragStart={onMarkerDragStart} onDragEnd={onMarkerDragEnd}>
                       </MarkerF>
                     </GoogleMap>
+                  </div>
 
                     {errorMsg === "" ? (
-                      <div className='d-flex justify-content-between p-4'>
+                      <div className='d-flex flex-column justify-content-between w-100 p-4'>
                         <p><b>Address : </b>{isAddressLoading ? "...." : localLocation.formatted_address}</p>
                         <motion.button whileTap={{ scale: 0.6 }} type='button' className='btn-confirm-location' onClick={confirmCurrentLocation} disabled={localLocation.formatted_address === ''}>Confirm</motion.button>
                       </div>
                     ) : null}
                   </>
                 )}
-
               <p className='text-danger'>{errorMsg}</p>
             </>
+
           )}
       </div>
+
+
+
     </LoadScript>
   )
 }

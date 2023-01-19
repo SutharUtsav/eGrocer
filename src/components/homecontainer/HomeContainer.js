@@ -8,7 +8,7 @@ const HomeContainer = () => {
 
         <section id="home" className='container'>
             {/* Slider & Category */}
-            <div className='homecontainer p-3 h-100'>
+            <div className='homecontainer h-100'>
                 <Category />
                 <Slider />
             </div>

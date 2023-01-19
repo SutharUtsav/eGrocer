@@ -92,7 +92,7 @@ const Offers = () => {
     };
 
     return (
-        <section id="offers" className='p-3'>
+        <section id="offers">
             {offers === null
                 ? (
                     <div className='d-flex container flex-column p-4 gap-3'>

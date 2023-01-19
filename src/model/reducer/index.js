@@ -3,14 +3,14 @@ import { locationReducer } from "./locationReducer";
 import { cssmodeReducer } from './cssmodeReducer';
 import { languageReducer } from "./languageReducer";
 import { categoryReducer } from "./categoryReducer";
-import { userReducer } from './userReducer';
+import { authReducer } from './authReducer';
 
 const reducers = combineReducers({
     city:locationReducer,
     cssmode:cssmodeReducer,
     language:languageReducer,
     category:categoryReducer,
-    user:userReducer,
+    user:authReducer,
 })
 
 export default reducers;

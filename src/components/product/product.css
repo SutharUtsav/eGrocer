@@ -1,3 +1,6 @@
+#products{
+    padding-top: 60px;
+}
 .product-heading-container{
     background: var(--second-cards-color);
     border-radius: 8px;
@@ -18,7 +21,7 @@
     margin: 0;
 }
 
-.product-heading-container button{
+.product-heading-container a{
     background: #61ccc362;
     border: 1px solid var(--secondary-color);
     border-radius: 8px;
@@ -26,10 +29,14 @@
     font-size: 1.5rem;
     width: 13rem;
     height: 5rem;
+    text-decoration: none;
     color: var(--secondary-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.product-heading-container button:hover{
+.product-heading-container a:hover{
     background: var(--secondary-color);
     color: #fff;
 }
@@ -41,7 +48,7 @@
     color: var(--primary-color);
     box-shadow: 0px 0px 31px -26px;
     background: var(--second-cards-color);
-    border-radius: 9px;
+    border-radius: 8px;
 }
 .product-card .image-container{
     width: 100%;
@@ -49,13 +56,9 @@
 }
 
 .product-card .image-container a{
-    font-size: 3rem;
+    font-size: 20px;
     background: #fff;
-    position: relative;
-    top: 7px;
-    right: 25px;
-    width: 30px;
-    height: 30px;
+    float: right;
     line-height: 25px;
     text-align: center;
     padding: 2px;
@@ -89,8 +92,9 @@
     font-size: 1.3rem;
 }
 
-.product-card .product-card-body .price{
+.product-card .product-card-body .price span{
     color: var(--secondary-color);
+
 }
 
 
@@ -100,7 +104,7 @@
 
 .product-card .product-card-footer .add-to-cart{
     text-transform: uppercase;
-    font-size: 1.3rem;
+    font-size: 1.7rem;
 }
 
 .product-card .product-card-footer button:hover{
@@ -114,3 +118,87 @@
 .slick-list {
     margin: 0 -10px;
 }
+
+
+
+
+#productlist{
+    padding-top: 20px;
+    padding-bottom: 20px;
+    font-size: 2rem;
+}
+
+#productlist .wrapper{
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+}
+
+#productlist .wrapper .filter-wrapper{
+    background: #fff;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+
+#productlist .wrapper .filter-wrapper > div{
+    padding: 5px;
+}
+
+#productlist .wrapper .filter-wrapper h5{
+    font-size: 2.5rem;
+    padding: 5px;
+    border-bottom: 3px solid rgba(128, 128, 128, 0.253);
+    border-image:   linear-gradient(to right, var(--secondary-color) 10%, rgba(128, 128, 128, 0.253) 0%, rgba(128, 128, 128, 0.253) 75%) 2;
+    
+}
+
+
+#productlist .wrapper .filter-wrapper .image-container{
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+}
+
+#productlist .wrapper .filter-wrapper img{
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+}
+
+#productlist .wrapper .filter-view{
+    background: #fff;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+#productlist .wrapper .filter-view .icon{
+    padding: 0 5px;
+}
+
+#productlist .wrapper .filter-view .icon:hover{
+    background: var(--secondary-color);
+}
+
+#productlist .wrapper .filter-view .dropdown button, #productlist .wrapper .filter-view .dropdown ul{
+    font-size: 1.5rem;
+    text-transform: capitalize;
+    background: rgba(128, 128, 128, 0.164);
+}
+
+
+#productlist .wrapper .product-card{
+    max-width: 200px;
+}
+
+
+
+
+
+
+@media(max-width:1000px) {
+    #productlist .wrapper{
+        flex-direction: column;
+    }
+}
+  

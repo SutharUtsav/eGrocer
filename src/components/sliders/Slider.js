@@ -8,9 +8,9 @@ import "swiper/css";
 import api from '../../api/api';
 
 
-import slider3 from '../../utils/sliders/slider3.jpg'
-import slider4 from '../../utils/sliders/slider4.jpg'
-import slider5 from '../../utils/sliders/slider5.jpg'
+// import slider3 from '../../utils/sliders/slider3.jpg'
+// import slider4 from '../../utils/sliders/slider4.jpg'
+// import slider5 from '../../utils/sliders/slider5.jpg'
 
 
 const Slider = () => {
@@ -99,7 +99,7 @@ const Slider = () => {
 
                                         );
                                     })}
-                                    <SwiperSlide>
+                                    {/* <SwiperSlide>
                                         <div className="slider__image">
                                             <img src={slider3} alt="xyz" />
                                         </div>
@@ -113,7 +113,7 @@ const Slider = () => {
                                         <div className="slider__image">
                                             <img src={slider5} alt="xyz" />
                                         </div>
-                                    </SwiperSlide>
+                                    </SwiperSlide> */}
 
                                 </Swiper>
                             </div>
@@ -151,7 +151,7 @@ const Slider = () => {
                                             );
                                         })}
 
-                                        <SwiperSlide>
+                                        {/* <SwiperSlide>
                                             <div className="slider__image">
                                                 <img src={slider3} alt="xyz" />
                                             </div>
@@ -165,7 +165,7 @@ const Slider = () => {
                                             <div className="slider__image">
                                                 <img src={slider5} alt="xyz" />
                                             </div>
-                                        </SwiperSlide>
+                                        </SwiperSlide> */}
                                     </Swiper>
                                 </div>
                             </div>

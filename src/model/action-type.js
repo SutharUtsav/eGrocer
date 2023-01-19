@@ -12,12 +12,13 @@ export const ActionTypes = {
     //Location
     SET_CITY:"SET_CITY",
 
-
     //Categories
     SET_CATEGORY:"SET_CATEGORY",
 
-    //Current User
-    SET_USER:"SET_USER",
+    //Authentication
+    SET_CURRENT_USER:"SET_CURRENT_USER",
+
+    LOGOUT_AUTH:"LOGOUT_AUTH",
 
 
 }

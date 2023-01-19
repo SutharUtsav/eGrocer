@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{useState,useEffect} from 'react';
 import './footer.css';
 import { Link } from 'react-router-dom';
 import googleplay from '../../utils/google-play.jpg'
@@ -6,11 +6,32 @@ import appstore from '../../utils/app-store.png'
 import rozerpay from '../../utils/payments/rozerpay.png'
 import mastercard from '../../utils/payments/master-card.jpg'
 import upi from '../../utils/payments/upi.png'
-import { useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
+import api from '../../api/api'
+import { ActionTypes } from '../../model/action-type';
 
 export const Footer = () => {
 
-    const category = useSelector((state) => state.category)
+    const dispatch = useDispatch();
+
+    //fetch Category
+    const fetchCategory = () => {
+        api.getCategory()
+            .then(response => response.json())
+            .then(result => {
+                if (result.status === 1) {
+                    setcategory(result.data)
+                    dispatch({ type: ActionTypes.SET_CATEGORY, payload: result.data });
+                }
+            })
+            .catch(error => console.log("error ", error))
+    }
+
+    useEffect(() => {
+        fetchCategory();
+    }, [])
+
+    const [category, setcategory] = useState(null);
 
     return (
         <section id="footer">
@@ -19,7 +40,7 @@ export const Footer = () => {
                     <div className="col-xs-3 col-sm-3 col-md-3" style={{maxHeight:"40px"}}>
                         <h5>categories</h5>
 
-                        {category.status === 'loading'
+                        {category === null
                             ? (
                                 <div className="d-flex justify-content-center">
                                     <div className="spinner-border" role="status">
@@ -29,7 +50,7 @@ export const Footer = () => {
                             )
                             : (
                                 <ul className='category-list'>
-                                    {category.category.map((ctg, index) => (
+                                    {category.map((ctg, index) => (
                                         <li key={index}><Link to='/'>{ctg.name}</Link></li>
                                     ))}
                                 </ul>

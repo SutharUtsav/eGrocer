@@ -58,8 +58,19 @@ button{
   background: var(--body-background);
 }
 
+.toast-container{
+  font-size: 2rem;
+}
 
 
+.modal-dialog-centered{
+  justify-content: center;
+}
+.modal-content{
+  padding: 30px;
+  border-radius: 10px;
+  max-width: 30vw;
+}
 
 
 /* media queries */

@@ -1,7 +1,17 @@
+#offers{
+    padding-top: 60px;
+}
+
 .offer-container{
     background: var(--second-cards-color);
+    gap: 30px;
 
 }
+
+.offer-container .offer-container-heading{
+    padding-top: 9px;
+}
+
 .offer-container .offer-container-heading span{
     font-size: 1.5rem;
     text-transform: capitalize;
