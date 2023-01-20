@@ -166,6 +166,26 @@
     border-radius: 50%;
 }
 
+#productlist .wrapper .filter-wrapper .brand-count{
+    background: #51bd8980;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    border: 1px solid var(--secondary-color);
+    font-size: 1.5rem;
+}
+
+
+#productlist .wrapper .filter-wrapper .filter-bar:hover {
+    background: rgba(0, 0, 0, 0.225);
+    border-radius: 8px;
+}
+
+#productlist .wrapper .filter-wrapper .filter-bar.active{
+    border-right: 4px solid var(--secondary-color);
+    border-radius: 8px;
+}
+
 #productlist .wrapper .filter-view{
     background: #fff;
     padding: 10px;

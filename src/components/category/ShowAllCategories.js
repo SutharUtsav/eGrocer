@@ -11,7 +11,7 @@ const ShowAllCategories = () => {
 
 
   const getProductfromApi = async (ctg) => {
-    await api.getProductbyCategory(city.city.id, city.city.latitude, city.city.longitude, ctg.id)
+    await api.getProductbyFilter(city.city.id, city.city.latitude, city.city.longitude, { category_id : ctg.id})
       .then(response => response.json())
       .then(result => {
         if (result.status === 1) {
@@ -25,10 +25,7 @@ const ShowAllCategories = () => {
       category.category.forEach(ctg => {
         getProductfromApi(ctg)
       });
-    }
-
-    console.log(map)
-    
+    }    
   }, [category])
 
 

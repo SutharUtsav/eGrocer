@@ -57,7 +57,7 @@ function App() {
           <Routes>
             <Route path="/profile" element={<ProfileDashboard />}></Route>
             <Route path='/categories' element={<ShowAllCategories/>}></Route>
-            <Route path='/products' element={<ProductList/>}></Route>
+            <Route path='/products/*' element={<ProductList/>}></Route>
             <Route path="/*" element={<MainContainer />}></Route>
 
           </Routes>

@@ -212,7 +212,7 @@ const api = {
 
         return fetch(process.env.REACT_APP_URL + process.env.REACT_APP_SUBURL + "/user_details", requestOptions)
     },
-    editProfile(uname, email, selectedFile,token) {
+    editProfile(uname, email, selectedFile, token) {
         var myHeaders = new Headers();
         myHeaders.append(access_key_param, access_key);
         myHeaders.append("Authorization", token_prefix + token);
@@ -234,7 +234,7 @@ const api = {
 
         return fetch(process.env.REACT_APP_URL + process.env.REACT_APP_SUBURL + "/edit_profile", requestOptions)
     },
-    getProductbyCategory(city_id, latitude, longitude, category_id) {
+    getProductbyFilter(city_id, latitude, longitude, filters) {
         var myHeaders = new Headers();
         myHeaders.append(access_key_param, access_key);
 
@@ -242,7 +242,12 @@ const api = {
         formdata.append("city_id", city_id);
         formdata.append("latitude", latitude);
         formdata.append("longitude", longitude);
-        formdata.append("category_id", category_id);
+
+        if (filters !== undefined) {
+            for (const filter in filters) {
+                formdata.append(filter, filters[filter])
+            }
+        }
 
         var requestOptions = {
             method: 'POST',

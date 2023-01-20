@@ -17,8 +17,10 @@ export const ActionTypes = {
 
     //Authentication
     SET_CURRENT_USER:"SET_CURRENT_USER",
-
     LOGOUT_AUTH:"LOGOUT_AUTH",
+
+    //products
+    SET_PRODUCTS : "SET_PRODUCTS",
 
 
 }
