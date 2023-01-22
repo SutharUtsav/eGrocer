@@ -121,7 +121,7 @@ const ProductContainer = () => {
                                 <span>eat healthy</span>
                                 <p>top picks today</p>
                             </div>
-                            <Link to='/products' >see all</Link>
+                            <Link to='/products'>see all</Link>
                         </div>
                         <Slider {...settings}>
                             {products.map((product, index) => (

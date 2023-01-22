@@ -2,6 +2,7 @@
   "name": "egrocer",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://devegrocer.thewrteam.in",
   "dependencies": {
     "@react-google-maps/api": "^2.17.1",
     "@reduxjs/toolkit": "^1.9.1",
@@ -24,6 +25,7 @@
     "react-shimmer": "^3.2.0",
     "react-shimmer-effects": "^1.0.2",
     "react-slick": "^0.29.0",
+    "react-slider": "^2.0.4",
     "react-toastify": "^9.1.1",
     "redux-persist": "^6.0.0",
     "slick-carousel": "^1.8.1",

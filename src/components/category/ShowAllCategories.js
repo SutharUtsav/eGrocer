@@ -1,10 +1,16 @@
 import React, { useEffect,useState } from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 import api from '../../api/api'
+import { ActionTypes } from '../../model/action-type'
 import coverImg from '../../utils/cover-img.jpg'
 import './category.css'
 
 const ShowAllCategories = () => {
+
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+
 
   const category = useSelector(state => (state.category));
   const city = useSelector(state => (state.city))
@@ -32,6 +38,12 @@ const ShowAllCategories = () => {
   //categories and their product count map
   const [map, setMap] = useState(new Map())
 
+
+  const selectCategory = (category) => {
+    dispatch({type:ActionTypes.SET_FILTER_CATEGORY,payload:category.id})
+    navigate('/products')
+  }
+
   return (
     <section id='allcategories'  >
       <div className='cover'>
@@ -56,7 +68,7 @@ const ShowAllCategories = () => {
               {category.category.map((ctg, index) => (
                 <div className='card' key={index}>
                   <img className='card-img-top' src={ctg.image_url} alt='' />
-                  <div className='card-body'>
+                  <div className='card-body' onClick={()=>selectCategory(ctg)}>
                     <p>{ctg.name} (
                       {map.get(`category${ctg.id}`) !== undefined
                         ?  map.get(`category${ctg.id}`)  

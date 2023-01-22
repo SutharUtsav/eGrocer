@@ -1,23 +1,42 @@
 import React, { useEffect, useState } from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { BsPlusCircle, BsGrid, BsListUl } from "react-icons/bs";
 import { AiOutlineEye } from 'react-icons/ai'
 import { FaRupeeSign } from "react-icons/fa";
 import { BsHeart, BsShare } from "react-icons/bs";
-import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import api from '../../api/api';
 import { motion } from 'framer-motion'
-
+import { ActionTypes } from '../../model/action-type';
+import ReactSlider from 'react-slider';
 
 const ProductList = () => {
 
 
-    const navigate = useNavigate();
+    const dispatch = useDispatch();
 
-    let query = new URLSearchParams(useLocation().search)
+    // const navigate = useNavigate();
+    // let query = new URLSearchParams(useLocation().search)
 
     const category = useSelector(state => state.category);
     const city = useSelector(state => state.city);
+    const filter = useSelector(state => state.productFilter);
+
+
+
+    const [brands, setbrands] = useState(null)
+    const [productresult, setproductresult] = useState(null)
+    const [productSizes, setproductSizes] = useState(null)
+    const [minmaxTotalPrice, setminmaxTotalPrice] = useState({
+        total_min_price: null,
+        total_max_price: null,
+        min_price: null,
+        max_price: null,
+    })
+
+    // const [minPrice, setminPrice] = useState(null)
+    // const [maxPrice, setmaxPrice] = useState(null)
+
 
 
     const getBrandsApi = () => {
@@ -51,46 +70,74 @@ const ProductList = () => {
     }
 
     const getProductfromApi = () => {
-        api.getProductbyFilter(city.city.id, city.city.latitude, city.city.longitude)
+        setproductresult(null)
+        api.getProductbyFilter(city.city.id, city.city.latitude, city.city.longitude, { sort: filter.sort_filter })
             .then(response => response.json())
             .then(result => {
                 if (result.status === 1) {
+                    setminmaxTotalPrice({
+                        total_min_price: result.total_min_price,
+                        total_max_price: result.total_max_price,
+                        min_price: result.min_price,
+                        max_price: result.max_price,
+                    })
                     setproductSizes(result.sizes)
                     setproductresult(result.data)
+                }
+                else {
+                    setproductresult([]);
                 }
             })
     }
 
-
-
-    const [brands, setbrands] = useState(null)
-    const [productresult, setproductresult] = useState(null)
-    const [productSizes, setproductSizes] = useState(null)
-
-
     useEffect(() => {
-        getBrandsApi();
         if (city.city !== null) {
+            getBrandsApi();
 
-            if (query.get('brand_ids') === null && query.get('category_id') === null) {
+            if (filter.category_id === null && filter.brand_ids.length === 0 && filter.price_filter === null) {
                 getProductfromApi()
             }
-            else if (query.get('category_id') === null) {
-                filterProductsFromApi({ brand_ids: query.get('brand_ids') })
+            else if (filter.brand_ids.length !== 0 && filter.category_id !== null && filter.price_filter !== null) {
+                filterProductsFromApi({
+                    category_id: filter.category_id,
+                    brand_ids: filter.brand_ids.toString(),
+                    min_price: filter.price_filter.min_price,
+                    max_price: filter.price_filter.max_price,
+                    sort: filter.sort_filter,
+                })
             }
-            else if (query.get('brand_ids') === null) {
-                filterProductsFromApi({ category_id: query.get('category_id') })
+            else if (filter.brand_ids.length !== 0) {
+                filterProductsFromApi({
+                    brand_ids: filter.brand_ids.toString(),
+                    sort: filter.sort_filter,
+                })
+            }
+            else if (filter.category_id !== null) {
+                filterProductsFromApi({
+                    category_id: filter.category_id,
+                    sort: filter.sort_filter
+                })
             }
             else {
                 filterProductsFromApi({
-                    category_id: query.get('category_id'),
-                    brand_ids: query.get('brand_ids')
+                    min_price: filter.price_filter.min_price,
+                    max_price: filter.price_filter.max_price,
+                    sort: filter.sort_filter,
                 })
             }
         }
-    }, [city, query.get('brand_ids'), query.get('category_id')])
+    }, [city, filter])
 
 
+    useEffect(() => {
+        return () => {
+            dispatch({ type: ActionTypes.SET_FILTER_CATEGORY, payload: null })
+            dispatch({ type: ActionTypes.SET_FILTER_BRANDS, payload: [] })
+            dispatch({ type: ActionTypes.SET_FILTER_VIEW, payload: true })
+            dispatch({ type: ActionTypes.SET_FILTER_MIN_MAX_PRICE, payload: null })
+            dispatch({type:ActionTypes.SET_FILTER_SORT,payload:'new'})
+        }
+    }, [])
 
 
     //brands and their product count map
@@ -120,24 +167,30 @@ const ProductList = () => {
 
 
     //filters
-
-    const filterProductsFromApi = (filter) => {
+    const filterProductsFromApi = async (filter) => {
         setproductresult(null);
-
-        api.getProductbyFilter(city.city.id, city.city.latitude, city.city.longitude, filter)
+        await api.getProductbyFilter(city.city.id, city.city.latitude, city.city.longitude, filter)
             .then(response => response.json())
             .then(result => {
-                if(result.status ===1){
-                    setproductresult(result.data)
+                if (result.status === 1) {
+                    setminmaxTotalPrice({
+                        total_min_price: result.total_min_price,
+                        total_max_price: result.total_max_price,
+                        min_price: result.min_price,
+                        max_price: result.max_price,
+                    })
+                    const filtered_data = result.data;
+                    setproductresult(filtered_data)
+                    setproductSizes(result.sizes)
+                }
+                else {
+                    setproductresult([]);
                 }
             })
             .catch(error => console.log("error ", error))
     }
 
     //filter by brands
-
-
-
     const sort_unique_brand_ids = (int_brand_ids) => {
         if (int_brand_ids.length === 0) return int_brand_ids;
         int_brand_ids = int_brand_ids.sort(function (a, b) { return a * 1 - b * 1; });
@@ -153,50 +206,61 @@ const ProductList = () => {
     //onClick event of brands
     const filterbyBrands = (brand) => {
 
-        if (query.get('brand_ids') === null) {
-            navigate(`?brand_ids=${parseInt(brand.id)}`)
+        var brand_ids = [...filter.brand_ids];
+
+        if (brand_ids.includes(brand.id)) {
+            brand_ids.splice(brand_ids.indexOf(brand.id), 1)
         }
         else {
-            const brand_ids = query.get('brand_ids').split(',');
-
-            var int_brand_ids = [];
-
-            brand_ids.forEach(ids => {
-                int_brand_ids.push(parseInt(ids))
-            });
-
-
-            if (int_brand_ids.includes(brand.id)) {
-                int_brand_ids.splice(int_brand_ids.indexOf(brand.id), 1)
-            }
-            else {
-                int_brand_ids.push(parseInt(brand.id))
-            }
-
-            if (int_brand_ids.length > 0) {
-                var next_url = '?brand_ids=';
-
-                const sorted_brand_ids = sort_unique_brand_ids(int_brand_ids);
-
-                for (const ids in sorted_brand_ids) {
-                    if (parseInt(ids) + 1 === (sorted_brand_ids.length)) {
-                        next_url += parseInt(sorted_brand_ids[ids])
-                    }
-                    else {
-                        next_url += parseInt(sorted_brand_ids[ids]) + ','
-                    }
-                }
-
-                navigate(next_url)
-            }
-            else {
-                navigate('/products')
-            }
-
+            brand_ids.push(parseInt(brand.id));
         }
+
+        const sorted_brand_ids = sort_unique_brand_ids(brand_ids);
+
+        dispatch({ type: ActionTypes.SET_FILTER_BRANDS, payload: sorted_brand_ids })
+
+        // if (filter.brand_ids === null) {
+        //     navigate(`?brand_ids=${parseInt(brand.id)}`)
+        // }
+        // else {
+        //     const brand_ids = query.get('brand_ids').split(',');
+
+        //     var int_brand_ids = [];
+
+        //     brand_ids.forEach(ids => {
+        //         int_brand_ids.push(parseInt(ids))
+        //     });
+
+
+        //     if (int_brand_ids.includes(brand.id)) {
+        //         int_brand_ids.splice(int_brand_ids.indexOf(brand.id), 1)
+        //     }
+        //     else {
+        //         int_brand_ids.push(parseInt(brand.id))
+        //     }
+
+        //     if (int_brand_ids.length > 0) {
+        //         var next_url = '?brand_ids=';
+
+        //         const sorted_brand_ids = sort_unique_brand_ids(int_brand_ids);
+
+        //         for (const ids in sorted_brand_ids) {
+        //             if (parseInt(ids) + 1 === (sorted_brand_ids.length)) {
+        //                 next_url += parseInt(sorted_brand_ids[ids])
+        //             }
+        //             else {
+        //                 next_url += parseInt(sorted_brand_ids[ids]) + ','
+        //             }
+        //         }
+
+        //         navigate(next_url)
+        //     }
+        //     else {
+        //         navigate('/products')
+        //     }
+
+        // }
     }
-
-
 
 
     //filter by category
@@ -204,26 +268,16 @@ const ProductList = () => {
     //onLClick event of category
     const filterbyCategory = (category) => {
 
-        var next_url = ""
-
-        //if no query params available
-        if (query.toString().length === 0) {
-            next_url = `?category_id=${category.id}`;
+        if (filter.category_id === category.id) {
+            dispatch({ type: ActionTypes.SET_FILTER_CATEGORY, payload: null })
         }
         else {
-            console.log(query.toString())
-
-            //brand ids are already present in url
-            if (query.get('brand_ids') !== null) {
-                next_url = '?brand_ids=' + query.get('brand_ids') + `&category_id=${category.id}`
-            }
-            else {
-                next_url = `?category_id=${category.id}`
-            }
+            dispatch({ type: ActionTypes.SET_FILTER_CATEGORY, payload: category.id })
         }
-
-        navigate(next_url)
     }
+
+
+
 
     return (
         <section id="productlist" className='container' >
@@ -244,7 +298,7 @@ const ProductList = () => {
                             : (
                                 <>
                                     {category.category.map((ctg, index) => (
-                                        <motion.div whileTap={{ scale: 0.8 }} onClick={() => filterbyCategory(ctg)} className={`d-flex justify-content-between align-items-center filter-bar ${query.get('category_id') !== null ? query.get('category_ids') === ctg.id ? 'active' : null : null}`} key={index}>
+                                        <motion.div whileTap={{ scale: 0.8 }} onClick={() => filterbyCategory(ctg)} className={`d-flex justify-content-between align-items-center filter-bar ${filter.category_id !== null ? filter.category_id === ctg.id ? 'active' : null : null}`} key={index}>
                                             <div className='d-flex gap-3'>
                                                 <div className='image-container'>
                                                     <img src={ctg.image_url} alt="category"></img>
@@ -262,6 +316,34 @@ const ProductList = () => {
                     <div className='filter-wrapper'>
                         <h5>Filter by price</h5>
 
+                        {minmaxTotalPrice.total_min_price === null || minmaxTotalPrice.total_max_price === null || minmaxTotalPrice.min_price === null || minmaxTotalPrice.max_price === null
+                            ? (
+                                <div className="d-flex justify-content-center">
+                                    <div className="spinner-border" role="status">
+                                        <span className="visually-hidden">Loading...</span>
+                                    </div>
+                                </div>)
+                            : (
+                                <>
+                                    <ReactSlider
+                                        className="slider"
+                                        thumbClassName="thumb"
+                                        trackClassName="track"
+                                        min={minmaxTotalPrice.min_price}
+                                        max={minmaxTotalPrice.max_price}
+                                        defaultValue={[minmaxTotalPrice.min_price, minmaxTotalPrice.max_price]}
+                                        ariaLabel={['Lower thumb', 'Upper thumb']}
+                                        ariaValuetext={state => `Thumb value ${state.valueNow}`}
+                                        renderThumb={(props, state) => <div {...props}>{state.valueNow}</div>}
+                                        pearling={true}
+                                        withTracks={true}
+                                        minDistance={100}
+                                        onAfterChange={([min, max]) => {
+                                            dispatch({ type: ActionTypes.SET_FILTER_MIN_MAX_PRICE, payload: { min_price: min, max_price: max } })
+                                        }}
+                                    />
+                                </>
+                            )}
 
                     </div>
 
@@ -278,7 +360,7 @@ const ProductList = () => {
                             : (
                                 <>
                                     {brands.map((brand, index) => (
-                                        <motion.div whileTap={{ scale: 0.8 }} onClick={() => filterbyBrands(brand)} className={`d-flex justify-content-between align-items-center filter-bar ${query.get('brand_ids') !== null ? query.get('brand_ids').includes(brand.id) ? 'active' : null : null}`} key={index} >
+                                        <motion.div whileTap={{ scale: 0.8 }} onClick={() => filterbyBrands(brand)} className={`d-flex justify-content-between align-items-center filter-bar ${filter.brand_ids !== [] ? filter.brand_ids.includes(brand.id) ? 'active' : null : null}`} key={index} >
                                             <div className='d-flex gap-3 align-items-baseline'>
                                                 <div className='image-container'>
                                                     <img src={brand.image_url} alt="category"></img>
@@ -304,21 +386,39 @@ const ProductList = () => {
                 <div className='d-flex flex-column w-100 h-100' style={{ gap: "20px" }}>
                     <div className='d-flex flex-row justify-content-between align-items-center filter-view'>
                         <div className='d-flex gap-3'>
-                            <div className='icon'>
+                            <div className={`icon ${!filter.grid_view ? 'active' : null}`} onClick={() => {
+                                dispatch({ type: ActionTypes.SET_FILTER_VIEW, payload: false });
+                            }}>
                                 <BsListUl fontSize={"2rem"} />
                             </div>
-                            <div className='icon '>
+                            <div className={`icon ${filter.grid_view ? 'active' : null}`} onClick={() => {
+                                dispatch({ type: ActionTypes.SET_FILTER_VIEW, payload: true });
+                            }}>
                                 <BsGrid fontSize={"2rem"} />
                             </div>
                         </div>
-                        <div className="dropdown">
-                            <button className="btn dropdown-toggle" type="button" id="dropdownPriceFilter1" data-bs-toggle="dropdown" aria-expanded="false">
+
+                        <div className="select">
+                            <select className="form-select" aria-label="Default select example" onChange={(e)=>{
+                                
+                                dispatch({type:ActionTypes.SET_FILTER_SORT,payload:e.target.value})
+                            }}>
+                                <option value="new">New Products</option>
+                                <option value="old">Old Products</option>
+                                <option value="high">High to Low Price</option>
+                                <option value="low">Low to High Price</option>
+                                <option value="discount">Discounted Products</option>
+                                <option value="popular">Popular Products</option>
+                            </select>
+                            {/* <button className="btn dropdown-toggle" type="button" id="dropdownPriceFilter1" data-bs-toggle="dropdown" aria-expanded="false">
                                 Price(low to high)
                             </button>
+
+                            
                             <ul className="dropdown-menu" aria-labelledby="dropdownPriceFilter1">
                                 <li className="dropdown-item" >Price(low to high)</li>
                                 <li className="dropdown-item" >Price(high to low)</li>
-                            </ul>
+                            </ul> */}
                         </div>
                     </div>
 
@@ -337,46 +437,52 @@ const ProductList = () => {
                                 {productresult.length > 0
                                     ? (
                                         <div className='d-flex flex-wrap h-100' style={{ gap: "8px" }}>
+
                                             {productresult.map((product, index) => (
-                                                <div key={index} className='d-flex border flex-column product-card'>
+                                                <div key={index} className={`border product-card ${!filter.grid_view ? 'list-view' : ''}`}>
                                                     <div className='image-container'>
                                                         <Link to='/'><AiOutlineEye /></Link>
                                                         <img src={product.image_url} alt={product.slug} className='card-img-top' />
                                                     </div>
-                                                    <div className="card-body product-card-body p-3">
-                                                        <span>{product.name}</span>
-                                                        <div className='d-flex flex-row justify-content-between'>
+
+                                                    <div className='d-flex flex-column'>
+                                                        <div className="card-body product-card-body p-3">
+                                                            <span>{product.name}</span>
+                                                            <div className='d-flex flex-row justify-content-between'>
 
 
-                                                            <select id={`selectedVariant${product.id}`} onChange={(e) => {
-                                                                document.getElementById(`price${product.id}`).innerHTML = JSON.parse(e.target.value).price;
-                                                            }} defaultValue={JSON.stringify(product.variants[0])} >
-                                                                {getProductVariants(product)}
-                                                            </select>
+                                                                <select id={`selectedVariant${product.id}`} onChange={(e) => {
+                                                                    document.getElementById(`price${product.id}`).innerHTML = JSON.parse(e.target.value).price;
+                                                                }} defaultValue={JSON.stringify(product.variants[0])} >
+                                                                    {getProductVariants(product)}
+                                                                </select>
 
 
-                                                            <div className='price d-flex flex-row align-items-center'>
-                                                                <FaRupeeSign fill='var(--secondary-color)' />
-                                                                <span id={`price${product.id}`}>{product.variants[0].price}</span>
+                                                                <div className='price d-flex flex-row align-items-center'>
+                                                                    <FaRupeeSign fill='var(--secondary-color)' />
+                                                                    <span id={`price${product.id}`}>{product.variants[0].price}</span>
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                    <div className='d-flex flex-row border-top product-card-footer'>
-                                                        <div className='border-end col col-lg-3'>
-                                                            <button type="button" className='w-100 h-100'><BsHeart /></button>
-                                                        </div>
-                                                        <div className='border-end col col-lg-6'>
-                                                            <button type="button" className='w-100 h-100 add-to-cart'>add to cart</button>
-                                                        </div>
-                                                        <div className='col col-lg-3'>
-                                                            <button type="button" className='w-100 h-100'><BsShare /></button>
+                                                        <div className='d-flex flex-row border-top product-card-footer'>
+                                                            <div className='border-end col col-lg-3'>
+                                                                <button type="button" className='w-100 h-100'><BsHeart /></button>
+                                                            </div>
+                                                            <div className='border-end col col-lg-6'>
+                                                                <button type="button" className='w-100 h-100 add-to-cart'>add to cart</button>
+                                                            </div>
+                                                            <div className='col col-lg-3'>
+                                                                <button type="button" className='w-100 h-100'><BsShare /></button>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             ))}
+
+
                                         </div>
                                     )
-                                    : ""}
+                                    : <h3>No Products Found</h3>}
                             </>
 
                         )}
