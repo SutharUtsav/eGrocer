@@ -42,6 +42,7 @@
     display: flex;
     flex-direction: row;
     gap: 2rem;
+    font-size: 2rem;
 }
 
 .login .body .PhoneInput .PhoneInputInput {
@@ -49,6 +50,8 @@
     background: rgba(155, 151, 151, 0.205);
     border-radius: 5px;
     padding: 5px;
+    flex-grow: 1;
+    font-size: 2rem;
 }
 
 
@@ -85,13 +88,29 @@
     border-radius: 10px;
     background: var(--secondary-color);
     color: #fff;
+    font-size: 2rem;
 }
 
 .login .body .otp-container {
-    margin: 2rem;
+    margin: 2rem 4%;
     font-size: 2rem;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
 }
 
 .login .body input[type=password]{
     background: rgba(155, 151, 151, 0.205);
+
+}
+
+.login .body .otp-container > input{
+    margin-right: 3px;
+}
+
+@media screen and (max-width: 75rem) {
+    .login .body .form {
+        width: 100%;
+    }
+
 }

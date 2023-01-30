@@ -334,14 +334,14 @@ const Location = (props) => {
                   </div>
 
                     {errorMsg === "" ? (
-                      <div className='d-flex flex-column justify-content-between w-100 p-4'>
+                      <div className='map-content'>
                         <p><b>Address : </b>{isAddressLoading ? "...." : localLocation.formatted_address}</p>
                         <motion.button whileTap={{ scale: 0.6 }} type='button' className='btn-confirm-location' onClick={confirmCurrentLocation} disabled={localLocation.formatted_address === ''}>Confirm</motion.button>
                       </div>
                     ) : null}
                   </>
                 )}
-              <p className='text-danger'>{errorMsg}</p>
+              <p className='text-danger' style={{fontSize:"2rem"}}>{errorMsg}</p>
             </>
 
           )}

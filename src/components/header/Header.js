@@ -1,11 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react'
 import './header.css'
+import { BsShopWindow } from 'react-icons/bs'
+import { BiUserCircle } from 'react-icons/bi'
 import { MdSearch, MdGTranslate } from "react-icons/md";
 import { IoContrast, IoNotificationsOutline, IoHeartOutline, IoCartOutline } from 'react-icons/io5';
-import { IoMdArrowDropdown } from "react-icons/io"
+import { IoMdArrowDropdown, IoIosArrowDown } from "react-icons/io"
 import { GoLocation } from 'react-icons/go'
+import { FiMenu, FiFilter } from 'react-icons/fi'
+import { AiOutlineCloseCircle } from 'react-icons/ai'
 import { motion } from 'framer-motion'
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import Location from '../location/Location';
 import logoPath from '../../utils/logo_egrocer.svg'
 import { getLocation } from '../../utils/manageLocalStorage';
@@ -13,6 +17,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import api from '../../api/api';
 import { ActionTypes } from '../../model/action-type';
 import Login from '../login/Login';
+import Category from '../category/Category';
 
 // import 'bootstrap/dist/js/bootstrap.bundle.js'
 // import { Modal } from 'bootstrap/dist/js/bootstrap.bundle.js';
@@ -21,7 +26,7 @@ import Login from '../login/Login';
 const Header = () => {
 
     // const [islocationclick, setislocationclick] = useState(false);
-    const [issearchClick, setissearchClick] = useState(false);
+    // const [issearchClick, setissearchClick] = useState(false);
     const [isLocationPresent, setisLocationPresent] = useState(false);
 
     const locationModalTrigger = useRef();
@@ -31,6 +36,10 @@ const Header = () => {
     const city = useSelector(state => (state.city))
     const cssmode = useSelector(state => (state.cssmode))
     const user = useSelector(state => (state.user))
+    // const categories = useSelector(state => (state.category))
+
+    const curr_url = useLocation();
+
 
     useEffect(() => {
         let location = getLocation();
@@ -52,6 +61,7 @@ const Header = () => {
         }
     }, [dispatch])
 
+
     const handleCssModeChange = (e) => {
         dispatch({ type: ActionTypes.SET_CSSMODE, payload: e.target.value });
     }
@@ -61,153 +71,453 @@ const Header = () => {
     }
 
     return (
-        <header>
+        <>
 
-            {/* top header */}
-            <div className={`border-bottom header-1 ${(cssmode.cssmode === "dark") ? "dark-header-1" : null}`}>
-                <div className={`container d-flex justify-content-between`}>
-                    <div className='d-flex pages'>
-                        <Link to='/about' className={`p-2 text-decoration-none border-end ${(cssmode.cssmode === "dark") ? "dark-header-1" : null}`} > About us</Link>
-                        <Link to='/contact' className='p-2 text-decoration-none border-end' > Contact us</Link>
-                        <Link to='/faq' className='p-2 text-decoration-none border-end' > faq</Link>
+            {/* sidebar */}
+            <div className="hide-desktop offcanvas offcanvas-start" tabIndex="-1" id="sidebaroffcanvasExample" aria-labelledby="sidebaroffcanvasExampleLabel">
+                <div className='site-scroll ps'>
+
+                    <div className="canvas-header">
+                        <div className='site-brand'>
+                            <img src={logoPath} height="50px" alt="logo"></img>
+                        </div>
+
+                        <button type="button" className="close-canvas" data-bs-dismiss="offcanvas" aria-label="Close"><AiOutlineCloseCircle /></button>
                     </div>
-                    <div className='d-flex utils border-start'>
-                        <IoContrast className='my-auto fs-3' />
-                        <select className='p-2 border-end' onChange={handleCssModeChange}>
-                            <option value="light">Light</option>
-                            <option value="dark">Dark</option>
-                        </select>
-                        <MdGTranslate className='my-auto fs-3' />
-                        <select className='p-2' onChange={handleLanguageChange}>
-                            <option value="english">English</option>
-                            <option value="gujarati">Gujarati</option>
-                            <option value="hindi">Hindi</option>
-                        </select>
+                    <div className="canvas-main">
+                        <div className='site-location'>
+                            <motion.button whileTap={{ scale: 0.8 }} type='buton' data-bs-toggle="modal" data-bs-target="#locationModal" ref={locationModalTrigger}>
+                                <div className='d-flex flex-row gap-2'>
+                                    <div className='icon location p-1 m-auto'>
+                                        <GoLocation />
+                                    </div>
+                                    <div className='d-flex flex-column flex-grow-1'>
+                                        <span className='location-description'>Deliver to <IoMdArrowDropdown /></span>
+                                        <span className='current-location'>{isLocationPresent
+                                            ? (
+                                                <>
+                                                    {city.status === 'fulfill'
+                                                        ? city.city.formatted_address
+                                                        : (
+                                                            <div className="d-flex justify-content-center">
+                                                                <div className="spinner-border" role="status">
+                                                                    <span className="visually-hidden">Loading...</span>
+                                                                </div>
+                                                            </div>
+                                                        )}
+                                                </>)
+                                            : "Please select location"
+                                        }</span>
+                                    </div>
+                                </div>
+                            </motion.button>
+                        </div>
+
+                        <div className='all-categories locked'>
+                            {/* <motion.button whileTap={{ scale: 0.8 }} type="button" data-bs-toggle="collapse" data-bs-target="#collapseCategories" aria-expanded="false" aria-controls="collapseCategories">
+                                <FiMenu />
+                                <span className='text'>All categories</span>
+                                <IoIosArrowDown />
+                            </motion.button>
+
+                            <div className="collapse" id="collapseCategories">
+                                Category
+                            </div> */}
+                            <Category />
+
+                        </div>
+
+                        <div className='canvas-title'>
+                            <h6 className='entry-title'>Site Navigation</h6>
+                        </div>
+
+                        <nav className='canvas-menu canvas-primary vertical'>
+                            <ul id='menu-menu-1' className='menu'>
+                                <li className=' menu-item menu-item-type-post_type menu-item-object-page'>
+                                    <Link to='/'>Home</Link>
+                                </li>
+
+                                <li className='dropdown mega-menu menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children' >
+                                    <button type="button" >
+                                        Shop
+                                    </button>
+                                    <ul className="sub-menu dropdown-menu" aria-labelledby="ShopDropDown">
+                                        <li className='dropdown-item menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children'>
+                                            <button type='button'>Cart</button>
+                                        </li>
+
+                                        <li className='dropdown-item menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children'>
+                                            <button type='button'>Checkout</button>
+                                        </li>
+
+                                        <li className='dropdown-item menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children'>
+                                            <button type='button'>My Account</button>
+                                        </li>
+
+                                        <li className='dropdown-item menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children'>
+                                            <button type='button'>wishlist</button>
+                                        </li>
+
+                                        <li className='dropdown-item menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children'>
+                                            <button type='button'>Order Tracking</button>
+                                        </li>
+                                    </ul>
+                                    <button className='menu-dropdown' id="ShopDropDown" type='button' data-bs-toggle="dropdown" aria-expanded="false">
+                                        <IoIosArrowDown />
+                                    </button>
+                                </li>
+
+                                <li className=' menu-item menu-item-type-post_type menu-item-object-page'>
+                                    <Link to='/about'>About Us</Link>
+                                </li>
+                                <li className=' menu-item menu-item-type-post_type menu-item-object-page'>
+                                    <Link to='/contact'>Contact Us</Link>
+                                </li>
+                                <li className=' menu-item menu-item-type-post_type menu-item-object-page'>
+                                    <Link to='/faq'>FAQ</Link>
+                                </li>
+                                <li className='dropdown-item menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children'>
+                                    <button type='button'>Notification</button>
+                                </li>
+
+                            </ul>
+
+
+                            <div className='lang-mode-utils'>
+                                <div className='util'>
+                                    <span>Select Language</span>
+                                    <select className='' onChange={handleLanguageChange}>
+                                        <option value="english">English</option>
+                                        <option value="gujarati">Gujarati</option>
+                                        <option value="hindi">Hindi</option>
+                                    </select>
+                                </div>
+                                <div className='util'>
+                                    <span>Select Mode</span>
+                                    <select className='' onChange={handleCssModeChange}>
+                                        <option value="light">Light</option>
+                                        <option value="dark">Dark</option>
+                                    </select>
+                                </div>
+
+                            </div>
+                        </nav>
+
+                        <div className='canvas-footer'>
+                            <div className='site-copyright'>
+                                Copyright © 2022.All right Reversed By eGrocer.
+                            </div>
+                        </div>
+
+
                     </div>
                 </div>
+
             </div>
 
+            {/* header */}
+            <header className='site-header desktop-shadow-disable mobile-shadow-enable mobile-nav-enable'>
 
-            {/* bottom header */}
-            <div className="header-2 border-bottom">
-                <div className='container d-flex justify-content-between flex-row logo'>
-                    <Link to='/' className='py-3'>
-                        <img src={logoPath} height="50px" alt="logo" />
-                    </Link>
 
-                    <div className='d-flex gap-3'>
-
-                        {/* location modal trigger button */}
-                        <motion.button whileTap={{ scale: 0.6 }} type='buton' className='delivery-button' data-bs-toggle="modal" data-bs-target="#locationModal" onClick={() => {
-                            setissearchClick(false)
-                        }} ref={locationModalTrigger}>
-                            <div className='d-flex flex-row gap-2'>
-                                <GoLocation fill='var(--secondary-color)' className='border icon icon-location p-1 m-auto' />
-                                <div className='d-flex flex-column'>
-                                    <span className='secondary-span'>Deliver to <IoMdArrowDropdown /></span>
-                                    <span className='address'>{isLocationPresent
-                                        ? (
-                                            <>
-                                                {city.status === 'fulfill'
-                                                    ? city.city.formatted_address
-                                                    : (
-                                                        <div className="d-flex justify-content-center">
-                                                            <div className="spinner-border" role="status">
-                                                                <span className="visually-hidden">Loading...</span>
-                                                            </div>
-                                                        </div>
-                                                    )}
-                                            </>)
-                                        : "Please select location"
-                                    }</span>
+                {/* top header */}
+                <div className={`header-top header-wrapper hide-mobile ${(cssmode.cssmode === "dark") ? "dark-header-top" : ''}`}>
+                    <div className={`container`}>
+                        <div className='column column-left'>
+                            <Link to='/about' className={`p-2 border-end ${(cssmode.cssmode === "dark") ? "dark-header-1" : ''}`} > About us</Link>
+                            <Link to='/contact' className={`p-2 border-end`} > Contact us</Link>
+                            <Link to='/faq' className={`p-2 border-end`} > faq</Link>
+                        </div>
+                        <div className='column column-right'>
+                            <div className='d-flex justify-content-center align-items-center border-start px-2'>
+                                <div>
+                                    <IoContrast className='fs-3' />
                                 </div>
+                                <select className='p-2' onChange={handleCssModeChange}>
+                                    <option value="light">Light</option>
+                                    <option value="dark">Dark</option>
+                                </select>
                             </div>
-                        </motion.button>
 
-                        <div className="modal fade location" id="locationModal" tabIndex="-1" data-bs-backdrop="static" aria-labelledby="locationModalLabel" aria-hidden="true">
-                            <div className="modal-dialog modal-dialog-centered">
-                                <div className="modal-content" style={{borderRadius:"10px"}}>
-                                    <Location isLocationPresent={isLocationPresent} setisLocationPresent={setisLocationPresent} />
+                            <div className='d-flex justify-content-center align-items-center border-start px-2'>
+                                <div>
+                                    <MdGTranslate className='fs-3' />
+                                    <select className='p-2' onChange={handleLanguageChange}>
+                                        <option value="english">English</option>
+                                        <option value="gujarati">Gujarati</option>
+                                        <option value="hindi">Hindi</option>
+                                    </select>
                                 </div>
                             </div>
                         </div>
-                        <form onSubmit={(e) => { e.preventDefault() }} className='search-box-container my-auto'>
-                            <input type="text" className='border' id="search-box" placeholder="What are you lookinh for..." />
-                            <label htmlFor="search-box" onClick={() => {
-                                setissearchClick(!issearchClick);
-                                // setislocationclick(false);
-                            }}>
-                                <MdSearch fill='white' />
-                            </label>
-
-                            {issearchClick ? <input type="search" id="search-box-resp" placeholder="What are you lookinh for..." className='border p-2 rounded' /> : null}
-
-                        </form>
                     </div>
+                </div>
 
 
-                    <div className='d-flex gap-5 my-auto'>
-                        <motion.div whileTap={{ scale: 0.6 }} className='icon position-relative'>
-                            <IoNotificationsOutline />
-                            <span className="position-absolute start-100 translate-middle badge rounded-pill fs-5 ">
-                                9+
-                                <span className="visually-hidden">unread messages</span>
-                            </span>
-                        </motion.div>
+                {/* bottom header */}
+                <div className="header-main header-wrapper border-bottom">
+                    <div className='container'>
 
-                        <motion.div whileTap={{ scale: 0.6 }} className='icon position-relative'>
-                            <IoHeartOutline />
-                            <span className="position-absolute start-100 translate-middle badge rounded-pill fs-5 ">
-                                9+
-                                <span className="visually-hidden">unread messages</span>
-                            </span>
-                        </motion.div>
+                        <div className='column column-left '>
 
-                        <motion.div whileTap={{ scale: 0.6 }} className='icon position-relative'>
-                            <IoCartOutline />
-                            <span className="position-absolute start-100 translate-middle badge rounded-pill fs-5">
-                                9+
-                                <span className="visually-hidden">unread messages</span>
-                            </span>
-                        </motion.div>
+                            <div className='header-buttons hide-desktop'>
+                                <button className='header-canvas button-item' type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebaroffcanvasExample" aria-controls="sidebaroffcanvasExample">
+                                    <div className='button-menu'>
+                                        <FiMenu />
+                                    </div>
+                                </button>
+
+                            </div>
 
 
-                        {user.status === 'loading'
-                            ? (
-                                <>
-                                    <motion.div whileTap={{ scale: 0.6 }} className='d-flex flex-row user-profile gap-1' data-bs-toggle="modal" data-bs-target="#loginModal">
-                                        <div className='d-flex flex-column user-info my-auto'>
-                                            <span className='name'> Utsav Suthar</span>
-                                            <span className='number'>+91-9999988888</span>
-                                        </div>
-                                        <img src={user.status === "loading"
-                                            ? "https://egrocer.wrteam.in/storage/logo/1669957448_21176.png"
-                                            : user.user.profile} alt="user" className='rounded-3'></img>
-                                    </motion.div>
-                                    <Login modal_id='loginModal' />
-                                </>
-                            )
-                            : (
-                                <>
-                                    <Link to='/profile' className='d-flex flex-row user-profile gap-1' >
-                                        <div className='d-flex flex-column user-info my-auto'>
-                                            <span className='name'> { user.user.name}</span>
-                                            <span className='number'>{user.user.country_code + "-" + user.user.mobile}</span>
-                                        </div>
-                                        <img src={user.user.profile} alt="user"></img>
-                                    </Link>
-                                </>
-                            )}
+                            <Link to='/' className='site-brand'>
+                                <img src={logoPath} height="50px" alt="logo" className='desktop-logo hide-mobile' />
+                                <img src={logoPath} height="50px" alt="logo" className='mobile-logo hide-desktop' />
+
+                            </Link>
+                        </div>
+
+
+                        <div className='column column-center'>
+
+                            {/* location modal trigger button */}
+                            <motion.button whileTap={{ scale: 0.6 }} type='buton' className='header-location site-location hide-mobile' data-bs-toggle="modal" data-bs-target="#locationModal" ref={locationModalTrigger}>
+                                <div className='d-flex flex-row gap-2'>
+                                    <div className='icon location p-1 m-auto'>
+                                        <GoLocation />
+                                    </div>
+                                    <div className='d-flex flex-column flex-grow-1'>
+                                        <span className='location-description'>Deliver to <IoMdArrowDropdown /></span>
+                                        <span className='current-location'>{isLocationPresent
+                                            ? (
+                                                <>
+                                                    {city.status === 'fulfill'
+                                                        ? city.city.formatted_address
+                                                        : (
+                                                            <div className="d-flex justify-content-center">
+                                                                <div className="spinner-border" role="status">
+                                                                    <span className="visually-hidden">Loading...</span>
+                                                                </div>
+                                                            </div>
+                                                        )}
+                                                </>)
+                                            : "Please select location"
+                                        }</span>
+                                    </div>
+                                </div>
+                            </motion.button>
+
+                            <></>
+                            <div className='header-search'>
+                                <form onSubmit={(e) => {
+                                    e.preventDefault()
+                                    // console.log(document.getElementById('search-box').value)
+                                }} className='search-form'>
+                                    <input type="search" id="search-box" placeholder="What are you lookinh for..." />
+
+                                    <button type='submit'>
+                                        <MdSearch fill='white' />
+                                    </button>
+                                </form>
+                            </div>
+
+
+                        </div>
+
+
+                        <div className='column column-right gap-5'>
+                            <motion.div whileTap={{ scale: 0.6 }} className='icon position-relative hide-mobile'>
+                                <IoNotificationsOutline />
+                                <span className="position-absolute start-100 translate-middle badge rounded-pill fs-5 ">
+                                    9+
+                                    <span className="visually-hidden">unread messages</span>
+                                </span>
+                            </motion.div>
+
+                            <motion.div whileTap={{ scale: 0.6 }} className='icon position-relative hide-mobile-screen'>
+                                <IoHeartOutline />
+                                <span className="position-absolute start-100 translate-middle badge rounded-pill fs-5 ">
+                                    9+
+                                    <span className="visually-hidden">unread messages</span>
+                                </span>
+                            </motion.div>
+
+                            <motion.div whileTap={{ scale: 0.6 }} className='icon position-relative'>
+                                <IoCartOutline />
+                                <span className="position-absolute start-100 translate-middle badge rounded-pill fs-5">
+                                    9+
+                                    <span className="visually-hidden">unread messages</span>
+                                </span>
+                            </motion.div>
+
+
+                            {user.status === 'loading'
+                                ? (
+                                    <div className='hide-mobile-screen'>
+                                        <motion.div whileTap={{ scale: 0.6 }} className='d-flex flex-row user-profile gap-1' data-bs-toggle="modal" data-bs-target="#loginModal">
+                                            <div className='d-flex flex-column user-info my-auto'>
+                                                <span className='name'> Utsav Suthar</span>
+                                                <span className='number'>+91-9999988888</span>
+                                            </div>
+                                            <img src={user.status === "loading"
+                                                ? "https://egrocer.wrteam.in/storage/logo/1669957448_21176.png"
+                                                : user.user.profile} alt="user" className='rounded-3'></img>
+                                        </motion.div>
+
+                                    </div>
+                                )
+                                : (
+                                    <div className='hide-mobile-screen'>
+                                        <Link to='/profile' className='d-flex flex-row user-profile gap-1' >
+                                            <div className='d-flex flex-column user-info my-auto'>
+                                                <span className='name'> {user.user.name}</span>
+                                                <span className='number'>{user.user.country_code + "-" + user.user.mobile}</span>
+                                            </div>
+                                            <img src={user.user.profile} alt="user"></img>
+                                        </Link>
+                                    </div>
+                                )}
+
+                        </div>
 
                     </div>
-
-
-                    {/* {islocationclick ? <SelectLocation setislocationclick={setislocationclick} /> : null} */}
 
                 </div>
 
-            </div>
-        </header>
+
+                {/* Mobile bottom Nav */}
+                <nav className='header-mobile-nav'>
+                    <div className='mobile-nav-wrapper'>
+                        <ul>
+                            <li className='menu-item'>
+                                <Link to='/products' className='shop' onClick={() => {
+                                    document.getElementsByClassName('shop')[0].classList.toggle('active')
+                                    document.getElementsByClassName('filter')[0].classList.remove('active')
+                                    document.getElementsByClassName('wishlist')[0].classList.remove('active')
+                                    document.getElementsByClassName('search')[0].classList.remove('active')
+                                    document.getElementsByClassName('header-search')[0].classList.remove('active')
+                                }}>
+                                    <div>
+                                        <BsShopWindow />
+                                    </div>
+                                    <span>Shop</span>
+                                </Link>
+                            </li>
+
+                            <li className='menu-item'>
+                                <button type='button' className='search' onClick={() => {
+                                    document.getElementsByClassName('search')[0].classList.toggle('active')
+                                    document.getElementsByClassName('filter')[0].classList.remove('active')
+                                    document.getElementsByClassName('wishlist')[0].classList.remove('active')
+                                    document.getElementsByClassName('shop')[0].classList.remove('active')
+                                    document.getElementsByClassName('header-search')[0].classList.toggle('active')
+                                }}>
+                                    <div>
+                                        <MdSearch />
+                                    </div>
+                                    <span>Search</span>
+                                </button>
+                            </li>
+
+                            {curr_url.pathname === '/products' ? (
+                                <li className='menu-item'>
+                                    <button type='button' className='filter' data-bs-toggle="offcanvas" data-bs-target="#filteroffcanvasExample" aria-controls="filteroffcanvasExample" onClick={() => {
+                                        document.getElementsByClassName('filter')[0].classList.toggle('active')
+                                        document.getElementsByClassName('search')[0].classList.remove('active')
+                                        document.getElementsByClassName('wishlist')[0].classList.remove('active')
+                                        document.getElementsByClassName('shop')[0].classList.remove('active')
+                                        document.getElementsByClassName('header-search')[0].classList.remove('active')
+                                    }}>
+                                        <div>
+                                            <FiFilter />
+                                        </div>
+                                        <span>Filter</span>
+                                    </button>
+                                </li>
+                            ) : ""}
+
+                            <li className='menu-item'>
+                                <button type='button' className='wishlist' onClick={() => {
+                                    document.getElementsByClassName('wishlist')[0].classList.toggle('active')
+                                    document.getElementsByClassName('filter')[0].classList.remove('active')
+                                    document.getElementsByClassName('shop')[0].classList.remove('active')
+                                    document.getElementsByClassName('search')[0].classList.remove('active')
+                                    document.getElementsByClassName('header-search')[0].classList.remove('active')
+
+                                }}>
+                                    <div>
+                                        <IoHeartOutline />
+                                        {/* <span className="position-absolute start-100 translate-middle badge rounded-pill fs-5 ">
+                                        9+
+                                        <span className="visually-hidden">unread messages</span>
+                                    </span> */}
+                                    </div>
+                                    <span>Wishlist</span>
+                                </button>
+                            </li>
+
+                            <li className='menu-item'>
+                                {user.status === 'loading'
+                                    ? (
+                                        <>
+                                            <button type='button' className='account' data-bs-toggle="modal" data-bs-target="#loginModal" onClick={() => {
+                                                document.getElementsByClassName('wishlist')[0].classList.remove('active')
+                                                document.getElementsByClassName('filter')[0].classList.remove('active')
+                                                document.getElementsByClassName('shop')[0].classList.remove('active')
+                                                document.getElementsByClassName('search')[0].classList.remove('active')
+                                                document.getElementsByClassName('header-search')[0].classList.remove('active')
+
+                                            }}>
+                                                <div>
+                                                    <BiUserCircle />
+                                                </div>
+                                                <span>Login</span>
+
+                                            </button>
+
+                                        </>
+                                    )
+                                    : (
+                                        <Link to='/profile' className='d-flex user-profile gap-1 account' onClick={() => {
+                                            document.getElementsByClassName('wishlist')[0].classList.remove('active')
+                                            document.getElementsByClassName('filter')[0].classList.remove('active')
+                                            document.getElementsByClassName('shop')[0].classList.remove('active')
+                                            document.getElementsByClassName('search')[0].classList.remove('active')
+                                            document.getElementsByClassName('header-search')[0].classList.remove('active')
+
+                                        }}>
+                                            <div className='d-flex flex-column user-info my-auto'>
+                                                <span className='name'> {user.user.name}</span>
+                                                <span className='number'>{user.user.country_code + "-" + user.user.mobile}</span>
+                                            </div>
+                                            <img src={user.user.profile} alt="user"></img>
+                                            <span>Profile</span>
+                                        </Link>
+                                    )}
+
+
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+
+
+
+                {/* login modal */}
+                <Login modal_id='loginModal' />
+
+
+                {/* location modal */}
+                <div className="modal fade location" id="locationModal" data-bs-backdrop="static" aria-labelledby="locationModalLabel" aria-hidden="true">
+                    <div className="modal-dialog modal-dialog-centered">
+                        <div className="modal-content" style={{ borderRadius: "10px" }}>
+                            <Location isLocationPresent={isLocationPresent} setisLocationPresent={setisLocationPresent} />
+                        </div>
+                    </div>
+                </div>
+
+
+            </header>
+        </>
     )
 }
 

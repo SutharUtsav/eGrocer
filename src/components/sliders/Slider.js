@@ -45,19 +45,22 @@ const Slider = () => {
             {
                 slider === null
                     ? (
+                        <></>
                         // <div className="d-flex justify-content-center">
                         //     <div className="spinner-border" role="status">
                         //         <span className="visually-hidden">Loading...</span>
                         //     </div>
                         // </div>
-                        <div className='d-flex flex-row gap-3'>
-                            <Shimmer height={360} width={700} />
-                            <div className='d-flex flex-column justify-content-center gap-3'>
-                                <Shimmer height={50} width={50}></Shimmer>
-                                <Shimmer height={50} width={50}></Shimmer>
-                                <Shimmer height={50} width={50}></Shimmer>
-                            </div>
-                        </div>
+                        
+                        
+                        // <div className='d-flex flex-row gap-3'>
+                        //     <Shimmer height={360} width={700} />
+                        //     <div className='d-flex flex-column justify-content-center gap-3'>
+                        //         <Shimmer height={50} width={50}></Shimmer>
+                        //         <Shimmer height={50} width={50}></Shimmer>
+                        //         <Shimmer height={50} width={50}></Shimmer>
+                        //     </div>
+                        // </div>
                     )
                     : (
                         <div className="slider__flex ">
@@ -136,7 +139,7 @@ const Slider = () => {
                                                 direction: "horizontal"
                                             },
                                             770: {
-                                                direction: "vertical"
+                                                direction: "horizontal"
                                             }
                                         }}
                                         modules={[Navigation, Thumbs]}

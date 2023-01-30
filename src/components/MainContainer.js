@@ -6,11 +6,11 @@ import ProductContainer from './product/ProductContainer'
 
 const MainContainer = () => {
     return (
-        <>
+        <div className='home-page content'>
             <HomeContainer />
             <ProductContainer />
             <Offers />
-        </>
+        </div>
     )
 }
 

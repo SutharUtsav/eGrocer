@@ -192,7 +192,7 @@ const Login = (props) => {
 
                             {isOTP
                                 ? (
-                                    <form className='d-flex flex-column gap-3' onSubmit={verifyOTP}>
+                                    <form className='d-flex flex-column gap-3 form' onSubmit={verifyOTP}>
                                         {isLoading
                                             ? (
                                                 <div className="d-flex justify-content-center">
@@ -213,7 +213,7 @@ const Login = (props) => {
                                     </form>
                                 )
                                 : (
-                                    <form className='d-flex flex-column gap-3' onSubmit={handleLogin}>
+                                    <form className='d-flex flex-column gap-3 form' onSubmit={handleLogin}>
 
 
                                         <div>

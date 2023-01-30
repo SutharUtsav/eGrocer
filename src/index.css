@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@200;300;400;600;700&display=swap');
 
 :root {
-  --green: #27ae60;
+  /* --green: #27ae60;
   --black: #2c2c54;
   --blue: #0047AB;
   --orange: #ff7800;
@@ -10,17 +10,18 @@
   --red: #D22B2B;
   --color: #009c8e;
   --boxSize: 8px;
-  --gutter: 8px;
+  --gutter: 8px; */
 
   --body-background: #F2F3F9;
-  --primary-color:#141A1F;
-  --secondary-color:#51BD88;
-  --sub-text-color:#8B8B8B;
-  --second-cards-color:#FFFFFF;
-  --text-field-color:#F8F8F8;
+  --primary-color: #141A1F;
+  --secondary-color: #51BD88;
+  --sub-text-color: #8B8B8B;
+  --second-cards-color: #FFFFFF;
+  --text-field-color: #F8F8F8;
 
-  --body-background-dark:#141414;
-  --primary-color-dark:#e5e5e5;
+  --body-background-dark: #141414;
+  --primary-color-dark: #e5e5e5;
+  --gray-hover-color:#DCDCDC;
 }
 
 * {
@@ -33,7 +34,7 @@
   text-decoration: none;
   text-transform: capitalize;
   transition: all .2s linear;
-  color:var(--primary-color);
+  color: var(--primary-color);
 }
 
 *::selection {
@@ -49,27 +50,45 @@ html {
   scroll-behavior: smooth;
 }
 
-button{
+html::-webkit-scrollbar {
+  width: 0;
+}
+
+button {
   cursor: pointer;
 }
 
-.main-app{
+.main-app {
   color: var(--primary-color);
   background: var(--body-background);
 }
 
-.toast-container{
+
+.toast-container {
   font-size: 2rem;
 }
 
 
-.modal-dialog-centered{
+
+
+.modal-dialog {
+  padding: 0;
+}
+
+.modal-dialog-centered {
   justify-content: center;
 }
-.modal-content{
+
+.modal-content {
   padding: 30px;
   border-radius: 10px;
-  max-width: 30vw;
+  max-width: 340px;
+}
+
+
+
+body.modal-open {
+  overflow: auto;
 }
 
 
@@ -81,9 +100,20 @@ button{
   }
 }
 
+@media(max-width:768px) {
+  /* .modal-dialog {
+    min-width: 90vw;
+  } */
+
+  .modal-content {
+    padding: 15px;
+  }
+}
+
 @media(max-width:450px) {
   html {
     font-size: 35%;
   }
-
 }
+
+

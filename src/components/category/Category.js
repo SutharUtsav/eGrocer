@@ -42,20 +42,23 @@ const Category = () => {
         <>
             {category === null
                 ? (
-                    <Shimmer height={360} width={400}></Shimmer>
+                    <></>
+                    // <Shimmer height={360} width={400}></Shimmer>
                 )
                 : (
-                    <div className='d-flex flex-column category-wrapper border' >
-                        <motion.button whileTap={{ scale: 0.9 }} type='button' className='p-3 expand-category'
+                    <>
+                        <motion.button whileTap={{ scale: 0.9 }} type='button' className='expand-category'
                             data-bs-toggle="collapse" data-bs-target="#expandCategory" aria-expanded="false" aria-controls="collapseExample"
                         >
-                            <BsGrid3X3GapFill fill='white' fontSize={"3rem"} className='mx-2' />
-                            <p>browse all categories</p>
+                            <div>
+                                <BsGrid3X3GapFill fill='white' fontSize={"3rem"} />
+                            </div>
+                            <span>browse all categories</span>
                         </motion.button>
 
 
 
-                        <motion.div className='collapse categoties' id="expandCategory" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                        <div className='collapse show categoties' id="expandCategory">
                             {
                                 category.map((ctg, index) => (
                                     <div key={index} className='category-container'>
@@ -124,14 +127,15 @@ const Category = () => {
                                     meat
                                 </motion.button>
                             </div> */}
+                        </div>
+                        <Link to='/categories' className='p-3' id="show-more-button">
+                            <div>
+                                <BsPlusCircle fill='white' fontSize={"2.4rem"} />
+                            </div>
+                            <span>show more</span>
+                        </Link>
 
-
-                            <Link to='/categories' className='p-3' id="show-more-button">
-                                <BsPlusCircle fill='white' fontSize={"2.4rem"} /> show more
-                            </Link>
-                        </motion.div>
-
-                    </div>
+                    </>
                 )}
         </>
     )

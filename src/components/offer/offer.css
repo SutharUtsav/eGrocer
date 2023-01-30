@@ -1,5 +1,5 @@
 #offers{
-    padding-top: 60px;
+    padding-top: 30px;
 }
 
 .offer-container{
@@ -13,7 +13,7 @@
 }
 
 .offer-container .offer-container-heading span{
-    font-size: 1.5rem;
+    font-size: 2rem;
     text-transform: capitalize;
     color: var(--secondary-color);
 }

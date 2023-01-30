@@ -18,7 +18,7 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 
 root.render(
   // <React.StrictMode>
-    <Router>
+    <Router basename='/'>
       <Provider store={store}>
         {/* <PersistGate loading={null} persistor={Persiststore}> */}
         <App />

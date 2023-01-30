@@ -88,6 +88,7 @@
     background-color: #fff;
     width: 100%;
     color: #000;
+    font-size: 1.845rem;
 }
 
 .location .body button:hover {
@@ -96,14 +97,14 @@
 }
 
 
-.location .body .oval-continer{
+.location .body .oval-continer {
     height: 36px;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-.location .body .oval-continer .oval{
+.location .body .oval-continer .oval {
     width: 28px;
     height: 28px;
     display: flex;
@@ -112,26 +113,26 @@
     margin: 0 15px;
 }
 
-.location .body .oval-continer .oval .separator-text{
+.location .body .oval-continer .oval .separator-text {
     position: relative;
     display: inline-block;
+    border: 1px solid #ccc;
+    padding: 5px;
+    border-radius: 50%;
 }
 
-.location .body .oval-continer .oval .separator-text::before{
+.location .body .oval-continer .oval .separator-text::before {
     right: 100%;
     content: '';
     position: absolute;
     top: 50%;
     border-bottom: 1px solid #ccc;
-    width: 8px;
+    width: 7pc;
     margin: 0 7px;
 
 }
 
-.location .body .oval-continer .oval .separator-text .or{
-    width: 16px;
-    height: 13px;
-    font-family: okra;
+.location .body .oval-continer .oval .separator-text .or {
     font-size: 10px;
     font-weight: 500;
     font-stretch: normal;
@@ -143,27 +144,41 @@
 }
 
 
-.location .body .oval-continer .oval .separator-text::after{
+.location .body .oval-continer .oval .separator-text::after {
     left: 100%;
     content: '';
     position: absolute;
     top: 50%;
     border-bottom: 1px solid #ccc;
-    width: 8px;
+    width: 7pc;
     margin: 0 7px;
 }
 
-.location .body .input-container{
+.location .body .input-container {
     width: 100%;
 }
-.location .body input[type=text]{
+
+.location .body input[type=text] {
     width: 100%;
     background: rgba(155, 151, 151, 0.205);
     border: 1px solid rgba(155, 151, 151, 0.205);
     border-radius: 5px;
     padding: 6px;
+    font-size: 1.845rem;
 }
 
+.location .map-content {
+    display: inline-flex;
+    display: -webkit-inline-box;
+    display: -ms-inline-flexbox;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.location .map-content p,.location .map-content button {
+    font-size: 2rem;
+}
 
 
 /* z-index problem of munualy text select location */

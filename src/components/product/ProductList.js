@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { BsPlusCircle, BsGrid, BsListUl } from "react-icons/bs";
-import { AiOutlineEye } from 'react-icons/ai'
+import { AiOutlineEye, AiOutlineCloseCircle } from 'react-icons/ai'
 import { FaRupeeSign } from "react-icons/fa";
 import { BsHeart, BsShare } from "react-icons/bs";
 import { Link } from 'react-router-dom'
@@ -9,6 +9,12 @@ import api from '../../api/api';
 import { motion } from 'framer-motion'
 import { ActionTypes } from '../../model/action-type';
 import ReactSlider from 'react-slider';
+
+
+
+
+
+
 
 const ProductList = () => {
 
@@ -36,6 +42,7 @@ const ProductList = () => {
 
     // const [minPrice, setminPrice] = useState(null)
     // const [maxPrice, setmaxPrice] = useState(null)
+
 
 
 
@@ -135,7 +142,7 @@ const ProductList = () => {
             dispatch({ type: ActionTypes.SET_FILTER_BRANDS, payload: [] })
             dispatch({ type: ActionTypes.SET_FILTER_VIEW, payload: true })
             dispatch({ type: ActionTypes.SET_FILTER_MIN_MAX_PRICE, payload: null })
-            dispatch({type:ActionTypes.SET_FILTER_SORT,payload:'new'})
+            dispatch({ type: ActionTypes.SET_FILTER_SORT, payload: 'new' })
         }
     }, [])
 
@@ -277,110 +284,127 @@ const ProductList = () => {
     }
 
 
+    const Filter = () => {
+        return (
+            <>
+                {/* filter section */}
+
+                <div className='filter-wrapper'>
+                    <h5>Product category</h5>
+                    {category.status === 'loading'
+                        ? (
+                            <div className="d-flex justify-content-center">
+                                <div className="spinner-border" role="status">
+                                    <span className="visually-hidden">Loading...</span>
+                                </div>
+                            </div>
+                        )
+                        : (
+                            <>
+                                {category.category.map((ctg, index) => (
+                                    <motion.div whileTap={{ scale: 0.8 }} onClick={() => filterbyCategory(ctg)} className={`d-flex justify-content-between align-items-center filter-bar ${filter.category_id !== null ? filter.category_id === ctg.id ? 'active' : null : null}`} key={index}>
+                                        <div className='d-flex gap-3'>
+                                            <div className='image-container'>
+                                                <img src={ctg.image_url} alt="category"></img>
+                                            </div>
+                                            <p>{ctg.name}</p>
+                                        </div>
+
+                                        <BsPlusCircle />
+                                    </motion.div>
+                                ))}
+                            </>
+                        )}
+                </div>
+
+                <div className='filter-wrapper'>
+                    <h5>Filter by price</h5>
+
+                    {minmaxTotalPrice.total_min_price === null || minmaxTotalPrice.total_max_price === null || minmaxTotalPrice.min_price === null || minmaxTotalPrice.max_price === null
+                        ? (
+                            <div className="d-flex justify-content-center">
+                                <div className="spinner-border" role="status">
+                                    <span className="visually-hidden">Loading...</span>
+                                </div>
+                            </div>)
+                        : (
+                            <>
+                                <ReactSlider
+                                    className="slider"
+                                    thumbClassName="thumb"
+                                    trackClassName="track"
+                                    min={minmaxTotalPrice.total_min_price}
+                                    max={minmaxTotalPrice.total_max_price}
+                                    defaultValue={[minmaxTotalPrice.min_price, minmaxTotalPrice.max_price]}
+                                    ariaLabel={['Lower thumb', 'Upper thumb']}
+                                    ariaValuetext={state => `Thumb value ${state.valueNow}`}
+                                    renderThumb={(props, state) => <div {...props}>{state.valueNow}</div>}
+                                    pearling={true}
+                                    withTracks={true}
+                                    minDistance={100}
+                                    onAfterChange={([min, max]) => {
+                                        // console.log(min, max)
+                                        dispatch({ type: ActionTypes.SET_FILTER_MIN_MAX_PRICE, payload: { min_price: min, max_price: max } })
+                                    }}
+                                />
+                            </>
+                        )}
+
+                </div>
+
+                <div className='filter-wrapper'>
+                    <h5>Brands</h5>
+                    {brands === null
+                        ? (
+                            <div className="d-flex justify-content-center">
+                                <div className="spinner-border" role="status">
+                                    <span className="visually-hidden">Loading...</span>
+                                </div>
+                            </div>
+                        )
+                        : (
+                            <>
+                                {brands.map((brand, index) => (
+                                    <motion.div whileTap={{ scale: 0.8 }} onClick={() => filterbyBrands(brand)} className={`d-flex justify-content-between align-items-center filter-bar ${filter.brand_ids !== [] ? filter.brand_ids.includes(brand.id) ? 'active' : null : null}`} key={index} >
+                                        <div className='d-flex gap-3 align-items-baseline'>
+                                            <div className='image-container'>
+                                                <img src={brand.image_url} alt="category"></img>
+                                            </div>
+                                            <p>{brand.name}</p>
+                                        </div>
+                                        <div className='d-flex align-items-baseline justify-content-center brand-count'>
+                                            <p className='m-auto'>{brandproductcountmap.get(`brand${brand.id}`) !== undefined
+                                                ? brandproductcountmap.get(`brand${brand.id}`)
+                                                : 0}
+                                            </p>
+                                        </div>
+                                    </motion.div>
+                                ))}
+                            </>
+                        )}
+
+                </div>
+
+            </>
+        )
+    }
+
 
 
     return (
         <section id="productlist" className='container' >
             <div className='wrapper'>
 
-                {/* filter section */}
-                <div className='d-flex flex-column col col-lg-3 col-md-auto' style={{ gap: "20px" }}>
-                    <div className='filter-wrapper'>
-                        <h5>Product category</h5>
-                        {category.status === 'loading'
-                            ? (
-                                <div className="d-flex justify-content-center">
-                                    <div className="spinner-border" role="status">
-                                        <span className="visually-hidden">Loading...</span>
-                                    </div>
-                                </div>
-                            )
-                            : (
-                                <>
-                                    {category.category.map((ctg, index) => (
-                                        <motion.div whileTap={{ scale: 0.8 }} onClick={() => filterbyCategory(ctg)} className={`d-flex justify-content-between align-items-center filter-bar ${filter.category_id !== null ? filter.category_id === ctg.id ? 'active' : null : null}`} key={index}>
-                                            <div className='d-flex gap-3'>
-                                                <div className='image-container'>
-                                                    <img src={ctg.image_url} alt="category"></img>
-                                                </div>
-                                                <p>{ctg.name}</p>
-                                            </div>
-
-                                            <BsPlusCircle />
-                                        </motion.div>
-                                    ))}
-                                </>
-                            )}
-                    </div>
-
-                    <div className='filter-wrapper'>
-                        <h5>Filter by price</h5>
-
-                        {minmaxTotalPrice.total_min_price === null || minmaxTotalPrice.total_max_price === null || minmaxTotalPrice.min_price === null || minmaxTotalPrice.max_price === null
-                            ? (
-                                <div className="d-flex justify-content-center">
-                                    <div className="spinner-border" role="status">
-                                        <span className="visually-hidden">Loading...</span>
-                                    </div>
-                                </div>)
-                            : (
-                                <>
-                                    <ReactSlider
-                                        className="slider"
-                                        thumbClassName="thumb"
-                                        trackClassName="track"
-                                        min={minmaxTotalPrice.min_price}
-                                        max={minmaxTotalPrice.max_price}
-                                        defaultValue={[minmaxTotalPrice.min_price, minmaxTotalPrice.max_price]}
-                                        ariaLabel={['Lower thumb', 'Upper thumb']}
-                                        ariaValuetext={state => `Thumb value ${state.valueNow}`}
-                                        renderThumb={(props, state) => <div {...props}>{state.valueNow}</div>}
-                                        pearling={true}
-                                        withTracks={true}
-                                        minDistance={100}
-                                        onAfterChange={([min, max]) => {
-                                            dispatch({ type: ActionTypes.SET_FILTER_MIN_MAX_PRICE, payload: { min_price: min, max_price: max } })
-                                        }}
-                                    />
-                                </>
-                            )}
-
-                    </div>
-
-                    <div className='filter-wrapper'>
-                        <h5>Brands</h5>
-                        {brands === null
-                            ? (
-                                <div className="d-flex justify-content-center">
-                                    <div className="spinner-border" role="status">
-                                        <span className="visually-hidden">Loading...</span>
-                                    </div>
-                                </div>
-                            )
-                            : (
-                                <>
-                                    {brands.map((brand, index) => (
-                                        <motion.div whileTap={{ scale: 0.8 }} onClick={() => filterbyBrands(brand)} className={`d-flex justify-content-between align-items-center filter-bar ${filter.brand_ids !== [] ? filter.brand_ids.includes(brand.id) ? 'active' : null : null}`} key={index} >
-                                            <div className='d-flex gap-3 align-items-baseline'>
-                                                <div className='image-container'>
-                                                    <img src={brand.image_url} alt="category"></img>
-                                                </div>
-                                                <p>{brand.name}</p>
-                                            </div>
-                                            <div className='d-flex align-items-baseline justify-content-center brand-count'>
-                                                <p className='m-auto'>{brandproductcountmap.get(`brand${brand.id}`) !== undefined
-                                                    ? brandproductcountmap.get(`brand${brand.id}`)
-                                                    : 0}
-                                                </p>
-                                            </div>
-                                        </motion.div>
-                                    ))}
-                                </>
-                            )}
-
-                    </div>
+                <div className="hide-desktop offcanvas offcanvas-start" tabIndex="-1" id="filteroffcanvasExample" aria-labelledby="filteroffcanvasExampleLabel">
+                    <button type="button" className="close-canvas" data-bs-dismiss="offcanvas" aria-label="Close"><AiOutlineCloseCircle /></button>
+                    {Filter()}
                 </div>
 
+
+                {/* filter section */}
+                <div className='flex-column col col-lg-3 col-md-auto filter-container hide-mobile-screen' style={{ gap: "20px" }}>
+                    {Filter()}
+                </div>
 
                 {/* products according to applied filter */}
                 <div className='d-flex flex-column w-100 h-100' style={{ gap: "20px" }}>
@@ -399,9 +423,9 @@ const ProductList = () => {
                         </div>
 
                         <div className="select">
-                            <select className="form-select" aria-label="Default select example" onChange={(e)=>{
-                                
-                                dispatch({type:ActionTypes.SET_FILTER_SORT,payload:e.target.value})
+                            <select className="form-select" aria-label="Default select example" onChange={(e) => {
+
+                                dispatch({ type: ActionTypes.SET_FILTER_SORT, payload: e.target.value })
                             }}>
                                 <option value="new">New Products</option>
                                 <option value="old">Old Products</option>
@@ -436,7 +460,7 @@ const ProductList = () => {
                             <>
                                 {productresult.length > 0
                                     ? (
-                                        <div className='d-flex flex-wrap h-100' style={{ gap: "8px" }}>
+                                        <div className='d-flex flex-wrap justify-content-center h-100' style={{ gap: "8px" }}>
 
                                             {productresult.map((product, index) => (
                                                 <div key={index} className={`border product-card ${!filter.grid_view ? 'list-view' : ''}`}>
@@ -487,9 +511,11 @@ const ProductList = () => {
 
                         )}
                 </div>
+
+
             </div>
 
-        </section>
+        </section >
     )
 }
 

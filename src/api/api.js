@@ -245,7 +245,8 @@ const api = {
 
         if (filters !== undefined) {
             for (const filter in filters) {
-                formdata.append(filter, filters[filter])
+                if(filter!== null || filter!==undefined)
+                    formdata.append(filter, filters[filter])
             }
         }
 

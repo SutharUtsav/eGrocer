@@ -40,8 +40,21 @@
   color: var(--secondary-color);
 }
 
+#footer .download-button{
+  height: 40px;
+}
+
+#footer .download-button img{
+  width: 100%;
+  height: 100%;
+}
+
 #footer .copyright{
   background-color: #000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 8px 0;
 }
 
 #footer .copyright p{

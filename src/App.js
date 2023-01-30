@@ -53,11 +53,11 @@ function App() {
     <AnimatePresence>
       <div className="w-100 h-auto flex flex-col ">
         <Header />
-        <main className="main-app">
+        <main id='main' className="main-app">
           <Routes>
             <Route path="/profile" element={<ProfileDashboard />}></Route>
             <Route path='/categories' element={<ShowAllCategories/>}></Route>
-            <Route path='/products/*' element={<ProductList/>}></Route>
+            <Route path='/products' element={<ProductList/>}></Route>
             <Route path="/*" element={<MainContainer />}></Route>
 
           </Routes>

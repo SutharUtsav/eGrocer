@@ -1,4 +1,4 @@
-import React,{useState,useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import './footer.css';
 import { Link } from 'react-router-dom';
 import googleplay from '../../utils/google-play.jpg'
@@ -37,7 +37,7 @@ export const Footer = () => {
         <section id="footer">
             <div className="container">
                 <div className="row ">
-                    <div className="col-xs-3 col-sm-3 col-md-3" style={{maxHeight:"40px"}}>
+                    <div className="col-xs-3 col-sm-3 col-md-3" >
                         <h5>categories</h5>
 
                         {category === null
@@ -78,14 +78,14 @@ export const Footer = () => {
                             <li><a href="/">mumbai</a></li>
                             <li><a href="/">hydrabad</a></li>
                             <li><a href="/">kolkata</a></li>
-                            
+
                             <li><a href="/">Gurugram</a></li>
                             <li><a href="/">new delhi</a></li>
                             <li><a href="/">bengaluru</a></li>
                             <li><a href="/">mumbai</a></li>
                             <li><a href="/">hydrabad</a></li>
                             <li><a href="/">kolkata</a></li>
-                            
+
                         </ul>
                     </div>
 
@@ -93,17 +93,28 @@ export const Footer = () => {
                         <div className='d-flex flex-column gap-3'>
                             <div>
                                 <h5>Download apps</h5>
-                                <div className='d-flex flex-row gap-3 row'>
-                                    <img src={googleplay} alt='google-play' className='col-5' ></img>
-                                    <img src={appstore} alt='app-store' className='col-5'></img>
+                                <div className='d-flex flex-row gap-3 justify-content-evenly'>
+                                    <button type='button' className='download-button'>
+                                        <img src={googleplay} alt='google-play'></img>
+                                    </button>
+                                    <button type='button' className='download-button'>
+                                        <img src={appstore} alt='app-store' ></img>
+                                    </button>
+
                                 </div>
                             </div>
                             <div>
                                 <h5>payment method</h5>
-                                <div className='d-flex flex-row row gap-3 payment' >
-                                    <img src={rozerpay} alt='rozerpay' className='col-3'></img>
-                                    <img src={mastercard} alt='master-card' className='col-3'></img>
-                                    <img src={upi} alt='upi' className='col-3'></img>
+                                <div className='d-flex flex-row gap-3 payment justify-content-evenly' >
+                                    <button type='button' className='download-button'>
+                                        <img src={rozerpay} alt='rozerpay' ></img>
+                                    </button>
+                                    <button type='button' className='download-button'>
+                                        <img src={mastercard} alt='master-card' ></img>
+                                    </button>
+                                    <button type='button'>
+                                        <img src={upi} alt='upi' className='download-button'></img>
+                                    </button>
 
                                 </div>
                             </div>
@@ -111,7 +122,7 @@ export const Footer = () => {
                     </div>
                 </div>
             </div>
-            <div className="row copyright">
+            <div className="copyright">
                 <div className="col-xs-12 col-sm-12 col-md-12 mt-2 mt-sm-2 text-center text-white">
                     <p className="h6">Copyright © 2022.All right Reversed By eGrocer.</p>
                 </div>

@@ -21,7 +21,7 @@ function SamplePrevArrow(props) {
     return (
         <div
             className={className}
-            style={{ ...style, display: "block", background: "var(--secondary-color)", borderRadius: "50%", width: "3rem", height: "3rem", textAlign: "center", border: "3px solid #fff" }}
+            style={window.innerWidth > "30rem" ? { ...style, display:"flex",alignItems:"center",justifyContent:"center", background: "var(--secondary-color)", borderRadius: "50%", width: "30px", height: "30px" }:{display:"none"}}
             onClick={onClick}
         />
     );
@@ -32,7 +32,7 @@ function SampleNextArrow(props) {
     return (
         <div
             className={className}
-            style={{ ...style, display: "block", background: "var(--secondary-color)", borderRadius: "50%", width: "3rem", height: "3rem", textAlign: "center", border: "3px solid #fff" }}
+            style={window.innerWidth > "30rem" ? { ...style, display:"flex",alignItems:"center",justifyContent:"center", background: "var(--secondary-color)", borderRadius: "50%", width: "30px", height: "30px" }:{display:"none"}}
             onClick={onClick}
         />
     );
@@ -104,14 +104,15 @@ const ProductContainer = () => {
         <section id="products" className='container'>
             {products === null
                 ? (
-                    <div className='d-flex flex-column p-4 gap-3'>
-                        <Shimmer width={1100} height={60}></Shimmer>
-                        <div className='d-flex flex-row justify-content-center gap-4'>
-                            <Shimmer width={150} height={200}></Shimmer>
-                            <Shimmer width={150} height={200}></Shimmer>
-                            <Shimmer width={150} height={200}></Shimmer>
-                        </div>
-                    </div>
+                    <></>
+                    // <div className='d-flex flex-column p-4 gap-3'>
+                    //     <Shimmer width={"90%"} height={60}></Shimmer>
+                    //     <div className='d-flex flex-row justify-content-center gap-4'>
+                    //         <Shimmer width={150} height={200}></Shimmer>
+                    //         <Shimmer width={150} height={200}></Shimmer>
+                    //         <Shimmer width={150} height={200}></Shimmer>
+                    //     </div>
+                    // </div>
 
                 )
                 : (

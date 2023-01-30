@@ -6,10 +6,13 @@ import './homecontainer.css'
 const HomeContainer = () => {
     return (
 
-        <section id="home" className='container'>
+        // elementor-section-height-min-height elementor-section-items-stretch elementor-section-boxed elementor-section-height-default
+        <section id="home" className='home-section home-element section'>
             {/* Slider & Category */}
-            <div className='homecontainer h-100'>
-                <Category />
+            <div className='home-container container'>
+                <div className='category-wrapper hide-mobile dropdown'>
+                    <Category />
+                </div>
                 <Slider />
             </div>
         </section>

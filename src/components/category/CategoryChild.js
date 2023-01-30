@@ -4,7 +4,8 @@ import { motion } from 'framer-motion'
 
 const CategoryChild = (props) => {
 
-    const fetchCategory = (id) => {
+    const fetchCategory = () => {
+        const id = props.ctg_id;
         api.getCategory(id)
             .then(response => response.json())
             .then(result => {
@@ -16,7 +17,7 @@ const CategoryChild = (props) => {
     }
 
     useEffect(() => {
-        fetchCategory(props.ctg_id);
+        fetchCategory();
     }, [])
 
     const [category, setcategory] = useState(null)
@@ -34,15 +35,16 @@ const CategoryChild = (props) => {
                     </div>
                 )
                 : (
-                    <>
+                    <div className='sub-categories'>
                         {category.map((ctg, index) => (
 
                             <motion.button type='button' className='p-3 border-bottom' key={index}>
-                                <img src={ctg.image_url} alt={ctg.subtitle} className='mx-3' />
+                                <img src={ctg.image_url} alt={ctg.subtitle} className='me-3' style={{marginLeft:"40px"}}/>
                                 {ctg.name}
                             </motion.button>
+
                         ))}
-                    </>
+                    </div>
                 )}
         </div>
     )
