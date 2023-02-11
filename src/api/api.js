@@ -178,23 +178,6 @@ const api = {
 
         return fetch(url, requestOptions)
     },
-    getCartContent() {
-        var myHeaders = new Headers();
-        myHeaders.append(access_key_param, access_key);
-        myHeaders.append("Authorization", token_prefix + localStorage.getItem('access_token'));
-        // myHeaders.append("Cookie", "egrocer_session=foCThxobkUYocTq5V3QrKtK4JDu4En7D4Ph3mgkY");
-
-        // var formdata = new FormData();
-
-        var requestOptions = {
-            method: 'GET',
-            headers: myHeaders,
-            //body: formdata,
-            redirect: 'follow'
-        };
-
-        return fetch(process.env.REACT_APP_URL + process.env.REACT_APP_SUBURL + "/cart", requestOptions)
-    },
     getUser(token) {
         var myHeaders = new Headers();
         myHeaders.append(access_key_param, access_key);
@@ -245,7 +228,7 @@ const api = {
 
         if (filters !== undefined) {
             for (const filter in filters) {
-                if(filter!== null || filter!==undefined)
+                if (filter !== null || filter !== undefined)
                     formdata.append(filter, filters[filter])
             }
         }
@@ -258,6 +241,83 @@ const api = {
         };
 
         return fetch(process.env.REACT_APP_URL + process.env.REACT_APP_SUBURL + "/products", requestOptions)
+    },
+    getProductbyId(city_id, latitude, longitude, id) {
+        var myHeaders = new Headers();
+        myHeaders.append(access_key_param, access_key);
+
+        var formdata = new FormData();
+        formdata.append("id", id);
+        formdata.append("city_id", city_id);
+        formdata.append("latitude", latitude);
+        formdata.append("longitude", longitude);
+
+        var requestOptions = {
+            method: 'POST',
+            headers: myHeaders,
+            body: formdata,
+            redirect: 'follow'
+        };
+
+        return fetch(process.env.REACT_APP_URL + process.env.REACT_APP_SUBURL + "/product_by_id", requestOptions)
+
+    },
+    getCart(token, latitude, longitude) {
+        var myHeaders = new Headers();
+        myHeaders.append(access_key_param, access_key);
+        myHeaders.append("Authorization", token_prefix + token);
+
+        var requestOptions = {
+            method: 'GET',
+            headers: myHeaders,
+            redirect: 'follow'
+        };
+
+        var params = { latitude: latitude, longitude: longitude };
+        var url = new URL(process.env.REACT_APP_URL + process.env.REACT_APP_SUBURL + "/cart");
+        for (let k in params) {
+            url.searchParams.append(k, params[k])
+        };
+        return fetch(url, requestOptions)
+
+    },
+    addToCart(token, product_id, product_variant_id, qty) {
+        var myHeaders = new Headers();
+        myHeaders.append(access_key_param, access_key);
+        myHeaders.append("Authorization", token_prefix + token);
+
+        var formdata = new FormData();
+        formdata.append("product_id", product_id);
+        formdata.append("product_variant_id", product_variant_id);
+        formdata.append("qty", qty);
+
+        var requestOptions = {
+            method: 'POST',
+            headers: myHeaders,
+            body: formdata,
+            redirect: 'follow'
+        };
+
+        return fetch(process.env.REACT_APP_URL + process.env.REACT_APP_SUBURL + "/cart/add", requestOptions)
+    },
+    removeFromCart(token, product_id, product_variant_id) {
+        var myHeaders = new Headers();
+        myHeaders.append(access_key_param, access_key);
+        myHeaders.append("Authorization", token_prefix + token);
+
+        var formdata = new FormData();
+        formdata.append("product_id", product_id);
+        formdata.append("product_variant_id", product_variant_id); 
+        // formdata.append("is_remove_all", is_all_remove);
+
+        var requestOptions = {
+            method: 'POST',
+            headers: myHeaders,
+            body: formdata,
+            redirect: 'follow'
+        };
+
+        return fetch(process.env.REACT_APP_URL + process.env.REACT_APP_SUBURL + "/cart/remove", requestOptions)
     },
 }
 export default api;

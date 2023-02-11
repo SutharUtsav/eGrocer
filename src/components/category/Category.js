@@ -10,9 +10,9 @@ import { useDispatch } from 'react-redux';
 import { ActionTypes } from '../../model/action-type';
 import { Link } from 'react-router-dom';
 
-// import category3 from '../../utils/categories/category3.jpg'
-// import category4 from '../../utils/categories/category4.jpg'
-// import category5 from '../../utils/categories/category5.jpg'
+import category3 from '../../utils/categories/category3.jpg'
+import category4 from '../../utils/categories/category4.jpg'
+import category5 from '../../utils/categories/category5.jpg'
 
 const Category = () => {
 
@@ -110,7 +110,7 @@ const Category = () => {
                                         <li><p className="dropdown-item" >Another action</p></li>
                                         <li><p className="dropdown-item" >Something else here</p></li>
                                     </ul>
-                                    
+
                                 </div>
                             </div>
                             <div className='category-container'>
@@ -127,13 +127,16 @@ const Category = () => {
                                     meat
                                 </motion.button>
                             </div> */}
+
+
+                            <Link to='/categories' className='p-3' id="show-more-button">
+                                <div>
+                                    <BsPlusCircle fill='white' fontSize={"2.4rem"} />
+                                </div>
+                                <span>show more</span>
+                            </Link>
                         </div>
-                        <Link to='/categories' className='p-3' id="show-more-button">
-                            <div>
-                                <BsPlusCircle fill='white' fontSize={"2.4rem"} />
-                            </div>
-                            <span>show more</span>
-                        </Link>
+
 
                     </>
                 )}

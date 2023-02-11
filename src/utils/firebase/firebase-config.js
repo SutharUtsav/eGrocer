@@ -2,7 +2,7 @@ import { initializeApp } from 'firebase/app';
 import { getAuth } from "firebase/auth";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBdDqLlXGn2RXOgnfPJ8ZMjkQ1DWUD7SMM",
+  apiKey: "AIzaSyBlfqs5K9HEe9c1Eu5bjPXXjr8Hz2mbTZE",
   authDomain: "egrocer-457a9.firebaseapp.com",
   projectId: "egrocer-457a9",
   storageBucket: "egrocer-457a9.appspot.com",
@@ -13,3 +13,6 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 export const authentication = getAuth(app);
+
+
+//AIzaSyBdDqLlXGn2RXOgnfPJ8ZMjkQ1DWUD7SMM

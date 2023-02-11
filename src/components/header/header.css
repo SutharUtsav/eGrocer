@@ -171,6 +171,7 @@
 
 .icon {
   font-size: 3.5rem;
+  background: none;
   cursor: pointer;
 }
 

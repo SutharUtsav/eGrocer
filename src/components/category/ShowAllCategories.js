@@ -68,7 +68,7 @@ const ShowAllCategories = () => {
               {category.category.map((ctg, index) => (
                 <div className='card' key={index}>
                   <img className='card-img-top' src={ctg.image_url} alt='' />
-                  <div className='card-body' onClick={()=>selectCategory(ctg)}>
+                  <div className='card-body' style={{cursor:"pointer"}} onClick={()=>selectCategory(ctg)}>
                     <p>{ctg.name} (
                       {map.get(`category${ctg.id}`) !== undefined
                         ?  map.get(`category${ctg.id}`)  

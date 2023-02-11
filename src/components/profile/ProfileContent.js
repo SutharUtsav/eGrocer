@@ -75,7 +75,7 @@ const ProfileContent = (props) => {
                                 <input type='email' placeholder='email address' value={useremail} onChange={(e) => {
                                     setuseremail(e.target.value)
                                 }} required />
-                                <input type='tel' placeholder='mobile number' value={user.user.mobile} readOnly />
+                                <input type='tel' placeholder='mobile number' value={user.user.mobile} readOnly style={{color:"var(--sub-text-color)"}}/>
                                 <input type="file" id="file" accept={'image/*'} onChange={(e) => { setselectedFile(e.target.files[0]) }} />
                             </div>
                             <motion.button whileTap={{ scale: 0.8 }} type='submit' disabled={props.isupdating} >update profile</motion.button>

@@ -1,19 +1,23 @@
 import React, { useState, useEffect } from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import api from '../../api/api'
 import Slider from 'react-slick'
 import './product.css'
 import { AiOutlineEye } from 'react-icons/ai'
 import { FaRupeeSign } from "react-icons/fa";
-import { BsHeart, BsShare } from "react-icons/bs";
+import { BsHeart, BsShare, BsPlus } from "react-icons/bs";
+import { BiMinus } from 'react-icons/bi'
 import { Link } from 'react-router-dom'
-// import { motion } from 'framer-motion'
-import { Shimmer } from 'react-shimmer'
+import { toast } from 'react-toastify'
+import Cookies from 'universal-cookie'
+import { ActionTypes } from '../../model/action-type';
 
-// import product4 from '../../utils/products/product4.jpg'
-// import product5 from '../../utils/products/products5.webp'
-// import product6 from '../../utils/products/products6.webp'
-// import product7 from '../../utils/products/products7.webp'
+// import { motion } from 'framer-motion'
+// import { Shimmer } from 'react-shimmer'
+// import { ActionTypes } from '../../model/action-type'
+// import ProductDetails from './ProductDetails'
+import QuickViewModal from './QuickViewModal'
+
 
 
 function SamplePrevArrow(props) {
@@ -21,7 +25,7 @@ function SamplePrevArrow(props) {
     return (
         <div
             className={className}
-            style={window.innerWidth > "30rem" ? { ...style, display:"flex",alignItems:"center",justifyContent:"center", background: "var(--secondary-color)", borderRadius: "50%", width: "30px", height: "30px" }:{display:"none"}}
+            style={window.innerWidth > 450 ? { ...style, display: "flex", alignItems: "center", justifyContent: "center", background: "var(--secondary-color)", borderRadius: "50%", width: "30px", height: "30px" } : { display: "none" }}
             onClick={onClick}
         />
     );
@@ -32,13 +36,30 @@ function SampleNextArrow(props) {
     return (
         <div
             className={className}
-            style={window.innerWidth > "30rem" ? { ...style, display:"flex",alignItems:"center",justifyContent:"center", background: "var(--secondary-color)", borderRadius: "50%", width: "30px", height: "30px" }:{display:"none"}}
+            style={window.innerWidth > 450 ? { ...style, display: "flex", alignItems: "center", justifyContent: "center", background: "var(--secondary-color)", borderRadius: "50%", width: "30px", height: "30px" } : { display: "none" }}
             onClick={onClick}
         />
     );
 }
 
 const ProductContainer = () => {
+
+    //initialize cookies
+    const cookies = new Cookies();
+    const dispatch = useDispatch()
+
+    const city = useSelector(state => state.city);
+
+
+    useEffect(() => {
+        if (city.status === 'fulfill') {
+            fetchSection(city.city.id, city.city.latitude, city.city.longitude)
+        }
+    }, [city])
+
+
+    const [products, setproducts] = useState(null)
+    const [selectedProduct, setselectedProduct] = useState({})
 
     const fetchSection = (id, lat, lng) => {
         api.getSection(id, lat, lng)
@@ -54,21 +75,52 @@ const ProductContainer = () => {
             .catch(error => console.log("error ", error))
     }
 
-    const city = useSelector(state => state.city);
+    //Add to Cart
+    const addtoCart = async (product_id, product_variant_id, qty) => {
+        await api.addToCart(cookies.get('jwt_token'), product_id, product_variant_id, qty)
+            .then(response => response.json())
+            .then(async (result) => {
+                if (result.status === 1) {
+                    toast.success(result.message)
+                    await api.getCart(cookies.get('jwt_token'), city.city.latitude, city.city.longitude)
+                        .then(resp => resp.json())
+                        .then(res => {
+                            if (res.status === 1)
+                                dispatch({ type: ActionTypes.SET_CART, payload: res })
+                        })
+                }
+                else {
+                    toast.error(result.message)
+                }
+            })
+    }
 
-    useEffect(() => {
-        if (city.status === 'fulfill') {
-            fetchSection(city.city.id, city.city.latitude, city.city.longitude)
-        }
-    }, [city])
+    //remove from Cart
+    const removefromCart = async (product_id, product_variant_id) => {
+        await api.removeFromCart(cookies.get('jwt_token'), product_id, product_variant_id)
+            .then(response => response.json())
+            .then(async (result) => {
+                if (result.status === 1) {
+                    toast.success(result.message)
+                    await api.getCart(cookies.get('jwt_token'), city.city.latitude, city.city.longitude)
+                        .then(resp => resp.json())
+                        .then(res => {
+                            if (res.status === 1)
+                                dispatch({ type: ActionTypes.SET_CART, payload: res })
+                            else
+                                dispatch({ type: ActionTypes.SET_CART, payload: null })
+                        })
+                }
+                else {
+                    toast.error(result.message)
+                }
+            })
+    }
 
-
-    const [products, setproducts] = useState(null)
-    // const [selectedVariant, setselectedVariant] = useState(null)
 
     const settings = {
         infinite: false,
-        slidesToShow: 6,
+        slidesToShow: 5,
         slidesToScroll: 1,
         initialSlide: 0,
         nextArrow: <SampleNextArrow />,
@@ -77,7 +129,7 @@ const ProductContainer = () => {
             {
                 breakpoint: 1024,
                 settings: {
-                    slidesToShow: 6,
+                    slidesToShow: 4,
                     slidesToScroll: 1,
 
                 }
@@ -85,7 +137,7 @@ const ProductContainer = () => {
             {
                 breakpoint: 768,
                 settings: {
-                    slidesToShow: 4,
+                    slidesToShow: 3,
                     slidesToScroll: 1,
 
                 }
@@ -99,6 +151,8 @@ const ProductContainer = () => {
             }
         ]
     };
+
+
 
     return (
         <section id="products" className='container'>
@@ -127,232 +181,117 @@ const ProductContainer = () => {
                         <Slider {...settings}>
                             {products.map((product, index) => (
                                 <div key={index} className='d-flex border flex-column product-card'>
-                                    <div className='image-container'>
+
+                                    <div className='image-container' onClick={() => {
+                                        // var prod = {
+                                        //     ...product,
+                                        //     selectedVariant: JSON.parse(document.getElementById(`select-product${index}-variant-section`).value)
+                                        // };
+
+                                        setselectedProduct(product)
+
+                                    }} data-bs-toggle="modal" data-bs-target="#quickviewModal">
+
                                         <Link to='/'><AiOutlineEye /></Link>
                                         <img src={product.image_url} alt={product.slug} className='card-img-top' />
                                     </div>
+
                                     <div className="card-body product-card-body p-3">
                                         <span>{product.name}</span>
                                         <div className='d-flex flex-row justify-content-between'>
-                                            <select onChange={(e) => {
-                                                document.getElementById(`price${product.id}`).innerHTML = JSON.parse(e.target.value).price;
+                                            <select id={`select-product${index}-variant-section`} onChange={(e) => {
+                                                document.getElementById(`price${index}-section`).innerHTML = parseFloat(JSON.parse(e.target.value).price);
+
+                                                if(document.getElementById(`input-cart-section${index}`).classList.contains('active')){
+                                                    document.getElementById(`input-cart-section${index}`).classList.remove('active')
+                                                    document.getElementById(`Add-to-cart-section${index}`).classList.add('active')
+                                                
+                                                }
+
                                             }} defaultValue={JSON.stringify(product.variants[0])} >
-                                                {product.variants.map((x, index) => (
-                                                    <option key={index} value={JSON.stringify(x)} >{x.stock_unit_id} {x.stock_unit_name} Rs.{x.price}</option>
+
+                                                {product.variants.map((x, ind) => (
+                                                    <option key={ind} value={JSON.stringify(x)} >{x.stock_unit_id} {x.stock_unit_name} Rs.{x.price}</option>
                                                 ))}
+
                                             </select>
 
                                             <div className='price d-flex flex-row align-items-center'>
                                                 <FaRupeeSign fill='var(--secondary-color)' />
-                                                <span id={`price${product.id}`}>{product.price}</span>
+                                                <span id={`price${index}-section`}>{parseFloat(product.price)}</span>
                                             </div>
 
                                         </div>
                                     </div>
+
                                     <div className='d-flex flex-row border-top product-card-footer'>
-                                        <div className='border-end col col-lg-3'>
+                                        <div className='border-end '>
                                             <button type="button" className='w-100 h-100'><BsHeart /></button>
                                         </div>
-                                        <div className='border-end col col-lg-6'>
-                                            <button type="button" className='w-100 h-100 add-to-cart'>add to cart</button>
+
+                                        <div className='border-end' style={{ flexGrow: "1" }} >
+                                            <button type="button" id={`Add-to-cart-section${index}`} className='w-100 h-100 add-to-cart active' onClick={() => {
+                                                if (cookies.get('jwt_token') !== undefined) {
+                                                    document.getElementById(`Add-to-cart-section${index}`).classList.remove('active')
+                                                    document.getElementById(`input-cart-section${index}`).classList.add('active')
+                                                    document.getElementById(`input-section${index}`).innerHTML = 1
+                                                    addtoCart(product.id, JSON.parse(document.getElementById(`select-product${index}-variant-section`).value).id, document.getElementById(`input-section${index}`).innerHTML)
+                                                }
+                                                else {
+                                                    toast.error("OOps! You need to login first to access the cart!")
+                                                }
+
+                                            }} >add to cart</button>
+
+                                            <div id={`input-cart-section${index}`} className="w-100 h-100 input-to-cart" >
+                                                <button type='button' onClick={() => {
+
+                                                    var val = parseInt(document.getElementById(`input-section${index}`).innerHTML);
+                                                    if (val === 1) {
+                                                        document.getElementById(`input-section${index}`).innerHTML = 0;
+                                                        document.getElementById(`input-cart-section${index}`).classList.remove('active')
+                                                        document.getElementById(`Add-to-cart-section${index}`).classList.add('active')
+                                                        removefromCart(product.id, JSON.parse(document.getElementById(`select-product${index}-variant-section`).value).id)
+
+                                                    }
+                                                    else {
+                                                        document.getElementById(`input-section${index}`).innerHTML = val - 1;
+                                                        addtoCart(product.id, JSON.parse(document.getElementById(`select-product${index}-variant-section`).value).id, document.getElementById(`input-section${index}`).innerHTML)
+                                                    }
+
+
+                                                }}><BiMinus /></button>
+                                                <span id={`input-section${index}`} ></span>
+                                                <button type='button' onClick={() => {
+
+                                                    var val = document.getElementById(`input-section${index}`).innerHTML;
+                                                    if (val < product.total_allowed_quantity) {
+                                                        document.getElementById(`input-section${index}`).innerHTML = parseInt(val) + 1;
+                                                        addtoCart(product.id, JSON.parse(document.getElementById(`select-product${index}-variant-section`).value).id, document.getElementById(`input-section${index}`).innerHTML)
+                                                    }
+
+
+                                                }}><BsPlus /> </button>
+
+
+                                            </div>
+
                                         </div>
-                                        <div className='col col-lg-3'>
+                                    
+                                        <div className=''>
                                             <button type="button" className='w-100 h-100'><BsShare /></button>
                                         </div>
                                     </div>
+
                                 </div>
                             ))}
 
-
-
-                            {/* dummy products */}
-
-                            {/* <div className='d-flex border flex-column product-card'>
-                                <div className='d-flex flex-row image-container'>
-                                    <Link to='/'><AiOutlineEye /></Link>
-                                    <img src={product4} alt="souce" className='card-img-top' />
-                                </div>
-                                <div className="card-body product-card-body p-3">
-                                    <span>Souces</span>
-                                    <div className='d-flex flex-row justify-content-between'>
-                                        <select  >
-
-                                            <option value={300} >3 KG Rs.300</option>
-
-                                        </select>
-
-                                        <span className='price'><FaRupeeSign fill='var(--secondary-color)' />500</span>
-                                    </div>
-                                </div>
-                                <div className='d-flex flex-row border-top product-card-footer'>
-                                    <div className='border-end col col-lg-3'>
-                                        <button type="button" className='w-100'><BsHeart /></button>
-                                    </div>
-                                    <div className='border-end col col-lg-6'>
-                                        <button type="button" className='w-100 h-100 add-to-cart'>add to cart</button>
-                                    </div>
-                                    <div className='col col-lg-3'>
-                                        <button type="button" className='w-100'><BsShare /></button>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className='d-flex border flex-column product-card'>
-                                <div className='d-flex flex-row image-container'>
-                                    <Link to='/'><AiOutlineEye /></Link>
-                                    <img src={product5} alt="souce" className='card-img-top' />
-                                </div>
-                                <div className="card-body product-card-body p-3">
-                                    <span>Souces</span>
-                                    <div className='d-flex flex-row justify-content-between'>
-                                        <select  >
-
-                                            <option value={300} >3 KG Rs.300</option>
-
-                                        </select>
-
-                                        <span className='price'><FaRupeeSign fill='var(--secondary-color)' />500</span>
-                                    </div>
-                                </div>
-                                <div className='d-flex flex-row border-top product-card-footer'>
-                                    <div className='border-end col col-lg-3'>
-                                        <button type="button" className='w-100'><BsHeart /></button>
-                                    </div>
-                                    <div className='border-end col col-lg-6'>
-                                        <button type="button" className='w-100 h-100 add-to-cart'>add to cart</button>
-                                    </div>
-                                    <div className='col col-lg-3'>
-                                        <button type="button" className='w-100'><BsShare /></button>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className='d-flex border flex-column product-card'>
-                                <div className='d-flex flex-row image-container'>
-                                    <Link to='/'><AiOutlineEye /></Link>
-                                    <img src={product6} alt="souce" className='card-img-top' />
-                                </div>
-                                <div className="card-body product-card-body p-3">
-                                    <span>Souces</span>
-                                    <div className='d-flex flex-row justify-content-between'>
-                                        <select  >
-
-                                            <option value={300} >3 KG Rs.300</option>
-
-                                        </select>
-
-                                        <span className='price'><FaRupeeSign fill='var(--secondary-color)' />500</span>
-                                    </div>
-                                </div>
-                                <div className='d-flex flex-row border-top product-card-footer'>
-                                    <div className='border-end col col-lg-3'>
-                                        <button type="button" className='w-100'><BsHeart /></button>
-                                    </div>
-                                    <div className='border-end col col-lg-6'>
-                                        <button type="button" className='w-100 h-100 add-to-cart'>add to cart</button>
-                                    </div>
-                                    <div className='col col-lg-3'>
-                                        <button type="button" className='w-100'><BsShare /></button>
-                                    </div>
-                                </div>
-                            </div>
-
-
-                            <div className='d-flex border flex-column product-card'>
-                                <div className='d-flex flex-row image-container'>
-                                    <Link to='/'><AiOutlineEye /></Link>
-                                    <img src={product7} alt="souce" className='card-img-top' />
-                                </div>
-                                <div className="card-body product-card-body p-3">
-                                    <span>Souces</span>
-                                    <div className='d-flex flex-row justify-content-between'>
-                                        <select  >
-
-                                            <option value={300} >3 KG Rs.300</option>
-
-                                        </select>
-
-                                        <span className='price'><FaRupeeSign fill='var(--secondary-color)' />500</span>
-                                    </div>
-                                </div>
-                                <div className='d-flex flex-row border-top product-card-footer'>
-                                    <div className='border-end col col-lg-3'>
-                                        <button type="button" className='w-100'><BsHeart /></button>
-                                    </div>
-                                    <div className='border-end col col-lg-6'>
-                                        <button type="button" className='w-100 h-100 add-to-cart'>add to cart</button>
-                                    </div>
-                                    <div className='col col-lg-3'>
-                                        <button type="button" className='w-100'><BsShare /></button>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className='d-flex border flex-column product-card'>
-                                <div className='d-flex flex-row image-container'>
-                                    <Link to='/'><AiOutlineEye /></Link>
-                                    <img src={product4} alt="souce" className='card-img-top' />
-                                </div>
-                                <div className="card-body product-card-body p-3">
-                                    <span>Souces</span>
-                                    <div className='d-flex flex-row justify-content-between'>
-                                        <select  >
-
-                                            <option value={300} >3 KG Rs.300</option>
-
-                                        </select>
-
-                                        <span className='price'><FaRupeeSign fill='var(--secondary-color)' />500</span>
-                                    </div>
-                                </div>
-                                <div className='d-flex flex-row border-top product-card-footer'>
-                                    <div className='border-end col col-lg-3'>
-                                        <button type="button" className='w-100'><BsHeart /></button>
-                                    </div>
-                                    <div className='border-end col col-lg-6'>
-                                        <button type="button" className='w-100 h-100 add-to-cart'>add to cart</button>
-                                    </div>
-                                    <div className='col col-lg-3'>
-                                        <button type="button" className='w-100'><BsShare /></button>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className='d-flex border flex-column product-card'>
-                                <div className='d-flex flex-row image-container'>
-                                    <Link to='/'><AiOutlineEye /></Link>
-                                    <img src={product4} alt="souce" className='card-img-top' />
-                                </div>
-                                <div className="card-body product-card-body p-3">
-                                    <span>Souces</span>
-                                    <div className='d-flex flex-row justify-content-between'>
-                                        <select  >
-
-                                            <option value={300} >3 KG Rs.300</option>
-
-                                        </select>
-
-                                        <span className='price'><FaRupeeSign fill='var(--secondary-color)' />500</span>
-                                    </div>
-                                </div>
-                                <div className='d-flex flex-row border-top product-card-footer'>
-                                    <div className='border-end col col-lg-3'>
-                                        <button type="button" className='w-100'><BsHeart /></button>
-                                    </div>
-                                    <div className='border-end col col-lg-6'>
-                                        <button type="button" className='w-100 h-100 add-to-cart'>add to cart</button>
-                                    </div>
-                                    <div className='col col-lg-3'>
-                                        <button type="button" className='w-100'><BsShare /></button>
-                                    </div>
-                                </div>
-                            </div> */}
-
-
-
-
                         </Slider>
+
+                        <QuickViewModal selectedProduct={selectedProduct} setselectedProduct={setselectedProduct} />
+
                     </div>
+
 
                 )}
         </section>

@@ -38,7 +38,7 @@
 }
 
 *::selection {
-  background: var(--green);
+  background: var(--secondary-color);
   color: #fff;
 }
 
@@ -66,6 +66,7 @@ button {
 
 .toast-container {
   font-size: 2rem;
+  right: 0;
 }
 
 
@@ -91,6 +92,13 @@ body.modal-open {
   overflow: auto;
 }
 
+.green-text{
+  color: var(--secondary-color);
+}
+
+.gray-text{
+  color: var(--sub-text-color);
+}
 
 /* media queries */
 

@@ -20,54 +20,64 @@
     margin-top: -70px;
     position: relative;
     font-size: 1.8rem;
+    display: flex;    
+    flex-direction: row;
+    gap: 20px;
+    min-width: 100%;
 }
 
-#profile .sidebar.active{
+#profile .sidebar{
     background: #fff;
     padding: 5px;
     border-radius: 10px;
     display: flex;
     flex-direction: column;
     align-items: center;
-
+    min-width: 250px;
 }
 
 #profile .bar{
     display: none;
 }
 
-#profile .sidebar.active img {
+#profile .sidebar img {
     width: 100px;
     height: 100px;
     border-radius: 50%;
     margin: 30px;
 }
 
-#profile .sidebar.active h5 {
+#profile .sidebar h5 {
     font-size: 2.2rem;
     font-weight: bolder;
     text-transform: capitalize;
 }
 
-#profile .sidebar.active span {
+#profile .sidebar span {
     font-size: 1.5rem;
     color: var(--sub-text-color);
     text-align: center;
     text-transform: lowercase;
 }
 
-#profile .sidebar.active button {
+#profile .sidebar button {
     background: none;
     padding: 10px 5px;
     border-bottom: 1px solid rgba(155, 151, 151, 0.205);
 }
 
-#profile .sidebar.active button:hover {
+#profile .sidebar button:hover {
     background: rgba(155, 151, 151, 0.205);
     
 } 
-#profile .sidebar.active button:nth-last-child(1){
+#profile .sidebar button:nth-last-child(1){
     border-bottom: none;
+}
+
+#profile .content{
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
 }
 
 #profile .content h5{
@@ -128,16 +138,13 @@
 }
 
 
-@media(max-width:767px){
+@media(max-width:48rem){
     #profile .bar{
         display: block;
     }
 
-    #profile .sidebar{
-        display: none;
+    #profile .content-container{
+        display: block;
     }
 
-    #profile .sidebar.active{
-        position: absolute;
-    }
 }

@@ -4,9 +4,9 @@ import './offer.css'
 import Slider from 'react-slick'
 import { Shimmer } from 'react-shimmer'
 import { AiOutlineArrowRight } from 'react-icons/ai'
-import offer3 from '../../utils/offers/offer3.jpg'
-import offer4 from '../../utils/offers/offer4.jpg'
-import offer5 from '../../utils/offers/offer5.jpg'
+// import offer3 from '../../utils/offers/offer3.jpg'
+// import offer4 from '../../utils/offers/offer4.jpg'
+// import offer5 from '../../utils/offers/offer5.jpg'
 
 
 function SamplePrevArrow(props) {
@@ -118,7 +118,7 @@ const Offers = () => {
                                         <button type='button'>shop now <AiOutlineArrowRight fill="#fff" /></button>
                                     </div>
                                 ))}
-                                <div className='offer-container-body'>
+                                {/* <div className='offer-container-body'>
                                     <img src={offer4} alt="offers" />
                                     <button type='button'>shop now <AiOutlineArrowRight fill="#fff" /></button>
                                 </div>
@@ -129,7 +129,7 @@ const Offers = () => {
                                 <div className='offer-container-body'>
                                     <img src={offer5} alt="offers" />
                                     <button type='button'>shop now <AiOutlineArrowRight fill="#fff" /></button>
-                                </div>
+                                </div> */}
                             </Slider>
                         </div>
 

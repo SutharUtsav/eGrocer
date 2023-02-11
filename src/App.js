@@ -17,6 +17,7 @@ import api from './api/api';
 import 'react-toastify/dist/ReactToastify.css';
 import ShowAllCategories from './components/category/ShowAllCategories';
 import ProductList from './components/product/ProductList';
+import ProductDetails from './components/product/ProductDetails';
 
 
 function App() {
@@ -47,6 +48,7 @@ function App() {
     if (cookies.get('jwt_token') !== undefined) {
       getCurrentUser(cookies.get('jwt_token'));
     }
+    
   }, [])
 
   return (
@@ -58,6 +60,7 @@ function App() {
             <Route path="/profile" element={<ProfileDashboard />}></Route>
             <Route path='/categories' element={<ShowAllCategories/>}></Route>
             <Route path='/products' element={<ProductList/>}></Route>
+            <Route path='/product' element={<ProductDetails/>}></Route>
             <Route path="/*" element={<MainContainer />}></Route>
 
           </Routes>

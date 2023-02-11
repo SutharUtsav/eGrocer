@@ -271,13 +271,13 @@ const Location = (props) => {
 
       <div className="d-flex flex-row justify-content-between header">
         <h5>set delivery location</h5>
-        <button type="button" className="" data-bs-dismiss="modal" aria-label="Close" ref={closeModalRef} onClick={() => {
+        <button type="button" className="" data-bs-dismiss="modal" aria-label="Close"  ref={closeModalRef} onClick={() => {
           seterrorMsg("")
           setisloading(false)
           setcurrLocationClick(false)
           setisInputFields(false)
           setisAddressLoading(false)
-        }}><AiOutlineCloseCircle /></button>
+        }} disabled={!props.isLocationPresent}><AiOutlineCloseCircle /></button>
       </div>
 
       <div className="modal-body d-flex flex-column gap-3 align-items-center body">

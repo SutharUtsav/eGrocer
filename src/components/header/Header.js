@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import './header.css'
 import { BsShopWindow } from 'react-icons/bs'
 import { BiUserCircle } from 'react-icons/bi'
-import { MdSearch, MdGTranslate } from "react-icons/md";
+import { MdSearch, MdGTranslate, MdOutlineAccountCircle } from "react-icons/md";
 import { IoContrast, IoNotificationsOutline, IoHeartOutline, IoCartOutline } from 'react-icons/io5';
 import { IoMdArrowDropdown, IoIosArrowDown } from "react-icons/io"
 import { GoLocation } from 'react-icons/go'
@@ -18,6 +18,10 @@ import api from '../../api/api';
 import { ActionTypes } from '../../model/action-type';
 import Login from '../login/Login';
 import Category from '../category/Category';
+import Cookies from 'universal-cookie'
+import CardSidebar from '../cart/CardSidebar';
+import { toast } from 'react-toastify';
+
 
 // import 'bootstrap/dist/js/bootstrap.bundle.js'
 // import { Modal } from 'bootstrap/dist/js/bootstrap.bundle.js';
@@ -36,7 +40,11 @@ const Header = () => {
     const city = useSelector(state => (state.city))
     const cssmode = useSelector(state => (state.cssmode))
     const user = useSelector(state => (state.user))
+    const cart = useSelector(state => (state.cart))
     // const categories = useSelector(state => (state.category))
+
+    //initialize cookies
+    const cookies = new Cookies();
 
     const curr_url = useLocation();
 
@@ -60,6 +68,27 @@ const Header = () => {
             locationModalTrigger.current.click();
         }
     }, [dispatch])
+
+
+    const fetchCart = async (token, latitude, longitude) => {
+        await api.getCart(token, latitude, longitude)
+            .then(response => response.json())
+            .then(result => {
+                if (result.status === 1) {
+                    dispatch({ type: ActionTypes.SET_CART, payload: result })
+                }
+                else{
+                    dispatch({type: ActionTypes.SET_CART, payload: null})
+                }
+            })
+            .catch(error => console.log(error))
+    }
+
+    useEffect(() => {
+        if (city.city !== null && cookies.get('jwt_token') !== undefined && user.user !== null) {
+            fetchCart(cookies.get('jwt_token'), city.city.latitude, city.city.longitude)
+        }
+    }, [city, user])
 
 
     const handleCssModeChange = (e) => {
@@ -259,17 +288,19 @@ const Header = () => {
 
                         <div className='column column-left '>
 
-                            <div className='header-buttons hide-desktop'>
+                            <div className='header-buttons hide-desktop' style={curr_url.pathname === '/profile' ? { display: "none" } : null}>
+
                                 <button className='header-canvas button-item' type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebaroffcanvasExample" aria-controls="sidebaroffcanvasExample">
                                     <div className='button-menu'>
                                         <FiMenu />
                                     </div>
                                 </button>
 
+
                             </div>
 
 
-                            <Link to='/' className='site-brand'>
+                            <Link to='/' className='site-brand' style={curr_url.pathname === '/profile' ? { marginLeft: '4px' } : null}>
                                 <img src={logoPath} height="50px" alt="logo" className='desktop-logo hide-mobile' />
                                 <img src={logoPath} height="50px" alt="logo" className='mobile-logo hide-desktop' />
 
@@ -341,14 +372,40 @@ const Header = () => {
                                 </span>
                             </motion.div>
 
-                            <motion.div whileTap={{ scale: 0.6 }} className='icon position-relative'>
-                                <IoCartOutline />
-                                <span className="position-absolute start-100 translate-middle badge rounded-pill fs-5">
-                                    9+
-                                    <span className="visually-hidden">unread messages</span>
-                                </span>
-                            </motion.div>
+                            {city.city === null || cookies.get('jwt_token') === undefined
+                                ? <motion.button type='button' whileTap={{ scale: 0.6 }} className='icon position-relative' 
 
+                                    onClick={() => {
+                                        if (cookies.get('jwt_token') === undefined) {
+                                            toast.error("OOPS!You have to login first to see your cart!")
+                                        }
+                                        else if (city.city === null) {
+                                            toast.error("Please Select you delivery location first!")
+                                        }
+                                    }}>
+                                    <IoCartOutline />
+                                </motion.button>
+
+                                : <motion.button type='button' whileTap={{ scale: 0.6 }} className='icon position-relative' data-bs-toggle="offcanvas" data-bs-target="#cartoffcanvasExample" aria-controls="cartoffcanvasExample"
+
+                                    onClick={() => {
+                                        if (cookies.get('jwt_token') === undefined) {
+                                            toast.error("OOPS!You have to login first to see your cart!")
+                                        }
+                                        else if (city.city === null) {
+                                            toast.error("Please Select you delivery location first!")
+                                        }
+                                    }}>
+                                    <IoCartOutline />
+
+                                    {cart.cart !== null ?
+                                        <span className="position-absolute start-100 translate-middle badge rounded-pill fs-5">
+                                            {cart.cart.total}
+                                            <span className="visually-hidden">unread messages</span>
+                                        </span>
+                                        : null}
+                                </motion.button>
+                            }
 
                             {user.status === 'loading'
                                 ? (
@@ -391,7 +448,12 @@ const Header = () => {
                             <li className='menu-item'>
                                 <Link to='/products' className='shop' onClick={() => {
                                     document.getElementsByClassName('shop')[0].classList.toggle('active')
-                                    document.getElementsByClassName('filter')[0].classList.remove('active')
+                                    if (curr_url.pathname === '/products') {
+                                        document.getElementsByClassName('filter')[0].classList.remove('active')
+                                    }
+                                    if (curr_url.pathname === '/profile') {
+                                        document.getElementsByClassName('profile-account')[0].classList.remove('active')
+                                    }
                                     document.getElementsByClassName('wishlist')[0].classList.remove('active')
                                     document.getElementsByClassName('search')[0].classList.remove('active')
                                     document.getElementsByClassName('header-search')[0].classList.remove('active')
@@ -405,8 +467,14 @@ const Header = () => {
 
                             <li className='menu-item'>
                                 <button type='button' className='search' onClick={() => {
+
                                     document.getElementsByClassName('search')[0].classList.toggle('active')
-                                    document.getElementsByClassName('filter')[0].classList.remove('active')
+                                    if (curr_url.pathname === '/products') {
+                                        document.getElementsByClassName('filter')[0].classList.remove('active')
+                                    }
+                                    if (curr_url.pathname === '/profile') {
+                                        document.getElementsByClassName('profile-account')[0].classList.remove('active')
+                                    }
                                     document.getElementsByClassName('wishlist')[0].classList.remove('active')
                                     document.getElementsByClassName('shop')[0].classList.remove('active')
                                     document.getElementsByClassName('header-search')[0].classList.toggle('active')
@@ -421,6 +489,9 @@ const Header = () => {
                             {curr_url.pathname === '/products' ? (
                                 <li className='menu-item'>
                                     <button type='button' className='filter' data-bs-toggle="offcanvas" data-bs-target="#filteroffcanvasExample" aria-controls="filteroffcanvasExample" onClick={() => {
+                                        if (curr_url.pathname === '/profile') {
+                                            document.getElementsByClassName('profile-account')[0].classList.remove('active')
+                                        }
                                         document.getElementsByClassName('filter')[0].classList.toggle('active')
                                         document.getElementsByClassName('search')[0].classList.remove('active')
                                         document.getElementsByClassName('wishlist')[0].classList.remove('active')
@@ -437,8 +508,14 @@ const Header = () => {
 
                             <li className='menu-item'>
                                 <button type='button' className='wishlist' onClick={() => {
+
                                     document.getElementsByClassName('wishlist')[0].classList.toggle('active')
-                                    document.getElementsByClassName('filter')[0].classList.remove('active')
+                                    if (curr_url.pathname === '/products') {
+                                        document.getElementsByClassName('filter')[0].classList.remove('active')
+                                    }
+                                    if (curr_url.pathname === '/profile') {
+                                        document.getElementsByClassName('profile-account')[0].classList.remove('active')
+                                    }
                                     document.getElementsByClassName('shop')[0].classList.remove('active')
                                     document.getElementsByClassName('search')[0].classList.remove('active')
                                     document.getElementsByClassName('header-search')[0].classList.remove('active')
@@ -455,50 +532,85 @@ const Header = () => {
                                 </button>
                             </li>
 
-                            <li className='menu-item'>
-                                {user.status === 'loading'
-                                    ? (
-                                        <>
-                                            <button type='button' className='account' data-bs-toggle="modal" data-bs-target="#loginModal" onClick={() => {
-                                                document.getElementsByClassName('wishlist')[0].classList.remove('active')
-                                                document.getElementsByClassName('filter')[0].classList.remove('active')
-                                                document.getElementsByClassName('shop')[0].classList.remove('active')
-                                                document.getElementsByClassName('search')[0].classList.remove('active')
-                                                document.getElementsByClassName('header-search')[0].classList.remove('active')
+                            {curr_url.pathname === '/profile' ? (
+                                <li className='menu-item'>
+                                    <button type='button' className='profile-account' onClick={() => {
 
-                                            }}>
-                                                <div>
-                                                    <BiUserCircle />
-                                                </div>
-                                                <span>Login</span>
-
-                                            </button>
-
-                                        </>
-                                    )
-                                    : (
-                                        <Link to='/profile' className='d-flex user-profile gap-1 account' onClick={() => {
-                                            document.getElementsByClassName('wishlist')[0].classList.remove('active')
+                                        document.getElementsByClassName('profile-account')[0].classList.toggle('active')
+                                        document.getElementsByClassName('wishlist')[0].classList.remove('active')
+                                        if (curr_url.pathname === '/products') {
                                             document.getElementsByClassName('filter')[0].classList.remove('active')
-                                            document.getElementsByClassName('shop')[0].classList.remove('active')
-                                            document.getElementsByClassName('search')[0].classList.remove('active')
-                                            document.getElementsByClassName('header-search')[0].classList.remove('active')
+                                        }
+                                        document.getElementsByClassName('shop')[0].classList.remove('active')
+                                        document.getElementsByClassName('search')[0].classList.remove('active')
+                                        document.getElementsByClassName('header-search')[0].classList.remove('active')
 
-                                        }}>
-                                            <div className='d-flex flex-column user-info my-auto'>
-                                                <span className='name'> {user.user.name}</span>
-                                                <span className='number'>{user.user.country_code + "-" + user.user.mobile}</span>
-                                            </div>
-                                            <img src={user.user.profile} alt="user"></img>
-                                            <span>Profile</span>
-                                        </Link>
-                                    )}
+                                    }} data-bs-toggle="offcanvas" data-bs-target="#profilenavoffcanvasExample" aria-controls="profilenavoffcanvasExample">
+                                        <div>
+                                            <MdOutlineAccountCircle />
+
+                                        </div>
+                                        <span>Account</span>
+                                    </button>
+                                </li>
+                            ) :
+                                (
+                                    <li className='menu-item'>
+                                        {user.status === 'loading'
+                                            ? (
+                                                <>
+                                                    <button type='button' className='account' data-bs-toggle="modal" data-bs-target="#loginModal" onClick={() => {
+
+                                                        document.getElementsByClassName('wishlist')[0].classList.remove('active')
+                                                        if (curr_url.pathname === '/products') {
+                                                            document.getElementsByClassName('filter')[0].classList.remove('active')
+                                                        }
+                                                        document.getElementsByClassName('shop')[0].classList.remove('active')
+                                                        document.getElementsByClassName('search')[0].classList.remove('active')
+                                                        document.getElementsByClassName('header-search')[0].classList.remove('active')
+
+                                                    }}>
+                                                        <div>
+                                                            <BiUserCircle />
+                                                        </div>
+                                                        <span>Login</span>
+
+                                                    </button>
+
+                                                </>
+                                            )
+                                            : (
+                                                <>
+                                                    <Link to='/profile' className='d-flex user-profile gap-1 account' onClick={() => {
+
+                                                        document.getElementsByClassName('wishlist')[0].classList.remove('active')
+                                                        if (curr_url.pathname === '/products') {
+                                                            document.getElementsByClassName('filter')[0].classList.remove('active')
+                                                        }
+                                                        document.getElementsByClassName('shop')[0].classList.remove('active')
+                                                        document.getElementsByClassName('search')[0].classList.remove('active')
+                                                        document.getElementsByClassName('header-search')[0].classList.remove('active')
+
+                                                    }}>
+                                                        <div className='d-flex flex-column user-info my-auto'>
+                                                            <span className='name'> {user.user.name}</span>
+                                                            <span className='number'>{user.user.country_code + "-" + user.user.mobile}</span>
+                                                        </div>
+                                                        <img src={user.user.profile} alt="user"></img>
+                                                        <span>Profile</span>
+                                                    </Link>
+                                                </>
+                                            )}
 
 
-                            </li>
+                                    </li>
+                                )}
+
+
                         </ul>
                     </div>
                 </nav>
+
 
 
 
@@ -515,6 +627,9 @@ const Header = () => {
                     </div>
                 </div>
 
+
+                {/* Cart Sidebar */}
+                <CardSidebar />
 
             </header>
         </>
