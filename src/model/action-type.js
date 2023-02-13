@@ -37,6 +37,7 @@ export const ActionTypes = {
 
     //cart
     SET_CART :"SET_CART",
+    SET_CART_CHECKOUT : "SET_CART_CHECKOUT",
 
 
 }

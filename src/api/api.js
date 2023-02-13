@@ -262,7 +262,7 @@ const api = {
         return fetch(process.env.REACT_APP_URL + process.env.REACT_APP_SUBURL + "/product_by_id", requestOptions)
 
     },
-    getCart(token, latitude, longitude) {
+    getCart(token, latitude, longitude, checkout = 0) {
         var myHeaders = new Headers();
         myHeaders.append(access_key_param, access_key);
         myHeaders.append("Authorization", token_prefix + token);
@@ -273,7 +273,7 @@ const api = {
             redirect: 'follow'
         };
 
-        var params = { latitude: latitude, longitude: longitude };
+        var params = { latitude: latitude, longitude: longitude, is_checkout: checkout };
         var url = new URL(process.env.REACT_APP_URL + process.env.REACT_APP_SUBURL + "/cart");
         for (let k in params) {
             url.searchParams.append(k, params[k])
@@ -307,7 +307,7 @@ const api = {
 
         var formdata = new FormData();
         formdata.append("product_id", product_id);
-        formdata.append("product_variant_id", product_variant_id); 
+        formdata.append("product_variant_id", product_variant_id);
         // formdata.append("is_remove_all", is_all_remove);
 
         var requestOptions = {

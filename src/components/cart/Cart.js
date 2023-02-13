@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import './cart.css'
 import { useSelector, useDispatch } from 'react-redux'
 import { AiOutlineCloseCircle } from 'react-icons/ai'
@@ -10,10 +10,11 @@ import { toast } from 'react-toastify'
 import Cookies from 'universal-cookie'
 import { ActionTypes } from '../../model/action-type';
 import EmptyCart from '../../utils/zero-state-screens/Empty_Cart.svg'
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
-const CardSidebar = () => {
+const Cart = () => {
 
+    const closeCanvas = useRef();
     const cookies = new Cookies();
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -42,6 +43,8 @@ const CardSidebar = () => {
         else {
             setproductSizes(sizes.sizes)
         }
+
+
 
         if (cart.cart === null && cart.status === 'fulfill') {
             setiscartEmpty(true)
@@ -138,12 +141,15 @@ const CardSidebar = () => {
             .catch(error => console.log(error))
     }
 
+
     return (
-        <div tabIndex="-1" className='cart-sidebar-container offcanvas offcanvas-end' id="cartoffcanvasExample" aria-labelledby="cartoffcanvasExampleLabel">
+        <div tabIndex="-1" className={`cart-sidebar-container offcanvas offcanvas-end`} id="cartoffcanvasExample" aria-labelledby="cartoffcanvasExampleLabel">
+
             <div className='cart-sidebar-header'>
                 <h5>your cart</h5>
-                <button type="button" className="close-canvas" data-bs-dismiss="offcanvas" aria-label="Close"><AiOutlineCloseCircle /></button>
+                <button type="button" className="close-canvas" data-bs-dismiss="offcanvas" aria-label="Close" ref={closeCanvas}><AiOutlineCloseCircle /></button>
             </div>
+
             {iscartEmpty ? (
                 <div className='empty-cart'>
                     <img src={EmptyCart} alt='empty-cart'></img>
@@ -230,49 +236,58 @@ const CardSidebar = () => {
                                         <span >order summary</span>
                                     </div>
 
-                                    <div className='summary'>
-                                        <div className='d-flex justify-content-between'>
-                                            <span>Subtotal</span>
-                                            <div className='d-flex align-items-center'>
-                                                <FaRupeeSign />
-                                                <span>{parseFloat(cart.cart.data.sub_total)}</span>
+                                    {cart.checkout === null
+                                        ? (<div className="d-flex justify-content-center">
+                                            <div className="spinner-border" role="status">
+                                                <span className="visually-hidden">Loading...</span>
                                             </div>
-                                        </div>
+                                        </div>)
+                                        : (
+                                            <>
+                                                <div className='summary'>
+                                                    <div className='d-flex justify-content-between'>
+                                                        <span>Subtotal</span>
+                                                        <div className='d-flex align-items-center'>
+                                                            <FaRupeeSign />
+                                                            <span>{parseFloat(cart.checkout.sub_total)}</span>
+                                                        </div>
+                                                    </div>
 
-                                        <div className='d-flex justify-content-between'>
-                                            <span>Delivery Charges</span>
-                                            <div className='d-flex align-items-center'>
-                                                <FaRupeeSign />
-                                                <span>0</span>
-                                            </div>
-                                        </div>
+                                                    <div className='d-flex justify-content-between'>
+                                                        <span>Delivery Charges</span>
+                                                        <div className='d-flex align-items-center'>
+                                                            <FaRupeeSign />
+                                                            <span>{parseFloat(cart.checkout.delivery_charge.total_delivery_charge)}</span>
+                                                        </div>
+                                                    </div>
 
-                                    </div>
+                                                </div>
 
-                                    <div className='d-flex justify-content-between'>
-                                        <span>Total</span>
-                                        <div className='d-flex align-items-center total-amount'>
-                                            <FaRupeeSign fill='var(--secondary-color)' />
-                                            <span>{parseFloat(cart.cart.data.sub_total)}</span>
-                                        </div>
-                                    </div>
+                                                <div className='d-flex justify-content-between'>
+                                                    <span>Total</span>
+                                                    <div className='d-flex align-items-center total-amount'>
+                                                        <FaRupeeSign fill='var(--secondary-color)' />
+                                                        <span>{parseFloat(cart.checkout.total_amount)}</span>
+                                                    </div>
+                                                </div>
 
 
-                                    <div className='button-container'>
-                                        <button type='button' className='view-cart'>view cart</button>
-                                        <button type='button' className='checkout'>go to checkout</button>
-                                    </div>
+                                                <div className='button-container'>
+                                                    <Link to='/cart' className='view-cart'>view cart</Link>
+                                                    <Link className='checkout'>go to checkout</Link>
+                                                </div>
+                                            </>)}
+
+
                                 </div>
                             </>
                         )}
                 </>
-            )}
+            )
+            }
+        </div >
 
-
-
-
-        </div>
     )
 }
 
-export default CardSidebar
+export default Cart

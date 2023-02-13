@@ -19,7 +19,7 @@ import { ActionTypes } from '../../model/action-type';
 import Login from '../login/Login';
 import Category from '../category/Category';
 import Cookies from 'universal-cookie'
-import CardSidebar from '../cart/CardSidebar';
+import Cart from '../cart/Cart';
 import { toast } from 'react-toastify';
 
 
@@ -77,11 +77,22 @@ const Header = () => {
                 if (result.status === 1) {
                     dispatch({ type: ActionTypes.SET_CART, payload: result })
                 }
-                else{
-                    dispatch({type: ActionTypes.SET_CART, payload: null})
+                else {
+                    dispatch({ type: ActionTypes.SET_CART, payload: null })
                 }
             })
             .catch(error => console.log(error))
+        await api.getCart(token, latitude, longitude,1)
+            .then(response => response.json())
+            .then(result => {
+                if (result.status === 1) {
+                    dispatch({ type: ActionTypes.SET_CART_CHECKOUT, payload: result.data })
+                }
+            
+            })
+            .catch(error => console.log(error))
+
+
     }
 
     useEffect(() => {
@@ -373,7 +384,7 @@ const Header = () => {
                             </motion.div>
 
                             {city.city === null || cookies.get('jwt_token') === undefined
-                                ? <motion.button type='button' whileTap={{ scale: 0.6 }} className='icon position-relative' 
+                                ? <motion.button type='button' whileTap={{ scale: 0.6 }} className='icon position-relative'
 
                                     onClick={() => {
                                         if (cookies.get('jwt_token') === undefined) {
@@ -629,7 +640,7 @@ const Header = () => {
 
 
                 {/* Cart Sidebar */}
-                <CardSidebar />
+                <Cart />
 
             </header>
         </>

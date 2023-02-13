@@ -18,6 +18,8 @@ import 'react-toastify/dist/ReactToastify.css';
 import ShowAllCategories from './components/category/ShowAllCategories';
 import ProductList from './components/product/ProductList';
 import ProductDetails from './components/product/ProductDetails';
+import ViewCart from './components/cart/ViewCart';
+import Cart from './components/cart/Cart';
 
 
 function App() {
@@ -35,8 +37,8 @@ function App() {
       .then(response => response.json())
       .then(result => {
         if (result.status === 1) {
-          
-          dispatch({type:ActionTypes.SET_CURRENT_USER,payload:result.user});
+
+          dispatch({ type: ActionTypes.SET_CURRENT_USER, payload: result.user });
         }
       })
   }
@@ -48,7 +50,7 @@ function App() {
     if (cookies.get('jwt_token') !== undefined) {
       getCurrentUser(cookies.get('jwt_token'));
     }
-    
+
   }, [])
 
   return (
@@ -57,16 +59,17 @@ function App() {
         <Header />
         <main id='main' className="main-app">
           <Routes>
+            <Route path="/cart" element={<ViewCart />}></Route>
             <Route path="/profile" element={<ProfileDashboard />}></Route>
-            <Route path='/categories' element={<ShowAllCategories/>}></Route>
-            <Route path='/products' element={<ProductList/>}></Route>
-            <Route path='/product' element={<ProductDetails/>}></Route>
+            <Route path='/categories' element={<ShowAllCategories />}></Route>
+            <Route path='/products' element={<ProductList />}></Route>
+            <Route path='/product' element={<ProductDetails />}></Route>
             <Route path="/*" element={<MainContainer />}></Route>
 
           </Routes>
         </main>
         <Footer />
-        <ToastContainer toastClassName='toast-container'/>
+        <ToastContainer toastClassName='toast-container' />
       </div>
     </AnimatePresence>
   );
