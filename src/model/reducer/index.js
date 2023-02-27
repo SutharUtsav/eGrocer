@@ -8,16 +8,20 @@ import { productFilterReducer } from "./productFilterReducer";
 import { selectedProductReducer } from "./selectedProduct";
 import {cartReducer} from './cartReducer';
 import {productSizesReducer} from './productSizesReducer'
+import { favotiteReducer } from "./favoriteReducer";
+import { shopReducer } from "./shopReducer";
 
 const reducers = combineReducers({
     city:locationReducer,
     cssmode:cssmodeReducer,
+    shop:shopReducer,
     language:languageReducer,
     category:categoryReducer,
     user:authReducer,
     productFilter:productFilterReducer,
     selectedProduct:selectedProductReducer,
     cart:cartReducer,
+    favorite:favotiteReducer,
     productSizes:productSizesReducer,
 })
 

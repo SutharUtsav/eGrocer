@@ -6,6 +6,9 @@ export const ActionTypes = {
     //language
     SET_LANGUAGE : "SET_LANGUAGE",
     
+    //Shop
+    SET_SHOP: "SET_SHOP",
+
     //Sliders
     SET_SLIDERS : "SET_SLIDERS",
 
@@ -38,6 +41,9 @@ export const ActionTypes = {
     //cart
     SET_CART :"SET_CART",
     SET_CART_CHECKOUT : "SET_CART_CHECKOUT",
+
+    //favorites
+    SET_FAVORITE : "SET_FAVORITE",
 
 
 }

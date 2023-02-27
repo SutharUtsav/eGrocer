@@ -6,41 +6,27 @@ import { BsPlusCircle, BsGrid3X3GapFill } from "react-icons/bs";
 import { Shimmer } from 'react-shimmer';
 import CategoryChild from './CategoryChild';
 import { AiOutlineDown } from 'react-icons/ai';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { ActionTypes } from '../../model/action-type';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
-import category3 from '../../utils/categories/category3.jpg'
-import category4 from '../../utils/categories/category4.jpg'
-import category5 from '../../utils/categories/category5.jpg'
 
 const Category = () => {
 
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
-    //fetch Category
-    const fetchCategory = () => {
-        api.getCategory()
-            .then(response => response.json())
-            .then(result => {
-                if (result.status === 1) {
-                    setcategory(result.data)
-                    dispatch({ type: ActionTypes.SET_CATEGORY, payload: result.data });
-                }
-            })
-            .catch(error => console.log("error ", error))
-    }
 
-    useEffect(() => {
-        fetchCategory();
-    }, [])
+    const shop = useSelector(state=>state.shop);
 
-    const [category, setcategory] = useState(null);
-
+    const selectCategory = (category) => {
+        dispatch({type:ActionTypes.SET_FILTER_CATEGORY,payload:category.id})
+        navigate('/products')
+      }
 
     return (
         <>
-            {category === null
+            {shop.shop === null
                 ? (
                     <></>
                     // <Shimmer height={360} width={400}></Shimmer>
@@ -60,7 +46,7 @@ const Category = () => {
 
                         <div className='collapse show categoties' id="expandCategory">
                             {
-                                category.map((ctg, index) => (
+                                shop.shop.category.map((ctg, index) => (
                                     <div key={index} className='category-container'>
                                         {ctg.has_child
                                             ? (
@@ -82,7 +68,7 @@ const Category = () => {
 
                                             )
                                             : (
-                                                <motion.button type='button' className='p-3 border-bottom'>
+                                                <motion.button type='button' className='p-3 border-bottom' onClick={()=>selectCategory(ctg)}>
                                                     <img src={ctg.image_url} alt={ctg.subtitle} className='mx-3' />
                                                     {ctg.name}
                                                 </motion.button>

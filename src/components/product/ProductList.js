@@ -459,6 +459,26 @@ const ProductList = () => {
             })
     }
 
+     //Add to favorite
+     const addToFavorite = async (product_id) => {
+        await api.addToFavotite(cookies.get('jwt_token'), product_id)
+            .then(response => response.json())
+            .then(async (result) => {
+                if (result.status === 1) {
+                    toast.success(result.message)
+                    await api.getFavorite(cookies.get('jwt_token'), city.city.latitude, city.city.longitude)
+                        .then(resp => resp.json())
+                        .then(res => {
+                            if (res.status === 1)
+                                dispatch({ type: ActionTypes.SET_FAVORITE, payload: res })
+                        })
+                }
+                else {
+                    toast.error(result.message)
+                }
+            })
+    }
+
 
 
     return (
@@ -579,7 +599,7 @@ const ProductList = () => {
                                                             </div>
                                                             <div className='d-flex flex-row border-top product-card-footer'>
                                                                 <div className='border-end'>
-                                                                    <button type="button" className='w-100 h-100'><BsHeart /></button>
+                                                                    <button type="button" className='w-100 h-100' onClick={()=>addToFavorite(product.id)}><BsHeart /></button>
                                                                 </div>
                                                                 <div className='border-end' style={{ flexGrow: "1" }}>
                                                                     <button type="button" id={`Add-to-cart-productlist${index}`} className='w-100 h-100 add-to-cart active' style={{ fontSize: "1.6rem" }}

@@ -21,6 +21,7 @@ import Category from '../category/Category';
 import Cookies from 'universal-cookie'
 import Cart from '../cart/Cart';
 import { toast } from 'react-toastify';
+import Favorite from '../favorite/Favorite';
 
 
 // import 'bootstrap/dist/js/bootstrap.bundle.js'
@@ -41,6 +42,7 @@ const Header = () => {
     const cssmode = useSelector(state => (state.cssmode))
     const user = useSelector(state => (state.user))
     const cart = useSelector(state => (state.cart))
+    const favorite = useSelector(state => (state.favorite))
     // const categories = useSelector(state => (state.category))
 
     //initialize cookies
@@ -82,22 +84,37 @@ const Header = () => {
                 }
             })
             .catch(error => console.log(error))
-        await api.getCart(token, latitude, longitude,1)
+        await api.getCart(token, latitude, longitude, 1)
             .then(response => response.json())
             .then(result => {
                 if (result.status === 1) {
                     dispatch({ type: ActionTypes.SET_CART_CHECKOUT, payload: result.data })
                 }
-            
+
             })
             .catch(error => console.log(error))
 
 
     }
 
+    const fetchFavorite = async (token, latitude, longitude) => {
+        await api.getFavorite(token, latitude, longitude)
+            .then(response => response.json())
+            .then(result => {
+                if (result.status === 1) {
+                    dispatch({ type: ActionTypes.SET_FAVORITE, payload: result })
+                }
+                else {
+                    dispatch({ type: ActionTypes.SET_FAVORITE, payload: null })
+                }
+            })
+            .catch(error => console.log(error))
+    }
+
     useEffect(() => {
         if (city.city !== null && cookies.get('jwt_token') !== undefined && user.user !== null) {
             fetchCart(cookies.get('jwt_token'), city.city.latitude, city.city.longitude)
+            fetchFavorite(cookies.get('jwt_token'), city.city.latitude, city.city.longitude)
         }
     }, [city, user])
 
@@ -375,13 +392,38 @@ const Header = () => {
                                 </span>
                             </motion.div>
 
-                            <motion.div whileTap={{ scale: 0.6 }} className='icon position-relative hide-mobile-screen'>
-                                <IoHeartOutline />
-                                <span className="position-absolute start-100 translate-middle badge rounded-pill fs-5 ">
-                                    9+
-                                    <span className="visually-hidden">unread messages</span>
-                                </span>
-                            </motion.div>
+                            {city.city === null || cookies.get('jwt_token') === undefined
+                                ? <motion.button whileTap={{ scale: 0.6 }} className='icon position-relative hide-mobile-screen'
+                                    onClick={() => {
+                                        if (cookies.get('jwt_token') === undefined) {
+                                            toast.error("OOPS!You have to login first to see your cart!")
+                                        }
+                                        else if (city.city === null) {
+                                            toast.error("Please Select you delivery location first!")
+                                        }
+                                    }}>
+                                    <IoHeartOutline />
+                                </motion.button>
+                                : <motion.button whileTap={{ scale: 0.6 }} className='icon position-relative hide-mobile-screen' data-bs-toggle="offcanvas" data-bs-target="#favoriteoffcanvasExample" aria-controls="favoriteoffcanvasExample"
+                                    onClick={() => {
+                                        if (cookies.get('jwt_token') === undefined) {
+                                            toast.error("OOPS!You have to login first to see your cart!")
+                                        }
+                                        else if (city.city === null) {
+                                            toast.error("Please Select you delivery location first!")
+                                        }
+                                    }}>
+                                    <IoHeartOutline />
+
+                                    {favorite.favorite !== null ?
+                                        <span className="position-absolute start-100 translate-middle badge rounded-pill fs-5 ">
+                                            {favorite.favorite.total}
+                                            <span className="visually-hidden">unread messages</span>
+                                        </span>
+                                        : null}
+
+                                </motion.button>
+                            }
 
                             {city.city === null || cookies.get('jwt_token') === undefined
                                 ? <motion.button type='button' whileTap={{ scale: 0.6 }} className='icon position-relative'
@@ -518,29 +560,72 @@ const Header = () => {
                             ) : ""}
 
                             <li className='menu-item'>
-                                <button type='button' className='wishlist' onClick={() => {
+                                {city.city === null || cookies.get('jwt_token') === undefined
+                                    ? <button type='button' className='wishlist' onClick={() => {
 
-                                    document.getElementsByClassName('wishlist')[0].classList.toggle('active')
-                                    if (curr_url.pathname === '/products') {
-                                        document.getElementsByClassName('filter')[0].classList.remove('active')
-                                    }
-                                    if (curr_url.pathname === '/profile') {
-                                        document.getElementsByClassName('profile-account')[0].classList.remove('active')
-                                    }
-                                    document.getElementsByClassName('shop')[0].classList.remove('active')
-                                    document.getElementsByClassName('search')[0].classList.remove('active')
-                                    document.getElementsByClassName('header-search')[0].classList.remove('active')
+                                        if (cookies.get('jwt_token') === undefined) {
+                                            toast.error("OOPS!You have to login first to see your cart!")
+                                        }
+                                        else if (city.city === null) {
+                                            toast.error("Please Select you delivery location first!")
+                                        }
+                                        else {
+                                            document.getElementsByClassName('wishlist')[0].classList.toggle('active')
+                                            if (curr_url.pathname === '/products') {
+                                                document.getElementsByClassName('filter')[0].classList.remove('active')
+                                            }
+                                            if (curr_url.pathname === '/profile') {
+                                                document.getElementsByClassName('profile-account')[0].classList.remove('active')
+                                            }
+                                            document.getElementsByClassName('shop')[0].classList.remove('active')
+                                            document.getElementsByClassName('search')[0].classList.remove('active')
+                                            document.getElementsByClassName('header-search')[0].classList.remove('active')
+                                        }
 
-                                }}>
-                                    <div>
-                                        <IoHeartOutline />
-                                        {/* <span className="position-absolute start-100 translate-middle badge rounded-pill fs-5 ">
-                                        9+
-                                        <span className="visually-hidden">unread messages</span>
-                                    </span> */}
-                                    </div>
-                                    <span>Wishlist</span>
-                                </button>
+
+                                    }}>
+                                        <div>
+                                            <IoHeartOutline />
+
+                                        </div>
+                                        <span>Wishlist</span>
+                                    </button>
+                                    : <button type='button' className='wishlist' onClick={() => {
+
+                                        if (cookies.get('jwt_token') === undefined) {
+                                            toast.error("OOPS!You have to login first to see your cart!")
+                                        }
+                                        else if (city.city === null) {
+                                            toast.error("Please Select you delivery location first!")
+                                        }
+                                        else {
+                                            document.getElementsByClassName('wishlist')[0].classList.toggle('active')
+                                            if (curr_url.pathname === '/products') {
+                                                document.getElementsByClassName('filter')[0].classList.remove('active')
+                                            }
+                                            if (curr_url.pathname === '/profile') {
+                                                document.getElementsByClassName('profile-account')[0].classList.remove('active')
+                                            }
+                                            document.getElementsByClassName('shop')[0].classList.remove('active')
+                                            document.getElementsByClassName('search')[0].classList.remove('active')
+                                            document.getElementsByClassName('header-search')[0].classList.remove('active')
+                                        }
+
+
+                                    }} data-bs-toggle="offcanvas" data-bs-target="#favoriteoffcanvasExample" aria-controls="favoriteoffcanvasExample">
+                                        <div>
+                                            <IoHeartOutline />
+
+                                            {favorite.favorite !== null ?
+                                                <span className="position-absolute translate-middle badge rounded-pill fs-5" style={{background:"var(--secondary-color)", borderRadius:"50%", color:"#fff", top:"1px",right:"-9px"}}>
+                                                    {favorite.favorite.total}
+                                                    <span className="visually-hidden">unread messages</span>
+                                                </span>
+                                                : null}
+                                        </div>
+                                        <span>Wishlist</span>
+                                    </button>}
+
                             </li>
 
                             {curr_url.pathname === '/profile' ? (
@@ -641,6 +726,9 @@ const Header = () => {
 
                 {/* Cart Sidebar */}
                 <Cart />
+
+                {/* favorite sidebar */}
+                <Favorite />
 
             </header>
         </>

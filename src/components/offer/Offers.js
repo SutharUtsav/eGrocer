@@ -4,6 +4,7 @@ import './offer.css'
 import Slider from 'react-slick'
 import { Shimmer } from 'react-shimmer'
 import { AiOutlineArrowRight } from 'react-icons/ai'
+import { useSelector } from 'react-redux'
 // import offer3 from '../../utils/offers/offer3.jpg'
 // import offer4 from '../../utils/offers/offer4.jpg'
 // import offer5 from '../../utils/offers/offer5.jpg'
@@ -33,26 +34,29 @@ function SampleNextArrow(props) {
 
 
 const Offers = () => {
-    const fetchOffer = () => {
-        api.getOffer()
-            .then(response => response.json())
-            .then(result => {
-                if (result.status === 1) {
-                    setoffers(result.data);
-                }
-                else {
-                    console.log(result.message)
-                }
-            })
-            .catch(error => console.log("error ", error))
-    }
+
+    const shop = useSelector(state=>state.shop);
+
+    // const fetchOffer = () => {
+    //     api.getOffer()
+    //         .then(response => response.json())
+    //         .then(result => {
+    //             if (result.status === 1) {
+    //                 setoffers(result.data);
+    //             }
+    //             else {
+    //                 console.log(result.message)
+    //             }
+    //         })
+    //         .catch(error => console.log("error ", error))
+    // }
 
 
     useEffect(() => {
-        fetchOffer();
+        // fetchOffer();
     }, [])
 
-    const [offers, setoffers] = useState(null)
+    // const [offers, setoffers] = useState(null)
 
 
 
@@ -92,7 +96,7 @@ const Offers = () => {
 
     return (
         <section id="offers">
-            {offers === null
+            {shop.shop === null
                 ? (
                     <></>
                     // <div className='d-flex container flex-column p-4 gap-3'>
@@ -112,7 +116,7 @@ const Offers = () => {
                                 <p>one more offer for you!</p>
                             </div>
                             <Slider {...settings} className='p-2 container'>
-                                {offers.map((offer, index) => (
+                                {shop.shop.offers.map((offer, index) => (
                                     <div key={index} className='offer-container-body'>
                                         <img src={offer.image_url} alt="offers" />
                                         <button type='button'>shop now <AiOutlineArrowRight fill="#fff" /></button>

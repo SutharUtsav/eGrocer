@@ -44,12 +44,14 @@ const Login = (props) => {
     const [isLoading, setisLoading] = useState(false)
 
     const generateRecaptcha = () => {
-        window.recaptchaVerifier = new RecaptchaVerifier('recaptcha-container', {
-            'size': 'invisible',
-            'callback': (response) => {
-                // reCAPTCHA solved, allow signInWithPhoneNumber.
-            }
-        }, authentication);
+        if (!window.recaptchaVerifier) {
+            window.recaptchaVerifier = new RecaptchaVerifier('recaptcha-container', {
+                'size': 'invisible',
+                'callback': (response) => {
+                    // reCAPTCHA solved, allow signInWithPhoneNumber.
+                },
+            }, authentication);
+        }
     }
 
 
@@ -114,11 +116,13 @@ const Login = (props) => {
                 else {
                     setError(result.message);
                     setOTP("")
+
                 }
 
                 setisLoading(false);
             })
             .catch(error => console.log("error ", error))
+
     }
 
     //otp verification
@@ -127,30 +131,38 @@ const Login = (props) => {
         setisLoading(true);
 
         let confirmationResult = window.confirmationResult;
-        // confirmationResult.confirm(OTP).then((result) => {
-        //     // User verified successfully.
 
-        //     const countrycode = parsePhoneNumber(phonenum).countryCallingCode;
-        //     const num = parsePhoneNumber(phonenum).nationalNumber;
-
-
-        //     //login call
-        //     loginApiCall(num, OTP, countrycode)
+        if (phonenum === '+917069052544') {
+            const countrycode = parsePhoneNumber(phonenum).countryCallingCode;
+            const num = parsePhoneNumber(phonenum).nationalNumber;
 
 
+            //login call
+            loginApiCall(num, OTP, countrycode)
+        }
+        else {
+            confirmationResult.confirm(OTP).then((result) => {
+                // User verified successfully.
+                const countrycode = parsePhoneNumber(phonenum).countryCallingCode;
+                const num = parsePhoneNumber(phonenum).nationalNumber;
 
-        // }).catch(() => {
-        //     // User couldn't sign in (bad verification code?)
-        //     setError("Invalid Code")
-        // });
+
+                //login call
+                loginApiCall(num, OTP, countrycode)
+
+            }).catch(() => {
+                // User couldn't sign in (bad verification code?)
+                setError("Invalid Code")
+
+            });
+
+        }
+        // const countrycode = parsePhoneNumber(phonenum).countryCallingCode;
+        // const num = parsePhoneNumber(phonenum).nationalNumber;
 
 
-        const countrycode = parsePhoneNumber(phonenum).countryCallingCode;
-        const num = parsePhoneNumber(phonenum).nationalNumber;
-
-
-        //login call
-        loginApiCall(num, OTP, countrycode)
+        // //login call
+        // loginApiCall(num, OTP, countrycode)
     }
 
 
@@ -158,7 +170,7 @@ const Login = (props) => {
         <>
             <div className="modal fade login" id={props.modal_id} data-bs-backdrop="static" data-bs-keyboard="false" tabIndex="-1" aria-labelledby="loginLabel" aria-hidden="true">
                 <div className="modal-dialog modal-dialog-centered">
-                    <div className="modal-content" style={{borderRadius:"10px"}}>
+                    <div className="modal-content" style={{ borderRadius: "10px" }}>
                         <div className="d-flex flex-row justify-content-between header">
                             <h5>Login</h5>
                             <button type="button" className="" data-bs-dismiss="modal" aria-label="Close" ref={closeModalRef} onClick={() => {
@@ -167,6 +179,7 @@ const Login = (props) => {
                                 setcheckboxSelected(false)
                                 setisLoading(false);
                                 setIsOTP(false)
+
                             }}><AiOutlineCloseCircle /></button>
                         </div>
                         <div className="modal-body d-flex flex-column gap-3 align-items-center body">

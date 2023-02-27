@@ -1,6 +1,10 @@
-import React, { useEffect, useState } from 'react'
-import './cart.css'
-import { useSelector, useDispatch } from 'react-redux'
+import React, { useEffect, useState, useRef } from 'react'
+import { useDispatch, useSelector } from 'react-redux';
+import coverImg from '../../utils/cover-img.jpg'
+import '../cart/cart.css'
+import './favorite.css'
+import EmptyCart from '../../utils/zero-state-screens/Empty_Cart.svg'
+import { useNavigate, Link } from 'react-router-dom';
 import { FaRupeeSign } from "react-icons/fa";
 import { BsPlus } from "react-icons/bs";
 import { BiMinus } from 'react-icons/bi'
@@ -8,29 +12,26 @@ import api from '../../api/api';
 import { toast } from 'react-toastify'
 import Cookies from 'universal-cookie'
 import { ActionTypes } from '../../model/action-type';
-import EmptyCart from '../../utils/zero-state-screens/Empty_Cart.svg'
-import { useNavigate, Link } from 'react-router-dom';
-import coverImg from '../../utils/cover-img.jpg'
 import { RiDeleteBinLine } from 'react-icons/ri'
 
 
-const ViewCart = () => {
+const Wishlist = () => {
 
-
+    const closeCanvas = useRef();
+    const navigate = useNavigate();
     const dispatch = useDispatch();
     const cookies = new Cookies();
-    const navigate = useNavigate();
 
-    const cart = useSelector(state => (state.cart))
+    const favorite = useSelector(state => (state.favorite))
     const city = useSelector(state => (state.city))
     const sizes = useSelector(state => (state.productSizes))
 
     const [productSizes, setproductSizes] = useState(null)
-    const [iscartEmpty, setiscartEmpty] = useState(false)
+    const [isfavoriteEmpty, setisfavoriteEmpty] = useState(false)
 
     useEffect(() => {
         if (sizes.sizes === null || sizes.status === 'loading') {
-            if (city.city !== null && cart.cart !== null) {
+            if (city.city !== null && favorite.favorite !== null) {
                 api.getProductbyFilter(city.city.id, city.city.latitude, city.city.longitude)
                     .then(response => response.json())
                     .then(result => {
@@ -45,15 +46,14 @@ const ViewCart = () => {
             setproductSizes(sizes.sizes)
         }
 
-        if (cart.cart === null && cart.status === 'fulfill') {
-            setiscartEmpty(true)
+        if (favorite.favorite === null && favorite.status === 'fulfill') {
+            setisfavoriteEmpty(true)
         }
         else {
-            setiscartEmpty(false)
+            setisfavoriteEmpty(false)
         }
 
-    }, [cart])
-
+    }, [favorite])
 
     const getProductVariantsSelection = (product_id, product_variant_id, div_id, index) => {
         api.getProductbyId(city.city.id, city.city.latitude, city.city.longitude, product_id)
@@ -62,9 +62,15 @@ const ViewCart = () => {
                 if (result.status === 1) {
                     var select = document.createElement("SELECT")
 
-                    select.setAttribute("id", `selectedVariant${index}-viewcart`)
+                    select.setAttribute("id", `selectedVariant${index}-wishlist`)
                     select.addEventListener('change', (e) => {
-                        addtoCart(product_id, JSON.parse(e.target.value).id, document.getElementById(`input-viewcart${index}`).innerHTML)
+
+                        document.getElementById(`input-wishlist${index}`).innerHTML = 0;
+                        document.getElementById(`input-cart-wishlist${index}`).classList.remove('active')
+                        document.getElementById(`Add-to-cart-wishlist${index}`).classList.add('active')
+                        document.getElementById(`price-wishlist${index}`).innerHTML = JSON.parse(e.target.value).price
+
+
                     })
 
                     result.data.variants.forEach((variant, ind) => {
@@ -126,7 +132,6 @@ const ViewCart = () => {
                                 dispatch({ type: ActionTypes.SET_CART, payload: res })
                             else
                                 dispatch({ type: ActionTypes.SET_CART, payload: null })
-
                         })
                         .catch(error => console.log(error))
                 }
@@ -137,60 +142,79 @@ const ViewCart = () => {
             .catch(error => console.log(error))
     }
 
+    //remove from favorite
+    const removefromFavorite = async (product_id) => {
+        await api.removeFromFavorite(cookies.get('jwt_token'), product_id)
+            .then(response => response.json())
+            .then(async (result) => {
+                if (result.status === 1) {
+                    toast.success(result.message)
+                    await api.getFavorite(cookies.get('jwt_token'), city.city.latitude, city.city.longitude)
+                        .then(resp => resp.json())
+                        .then(res => {
+                            if (res.status === 1)
+                                dispatch({ type: ActionTypes.SET_FAVORITE, payload: res })
+                            else
+                                dispatch({ type: ActionTypes.SET_FAVORITE, payload: null })
+                        })
+                }
+                else {
+                    toast.error(result.message)
+                }
+            })
+
+    }
+
     return (
-        <section id='viewcart'>
+        <section id='wishlist'>
             <div className='cover'>
                 <img src={coverImg} className='img-fluid' alt="cover"></img>
                 <div className='title'>
-                    <h3>Cart</h3>
-                    <span>home / </span><span className='active'>cart</span>
+                    <h3>Wishlist</h3>
+                    <span>home / </span><span className='active'>Wishlist</span>
                 </div>
-
             </div>
 
             <div className='view-cart-container container'>
-                {iscartEmpty ? (
+                {isfavoriteEmpty ? (
                     <div className='empty-cart'>
                         <img src={EmptyCart} alt='empty-cart'></img>
                         <p>Your Cart is empty</p>
                         <span>You have no items in your shopping cart.</span>
                         <span>Let's go buy something!</span>
-                        <button type='button' onClick={() => {
+                        <button type='button' className="close-canvas" data-bs-dismiss="offcanvas" aria-label="Close" onClick={() => {
                             navigate('/products')
                         }}>start shopping</button>
-                    </div>) : (
+                    </div>
+                ) : (
                     <>
-                        {cart.cart === null || productSizes === null
-                            ? (
-                                <div className="d-flex justify-content-center">
-                                    <div className="spinner-border" role="status">
-                                        <span className="visually-hidden">Loading...</span>
-                                    </div>
+                        {favorite.favorite === null || productSizes === null
+                            ? (<div className="d-flex justify-content-center">
+                                <div className="spinner-border" role="status">
+                                    <span className="visually-hidden">Loading...</span>
                                 </div>
-                            )
+                            </div>)
                             : (
                                 <>
                                     <div className='viewcart-product-wrapper'>
                                         <div className='product-heading'>
                                             <h3>your cart</h3>
-                                            <span>There are </span><span className='title'>{cart.cart.total}</span> <span> product in your cart</span>
+                                            <span>There are </span><span className='title'>{favorite.favorite.total}</span> <span> product in this list</span>
                                         </div>
 
                                         <table className='products-table table'>
                                             <thead>
                                                 <tr>
                                                     <th className='first-column'>Product</th>
-                                                    <th className='hide-mobile'>unit</th>
                                                     <th>price</th>
-                                                    <th>quantity</th>
-                                                    <th className='hide-mobile'>subtotal</th>
+                                                    <th>Add to cart</th>
                                                     <th className='last-column'>remove</th>
                                                 </tr>
                                             </thead>
 
                                             <tbody>
-                                                {cart.cart.data.cart.map((product, index) => (
-                                                    <tr key={index} >
+                                                {favorite.favorite.data.map((product, index) => (
+                                                    <tr key={index} className=''>
                                                         <th className='products-image-container first-column'>
                                                             <div className='image-container'>
                                                                 <img src={product.image_url} alt='product'></img>
@@ -199,52 +223,64 @@ const ViewCart = () => {
                                                             <div className=''>
                                                                 <span>{product.name}</span>
 
-                                                                <div id={`selectedVariant${index}-wrapper-viewcart`} ></div>
-                                                                {getProductVariantsSelection(product.product_id, product.product_variant_id, `selectedVariant${index}-wrapper-viewcart`, index)}
-
+                                                                <div id={`selectedVariant${index}-wrapper-wishlist`} ></div>
+                                                                {getProductVariantsSelection(product.id, product.variants[0].id, `selectedVariant${index}-wrapper-wishlist`, index)}
                                                             </div>
-                                                        </th>
-
-                                                        <th className='unit hide-mobile'>
-                                                            {product.qty}
                                                         </th>
 
                                                         <th className='price'>
                                                             <FaRupeeSign fill='var(--secondary-color)' />
-                                                            {parseFloat(product.price)}
+                                                            <span id={`price-wishlist${index}`}>{parseFloat(product.variants[0].price)}</span>
                                                         </th>
 
                                                         <th className='quantity'>
-                                                            <div>
-                                                                <button type='button' onClick={() => {
-                                                                    var val = parseInt(document.getElementById(`input-viewcart${index}`).innerHTML);
-                                                                    if (val > 1) {
-                                                                        document.getElementById(`input-viewcart${index}`).innerHTML = val - 1;
-                                                                        addtoCart(product.product_id, product.product_variant_id, document.getElementById(`input-cart-sidebar${index}`).innerHTML)
-
+                                                            <button type='button' id={`Add-to-cart-wishlist${index}`} className='add-to-cart active'
+                                                                onClick={() => {
+                                                                    if (cookies.get('jwt_token') !== undefined) {
+                                                                        document.getElementById(`Add-to-cart-wishlist${index}`).classList.remove('active')
+                                                                        document.getElementById(`input-cart-wishlist${index}`).classList.add('active')
+                                                                        document.getElementById(`input-wishlist${index}`).innerHTML = 1
+                                                                        addtoCart(product.id, JSON.parse(document.getElementById(`selectedVariant${index}-wishlist`).value).id, document.getElementById(`input-wishlist${index}`).innerHTML)
+                                                                    }
+                                                                    else {
+                                                                        toast.error("OOps! You need to login first to access the cart!")
                                                                     }
 
-                                                                }}><BiMinus fill='#fff' fontSize={'2rem'} /></button>
-                                                                <span id={`input-viewcart${index}`} >{product.qty}</span>
+                                                                }}
+                                                            >add to cart</button>
+
+
+                                                            <div className='counter' id={`input-cart-wishlist${index}`}>
                                                                 <button type='button' onClick={() => {
-                                                                    var val = parseInt(document.getElementById(`input-viewcart${index}`).innerHTML);
+                                                                    var val = parseInt(document.getElementById(`input-wishlist${index}`).innerHTML);
+                                                                    if (val === 1) {
+                                                                        document.getElementById(`input-wishlist${index}`).innerHTML = 0;
+                                                                        document.getElementById(`input-cart-wishlist${index}`).classList.remove('active')
+                                                                        document.getElementById(`Add-to-cart-wishlist${index}`).classList.add('active')
+                                                                        removefromCart(product.id, JSON.parse(document.getElementById(`selectedVariant${index}-wishlist`).value).id)
+
+                                                                    }
+                                                                    else {
+                                                                        document.getElementById(`input-wishlist${index}`).innerHTML = val - 1;
+                                                                        addtoCart(product.id, JSON.parse(document.getElementById(`selectedVariant${index}-wishlist`).value).id, document.getElementById(`input-wishlist${index}`).innerHTML)
+                                                                    }
+
+                                                                }}><BiMinus fill='#fff' /></button>
+                                                                <span id={`input-wishlist${index}`} ></span>
+                                                                <button type='button' onClick={() => {
+                                                                    var val = document.getElementById(`input-wishlist${index}`).innerHTML;
                                                                     if (val < product.total_allowed_quantity) {
-                                                                        document.getElementById(`input-viewcart${index}`).innerHTML = val + 1;
-                                                                        addtoCart(product.product_id, product.product_variant_id, document.getElementById(`input-viewcart${index}`).innerHTML)
+                                                                        document.getElementById(`input-wishlist${index}`).innerHTML = parseInt(val) + 1;
+                                                                        addtoCart(product.id, JSON.parse(document.getElementById(`selectedVariant${index}-wishlist`).value).id, document.getElementById(`input-wishlist${index}`).innerHTML)
                                                                     }
-                                                                }}><BsPlus fill='#fff' fontSize={'2rem'} /></button>
+                                                                }}><BsPlus fill='#fff' /></button>
                                                             </div>
 
-                                                        </th>
 
-                                                        <th className='subtotal hide-mobile'>
-                                                            <FaRupeeSign />
-
-                                                            {parseFloat(cart.cart.data.sub_total)}
                                                         </th>
 
                                                         <th className='remove last-column'>
-                                                            <button type='button' onClick={() => removefromCart(product.product_id, product.product_variant_id)}>
+                                                            <button type='button' onClick={() => removefromFavorite(product.id)}>
                                                                 <RiDeleteBinLine fill='red' fontSize={'2.985rem'} />
                                                             </button>
                                                         </th>
@@ -253,61 +289,14 @@ const ViewCart = () => {
                                             </tbody>
                                         </table>
                                     </div>
-
-                                    <div className='cart-summary-wrapper'>
-                                        <div className='heading'>
-                                            <span >Cart total</span>
-                                        </div>
-                                        {cart.checkout === null
-                                            ? (<div className="d-flex justify-content-center">
-                                                <div className="spinner-border" role="status">
-                                                    <span className="visually-hidden">Loading...</span>
-                                                </div>
-                                            </div>)
-                                            : (
-                                                <div className='summary'>
-                                                    <div className='d-flex justify-content-between'>
-                                                        <span>Subtotal</span>
-                                                        <div className='d-flex align-items-center'>
-                                                            <FaRupeeSign />
-                                                            <span>{parseFloat(cart.checkout.sub_total)}</span>
-                                                        </div>
-                                                    </div>
-
-                                                    <div className='d-flex justify-content-between'>
-                                                        <span>Delivery Charges</span>
-                                                        <div className='d-flex align-items-center'>
-                                                            <FaRupeeSign />
-                                                            <span>{parseFloat(cart.checkout.delivery_charge.total_delivery_charge)}</span>
-                                                        </div>
-                                                    </div>
-
-                                                    <div className='d-flex justify-content-between total'>
-                                                        <span>Total</span>
-                                                        <div className='d-flex align-items-center total-amount'>
-                                                            <FaRupeeSign fill='var(--secondary-color)' />
-                                                            <span>{parseFloat(cart.checkout.total_amount)}</span>
-                                                        </div>
-                                                    </div>
-
-
-                                                    <div className='button-container'>
-                                                        <Link to='/checkout' className='checkout'>go to checkout</Link>
-                                                    </div>
-
-                                                </div>)}
-
-
-
-                                    </div>
                                 </>
                             )}
                     </>
                 )}
             </div>
-        </section>
 
+        </section>
     )
 }
 
-export default ViewCart
+export default Wishlist

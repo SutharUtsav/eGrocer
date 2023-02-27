@@ -6,6 +6,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Thumbs, Mousewheel, Autoplay } from "swiper";
 import "swiper/css";
 import api from '../../api/api';
+import { useSelector } from 'react-redux';
 
 
 // import slider3 from '../../utils/sliders/slider3.jpg'
@@ -17,19 +18,19 @@ const Slider = () => {
 
     //useselect
     const [imagesNavSlider, setImagesNavSlider] = useState(null);
-    const [slider, setslider] = useState(null)
+    // const [slider, setslider] = useState(null)
 
     //fetch Slider
-    const fetchSlider = () => {
-        api.getSlider()
-            .then(response => response.json())
-            .then(result => {
-                if (result.status === 1) {
-                    setslider(result.data);
-                }
-            })
-            .catch(error => console.log("error ", error))
-    }
+    // const fetchSlider = () => {
+    //     api.getSlider()
+    //         .then(response => response.json())
+    //         .then(result => {
+    //             if (result.status === 1) {
+    //                 setslider(result.data);
+    //             }
+    //         })
+    //         .catch(error => console.log("error ", error))
+    // }
 
 
 
@@ -37,13 +38,15 @@ const Slider = () => {
 
     //get sliders from api on page load 
     useEffect(() => {
-        fetchSlider();
+        // fetchSlider();
     }, [])
+
+    const shop = useSelector(state=>state.shop);
 
     return (
         <div className='slider'>
             {
-                slider === null
+                shop.shop === null
                     ? (
                         <></>
                         // <div className="d-flex justify-content-center">
@@ -91,7 +94,7 @@ const Slider = () => {
                                     className="swiper-container2"
                                     modules={[Navigation, Thumbs, Mousewheel, Autoplay]} >
 
-                                    {slider.map((sld, index) => {
+                                    {shop.shop.sliders.map((sld, index) => {
                                         return (
 
                                             <SwiperSlide key={index}>
@@ -144,7 +147,7 @@ const Slider = () => {
                                         }}
                                         modules={[Navigation, Thumbs]}
                                     >
-                                        {slider.map((sld, index) => {
+                                        {shop.shop.sliders.map((sld, index) => {
                                             return (
                                                 <SwiperSlide key={index}>
                                                     <div className="slider__image">

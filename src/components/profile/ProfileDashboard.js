@@ -14,6 +14,9 @@ import logoPath from '../../utils/logo_egrocer.svg'
 import Cookies from 'universal-cookie'
 import ProfileContent from './ProfileContent';
 import { toast } from 'react-toastify';
+import Order from '../order/Order';
+import Address from '../address/Address';
+import Transaction from '../transaction/Transaction';
 
 const ProfileDashboard = () => {
     //initialize Cookies
@@ -26,7 +29,6 @@ const ProfileDashboard = () => {
 
     useEffect(() => {
         if (user.status === 'loading') {
-            console.log("Return")
             navigate('/')
         }
     }, [user])
@@ -191,7 +193,7 @@ const ProfileDashboard = () => {
 
                                 </div>
                                 <div className='content'>
-                                    <h5>Profile Dashboard</h5>
+                                    <h4>Profile Dashboard</h4>
 
 
                                     {profileClick
@@ -199,15 +201,15 @@ const ProfileDashboard = () => {
                                         : null}
 
                                     {orderClick
-                                        ? "order"
+                                        ? <Order />
                                         : null}
 
                                     {transactionClick
-                                        ? "transaction"
+                                        ? <Transaction />
                                         : null}
 
                                     {addressClick
-                                        ? "address"
+                                        ? <Address />
                                         : null}
 
                                 </div>

@@ -319,5 +319,213 @@ const api = {
 
         return fetch(process.env.REACT_APP_URL + process.env.REACT_APP_SUBURL + "/cart/remove", requestOptions)
     },
+    getFavorite(token, latitude, longitude) {
+        var myHeaders = new Headers();
+        myHeaders.append(access_key_param, access_key);
+        myHeaders.append("Authorization", token_prefix + token);
+
+        var requestOptions = {
+            method: 'GET',
+            headers: myHeaders,
+            redirect: 'follow'
+        };
+
+        var params = { latitude: latitude, longitude: longitude };
+        var url = new URL(process.env.REACT_APP_URL + process.env.REACT_APP_SUBURL + "/favorites");
+        for (let k in params) {
+            url.searchParams.append(k, params[k])
+        };
+        return fetch(url, requestOptions)
+
+    },
+    addToFavotite(token, product_id) {
+        var myHeaders = new Headers();
+        myHeaders.append(access_key_param, access_key);
+        myHeaders.append("Authorization", token_prefix + token);
+
+        var formdata = new FormData();
+        formdata.append("product_id", product_id);
+
+        var requestOptions = {
+            method: 'POST',
+            headers: myHeaders,
+            body: formdata,
+            redirect: 'follow'
+        };
+
+        return fetch(process.env.REACT_APP_URL + process.env.REACT_APP_SUBURL + "/favorites/add", requestOptions)
+    },
+    removeFromFavorite(token, product_id) {
+        var myHeaders = new Headers();
+        myHeaders.append(access_key_param, access_key);
+        myHeaders.append("Authorization", token_prefix + token);
+
+        var formdata = new FormData();
+        formdata.append("product_id", product_id);
+
+        var requestOptions = {
+            method: 'POST',
+            headers: myHeaders,
+            body: formdata,
+            redirect: 'follow'
+        };
+
+        return fetch(process.env.REACT_APP_URL + process.env.REACT_APP_SUBURL + "/favorites/remove", requestOptions)
+    },
+    getAddress(token) {
+        var myHeaders = new Headers();
+        myHeaders.append(access_key_param, access_key);
+        myHeaders.append("Authorization", token_prefix + token);
+
+        var requestOptions = {
+            method: 'GET',
+            headers: myHeaders,
+            redirect: 'follow'
+        };
+
+        return fetch(process.env.REACT_APP_URL + process.env.REACT_APP_SUBURL + "/address", requestOptions)
+    },
+    addAddress(token, name, mobile, type, address, landmark, area, pincode, city, state, country, alternate_mobile, latitiude, longitude, is_default) {
+        var myHeaders = new Headers();
+        myHeaders.append(access_key_param, access_key);
+        myHeaders.append("Authorization", token_prefix + token);
+
+        var formdata = new FormData();
+        formdata.append("name", name);
+        formdata.append("mobile", mobile);
+        formdata.append("type", type);
+        formdata.append("address", address);
+        formdata.append("landmark", landmark);
+        formdata.append("area", area);
+        formdata.append("pincode", pincode);
+        formdata.append("city", city);
+        formdata.append("state", state);
+        formdata.append("country", country);
+        formdata.append("alternate_mobile", alternate_mobile);
+        formdata.append("latitude", latitiude);
+        formdata.append("longitude", longitude);
+        formdata.append("is_default", is_default ? 1 : 0);
+
+        var requestOptions = {
+            method: 'POST',
+            headers: myHeaders,
+            body: formdata,
+            redirect: 'follow'
+        };
+
+        return fetch(process.env.REACT_APP_URL + process.env.REACT_APP_SUBURL + "/address/add", requestOptions)
+    },
+    deleteAddress(token, address_id) {
+        var myHeaders = new Headers();
+        myHeaders.append(access_key_param, access_key);
+        myHeaders.append("Authorization", token_prefix + token);
+
+        var formdata = new FormData();
+        formdata.append("id", address_id);
+
+        var requestOptions = {
+            method: 'POST',
+            headers: myHeaders,
+            body: formdata,
+            redirect: 'follow'
+        };
+
+        return fetch(process.env.REACT_APP_URL + process.env.REACT_APP_SUBURL + "/address/delete", requestOptions)
+
+    },
+    updateAddress(token, address_id, name, mobile, type, address, landmark, area, pincode, city, state, country, alternate_mobile, latitiude, longitude, is_default) {
+        var myHeaders = new Headers();
+        myHeaders.append(access_key_param, access_key);
+        myHeaders.append("Authorization", token_prefix + token);
+
+        var formdata = new FormData();
+        formdata.append("id", address_id);
+        formdata.append("name", name);
+        formdata.append("mobile", mobile);
+        formdata.append("type", type);
+        formdata.append("address", address);
+        formdata.append("landmark", landmark);
+        formdata.append("area", area);
+        formdata.append("pincode", pincode);
+        formdata.append("city", city);
+        formdata.append("state", state);
+        formdata.append("country", country);
+        formdata.append("alternate_mobile", alternate_mobile);
+        formdata.append("latitude", latitiude);
+        formdata.append("longitude", longitude);
+        formdata.append("is_default", is_default ? 1 : 0);
+
+        var requestOptions = {
+            method: 'POST',
+            headers: myHeaders,
+            body: formdata,
+            redirect: 'follow'
+        };
+
+        return fetch(process.env.REACT_APP_URL + process.env.REACT_APP_SUBURL + "/address/update", requestOptions)
+    },
+    fetchTimeSlot() {
+        var myHeaders = new Headers();
+        myHeaders.append(access_key_param, access_key);
+
+        var requestOptions = {
+            method: 'GET',
+            headers: myHeaders,
+            redirect: 'follow'
+        };
+
+        return fetch(process.env.REACT_APP_URL + process.env.REACT_APP_SUBURL + "/settings/time_slots", requestOptions)
+    },
+    placeOrder(token, product_variant_id, quantity, total, delivery_charge, final_total, payment_method, address_id, delivery_time, status = 2) {
+        var myHeaders = new Headers();
+        myHeaders.append(access_key_param, access_key);
+        myHeaders.append("Authorization", token_prefix + token);
+
+        var formdata = new FormData();
+        formdata.append("product_variant_id", product_variant_id);
+        formdata.append("quantity", quantity);
+        formdata.append("total", total);
+        formdata.append("delivery_charge", delivery_charge);
+        formdata.append("final_total", final_total);
+        formdata.append("payment_method", payment_method);
+        formdata.append("address_id", address_id);
+        formdata.append("delivery_time", delivery_time);
+        formdata.append("status", status);
+
+        var requestOptions = {
+            method: 'POST',
+            headers: myHeaders,
+            body: formdata,
+            redirect: 'follow'
+        };
+
+        return fetch(process.env.REACT_APP_URL + process.env.REACT_APP_SUBURL + "/place_order", requestOptions)
+    },
+    getOrders(token) {
+        var myHeaders = new Headers();
+        myHeaders.append(access_key_param, access_key);
+        myHeaders.append("Authorization", token_prefix + token);
+
+        var requestOptions = {
+            method: 'GET',
+            headers: myHeaders,
+            redirect: 'follow'
+        };
+
+        return fetch(process.env.REACT_APP_URL + process.env.REACT_APP_SUBURL + "/orders", requestOptions)
+    },
+    getTransactions(token) {
+        var myHeaders = new Headers();
+        myHeaders.append(access_key_param, access_key);
+        myHeaders.append("Authorization", token_prefix + token);
+
+        var requestOptions = {
+            method: 'GET',
+            headers: myHeaders,
+            redirect: 'follow'
+        };
+
+        return fetch(process.env.REACT_APP_URL + process.env.REACT_APP_SUBURL + "/get_user_transactions", requestOptions)
+    },
 }
 export default api;

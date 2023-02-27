@@ -4,8 +4,8 @@ import { Link } from 'react-router-dom';
 import googleplay from '../../utils/google-play.jpg'
 import appstore from '../../utils/app-store.png'
 import rozerpay from '../../utils/payments/rozerpay.png'
-import mastercard from '../../utils/payments/master-card.jpg'
-import upi from '../../utils/payments/upi.png'
+import paystack from '../../utils/payments/paystack.png'
+import cod from '../../utils/payments/cod.png'
 import { useDispatch } from 'react-redux';
 import api from '../../api/api'
 import { ActionTypes } from '../../model/action-type';
@@ -35,7 +35,7 @@ export const Footer = () => {
 
     return (
         <section id="footer">
-            <div className="container">
+            <div className="container pb-3">
                 <div className="row ">
                     <div className="col-xs-3 col-sm-3 col-md-3" >
                         <h5>categories</h5>
@@ -106,14 +106,14 @@ export const Footer = () => {
                             <div>
                                 <h5>payment method</h5>
                                 <div className='d-flex flex-row gap-3 payment justify-content-evenly' >
-                                    <button type='button' className='download-button'>
+                                    <button type='button' className='download-button' style={{padding:"0 8px",background:"#fff",borderRadius:"8px"}}>
                                         <img src={rozerpay} alt='rozerpay' ></img>
                                     </button>
-                                    <button type='button' className='download-button'>
-                                        <img src={mastercard} alt='master-card' ></img>
+                                    <button type='button' className='download-button' style={{padding:"0 8px",background:"#fff",borderRadius:"8px"}}>
+                                        <img src={paystack} alt='master-card' ></img>
                                     </button>
-                                    <button type='button'>
-                                        <img src={upi} alt='upi' className='download-button'></img>
+                                    <button type='button' style={{padding:"0 5px",background:"#fff",borderRadius:"8px"}}>
+                                        <img src={cod} alt='upi' className='download-button'></img>
                                     </button>
 
                                 </div>
@@ -124,7 +124,7 @@ export const Footer = () => {
             </div>
             <div className="copyright">
                 <div className="col-xs-12 col-sm-12 col-md-12 mt-2 mt-sm-2 text-center text-white">
-                    <p className="h6">Copyright © 2022.All right Reversed By eGrocer.</p>
+                    <p className="h6">Copyright © 2022.All right Reserved By eGrocer.</p>
                 </div>
                 <hr />
             </div>

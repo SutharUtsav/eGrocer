@@ -19,7 +19,8 @@ import ShowAllCategories from './components/category/ShowAllCategories';
 import ProductList from './components/product/ProductList';
 import ProductDetails from './components/product/ProductDetails';
 import ViewCart from './components/cart/ViewCart';
-import Cart from './components/cart/Cart';
+import Wishlist from './components/favorite/Wishlist';
+import Checkout from './components/checkout/Checkout';
 
 
 function App() {
@@ -60,6 +61,8 @@ function App() {
         <main id='main' className="main-app">
           <Routes>
             <Route path="/cart" element={<ViewCart />}></Route>
+            <Route path="/checkout" element={<Checkout />}></Route>
+            <Route path='/wishlist' element={<Wishlist />}></Route>
             <Route path="/profile" element={<ProfileDashboard />}></Route>
             <Route path='/categories' element={<ShowAllCategories />}></Route>
             <Route path='/products' element={<ProductList />}></Route>

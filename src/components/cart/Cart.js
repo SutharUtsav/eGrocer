@@ -274,7 +274,7 @@ const Cart = () => {
 
                                                 <div className='button-container'>
                                                     <Link to='/cart' className='view-cart'>view cart</Link>
-                                                    <Link className='checkout'>go to checkout</Link>
+                                                    <Link to='/checkout'className='checkout'>go to checkout</Link>
                                                 </div>
                                             </>)}
 

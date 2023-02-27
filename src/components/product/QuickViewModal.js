@@ -111,6 +111,26 @@ const QuickViewModal = (props) => {
             })
     }
 
+    //Add to favorite
+    const addToFavorite = async (product_id) => {
+        await api.addToFavotite(cookies.get('jwt_token'), product_id)
+            .then(response => response.json())
+            .then(async (result) => {
+                if (result.status === 1) {
+                    toast.success(result.message)
+                    await api.getFavorite(cookies.get('jwt_token'), city.city.latitude, city.city.longitude)
+                        .then(resp => resp.json())
+                        .then(res => {
+                            if (res.status === 1)
+                                dispatch({ type: ActionTypes.SET_FAVORITE, payload: res })
+                        })
+                }
+                else {
+                    toast.error(result.message)
+                }
+            })
+    }
+
     return (
         <div className='product-details-view'>
 
@@ -275,7 +295,7 @@ const QuickViewModal = (props) => {
 
                                                     </div>
 
-                                                    <button type='button' className='wishlist-product' ><BsHeart /></button>
+                                                    <button type='button' className='wishlist-product' onClick={()=>addToFavorite(props.selectedProduct.id)}><BsHeart /></button>
                                                     <button type='button' className='share-product' ><BsShare /></button>
                                                 </div>
                                             </div>

@@ -50,6 +50,7 @@ const ProductContainer = () => {
 
     const city = useSelector(state => state.city);
 
+    // const shop = useSelector(state=>state.shop);
 
     useEffect(() => {
         if (city.status === 'fulfill') {
@@ -117,6 +118,25 @@ const ProductContainer = () => {
             })
     }
 
+    //Add to favorite
+    const addToFavorite = async (product_id) => {
+        await api.addToFavotite(cookies.get('jwt_token'), product_id)
+            .then(response => response.json())
+            .then(async (result) => {
+                if (result.status === 1) {
+                    toast.success(result.message)
+                    await api.getFavorite(cookies.get('jwt_token'), city.city.latitude, city.city.longitude)
+                        .then(resp => resp.json())
+                        .then(res => {
+                            if (res.status === 1)
+                                dispatch({ type: ActionTypes.SET_FAVORITE, payload: res })
+                        })
+                }
+                else {
+                    toast.error(result.message)
+                }
+            })
+    }
 
     const settings = {
         infinite: false,
@@ -202,10 +222,10 @@ const ProductContainer = () => {
                                             <select id={`select-product${index}-variant-section`} onChange={(e) => {
                                                 document.getElementById(`price${index}-section`).innerHTML = parseFloat(JSON.parse(e.target.value).price);
 
-                                                if(document.getElementById(`input-cart-section${index}`).classList.contains('active')){
+                                                if (document.getElementById(`input-cart-section${index}`).classList.contains('active')) {
                                                     document.getElementById(`input-cart-section${index}`).classList.remove('active')
                                                     document.getElementById(`Add-to-cart-section${index}`).classList.add('active')
-                                                
+
                                                 }
 
                                             }} defaultValue={JSON.stringify(product.variants[0])} >
@@ -226,7 +246,7 @@ const ProductContainer = () => {
 
                                     <div className='d-flex flex-row border-top product-card-footer'>
                                         <div className='border-end '>
-                                            <button type="button" className='w-100 h-100'><BsHeart /></button>
+                                            <button type="button" className='w-100 h-100' onClick={() => addToFavorite(product.id)}><BsHeart /></button>
                                         </div>
 
                                         <div className='border-end' style={{ flexGrow: "1" }} >
@@ -277,7 +297,7 @@ const ProductContainer = () => {
                                             </div>
 
                                         </div>
-                                    
+
                                         <div className=''>
                                             <button type="button" className='w-100 h-100'><BsShare /></button>
                                         </div>

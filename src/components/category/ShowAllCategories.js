@@ -1,4 +1,4 @@
-import React, { useEffect,useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import api from '../../api/api'
@@ -17,21 +17,36 @@ const ShowAllCategories = () => {
 
 
   const getProductfromApi = async (ctg) => {
-    await api.getProductbyFilter(city.city.id, city.city.latitude, city.city.longitude, { category_id : ctg.id})
+    await api.getProductbyFilter(city.city.id, city.city.latitude, city.city.longitude, { category_id: ctg.id })
       .then(response => response.json())
       .then(result => {
         if (result.status === 1) {
-          setMap(new Map(map.set(`category${ctg.id}`,result.total)))
+          setMap(new Map(map.set(`category${ctg.id}`, result.total)))
         }
       })
   }
 
+  //fetch Category
+  const fetchCategory = () => {
+    api.getCategory()
+      .then(response => response.json())
+      .then(result => {
+        if (result.status === 1) {
+          dispatch({ type: ActionTypes.SET_CATEGORY, payload: result.data });
+        }
+      })
+      .catch(error => console.log("error ", error))
+  }
+
   useEffect(() => {
-    if (category.status !== 'loading' || city.city !== null) {
+    if (category.status === 'loading' && category.category === null) {
+      fetchCategory();
+    }
+    else if (category.status !== 'loading' || city.city !== null) {
       category.category.forEach(ctg => {
         getProductfromApi(ctg)
       });
-    }    
+    }
   }, [category])
 
 
@@ -40,7 +55,7 @@ const ShowAllCategories = () => {
 
 
   const selectCategory = (category) => {
-    dispatch({type:ActionTypes.SET_FILTER_CATEGORY,payload:category.id})
+    dispatch({ type: ActionTypes.SET_FILTER_CATEGORY, payload: category.id })
     navigate('/products')
   }
 
@@ -68,12 +83,12 @@ const ShowAllCategories = () => {
               {category.category.map((ctg, index) => (
                 <div className='card' key={index}>
                   <img className='card-img-top' src={ctg.image_url} alt='' />
-                  <div className='card-body' style={{cursor:"pointer"}} onClick={()=>selectCategory(ctg)}>
+                  <div className='card-body' style={{ cursor: "pointer" }} onClick={() => selectCategory(ctg)}>
                     <p>{ctg.name} (
                       {map.get(`category${ctg.id}`) !== undefined
-                        ?  map.get(`category${ctg.id}`)  
+                        ? map.get(`category${ctg.id}`)
                         : 0}
-                    )</p>
+                      )</p>
                   </div>
                 </div>
               ))}
