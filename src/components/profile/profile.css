@@ -10,7 +10,7 @@
 
 #profile .cover::before{
     content: "";
-    background: url('../../utils/cover-img.jpg')right/cover no-repeat;
+    background: url('../../utils/cover-img.jpg')center center/cover no-repeat;
     height: 37%;
     /* background-position: right; */
     width: 100% !important;

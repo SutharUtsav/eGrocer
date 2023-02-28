@@ -461,7 +461,7 @@ const Header = () => {
 
                             {user.status === 'loading'
                                 ? (
-                                    <div className='hide-mobile-screen mx-5'>
+                                    <div className='hide-mobile-screen ms-5'>
                                         <motion.div whileTap={{ scale: 0.6 }} className='d-flex flex-row user-profile gap-1' data-bs-toggle="modal" data-bs-target="#loginModal">
                                             <div className='d-flex flex-column user-info my-auto'>
                                                 <span className='name'> Utsav Suthar</span>

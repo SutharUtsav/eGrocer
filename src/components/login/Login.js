@@ -40,6 +40,7 @@ const Login = (props) => {
             setError("")
     }, 5000))
     const [isOTP, setIsOTP] = useState(false);
+    const [Uid, setUid] = useState("");
     const [OTP, setOTP] = useState("");
     const [isLoading, setisLoading] = useState(false)
 
@@ -74,6 +75,7 @@ const Login = (props) => {
                 let appVerifier = window.recaptchaVerifier;
                 signInWithPhoneNumber(authentication, phonenum, appVerifier)
                     .then(confirmationResult => {
+                        console.log(confirmationResult)
                         window.confirmationResult = confirmationResult;
                     }).catch((error) => {
                         console.log(error)
@@ -97,14 +99,55 @@ const Login = (props) => {
                 }
             })
     }
+//otp verification
+const verifyOTP = (e) => {
+    e.preventDefault();
+    setisLoading(true);
 
-    const loginApiCall = async (num, OTP, countrycode) => {
-        await api.login(num, OTP, countrycode)
+    let confirmationResult = window.confirmationResult;
+
+    if (phonenum === '+917069052544') {
+        const countrycode = parsePhoneNumber(phonenum).countryCallingCode;
+        const num = parsePhoneNumber(phonenum).nationalNumber;
+
+
+        //login call
+        loginApiCall(num, OTP, countrycode)
+    }
+    else {
+        console.log(OTP)
+        confirmationResult.confirm(OTP).then((result) => {
+            // User verified successfully.
+            console.log(result.user.uid);
+            setUid(result.user.uid)
+            const countrycode = parsePhoneNumber(phonenum).countryCallingCode;
+            const num = parsePhoneNumber(phonenum).nationalNumber;
+
+
+            //login call
+            loginApiCall(num, Uid, countrycode)
+
+        }).catch(() => {
+            // User couldn't sign in (bad verification code?)
+            setError("Invalid Code")
+
+        });
+
+    }
+    // const countrycode = parsePhoneNumber(phonenum).countryCallingCode;
+    // const num = parsePhoneNumber(phonenum).nationalNumber;
+
+
+    // //login call
+    // loginApiCall(num, OTP, countrycode)
+}
+    const loginApiCall = async (num, Uid, countrycode) => {
+        await api.login(num, Uid, countrycode)
             .then(response => response.json())
             .then(result => {
                 console.log(result)
                 if (result.status === 1) {
-
+                    console.log("success Login")
                     const decoded = jwt(result.data.access_token)
 
                     cookies.set("jwt_token", result.data.access_token, {
@@ -126,47 +169,7 @@ const Login = (props) => {
 
     }
 
-    //otp verification
-    const verifyOTP = (e) => {
-        e.preventDefault();
-        setisLoading(true);
-
-        let confirmationResult = window.confirmationResult;
-
-        if (phonenum === '+917069052544') {
-            const countrycode = parsePhoneNumber(phonenum).countryCallingCode;
-            const num = parsePhoneNumber(phonenum).nationalNumber;
-
-
-            //login call
-            loginApiCall(num, OTP, countrycode)
-        }
-        else {
-            console.log(OTP)
-            confirmationResult.confirm(OTP).then((result) => {
-                // User verified successfully.
-                console.log(result);
-                const countrycode = parsePhoneNumber(phonenum).countryCallingCode;
-                const num = parsePhoneNumber(phonenum).nationalNumber;
-
-
-                //login call
-                loginApiCall(num, OTP, countrycode)
-
-            }).catch(() => {
-                // User couldn't sign in (bad verification code?)
-                setError("Invalid Code")
-
-            });
-
-        }
-        // const countrycode = parsePhoneNumber(phonenum).countryCallingCode;
-        // const num = parsePhoneNumber(phonenum).nationalNumber;
-
-
-        // //login call
-        // loginApiCall(num, OTP, countrycode)
-    }
+    
 
 
     return (

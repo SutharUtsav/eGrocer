@@ -209,7 +209,7 @@ const ProductContainer = () => {
 
                         {shop.shop.sections.map((section, index0) => (
                             <div key={index0}>
-                                <div className='d-flex flex-column container' style={{ gap: "30px",marginTop:"30px" }}  >
+                                <div className='d-flex flex-column' style={{ gap: "30px",marginTop:"30px" }}  >
                                     <div className='d-flex flex-row justify-content-between align-items-center product-heading-container'>
                                         <div className='d-flex flex-column'>
                                             <span>{section.short_description}</span>
@@ -240,7 +240,7 @@ const ProductContainer = () => {
                                                 <div className="card-body product-card-body p-3">
                                                     <span>{product.name}</span>
                                                     <div className='d-flex flex-row justify-content-between'>
-                                                        <select id={`select-product${index}-variant-section`} onChange={(e) => {
+                                                        <select className='form-select' id={`select-product${index}-variant-section`} onChange={(e) => {
                                                             document.getElementById(`price${index}-section`).innerHTML = parseFloat(JSON.parse(e.target.value).price);
 
                                                             if (document.getElementById(`input-cart-section${index}`).classList.contains('active')) {
