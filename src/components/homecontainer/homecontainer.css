@@ -1,7 +1,8 @@
 .home-element {
     --widgets-spacing: 20px;
     padding: 15px 0px 0px 0px;
-    height: fit-content;
+    height: 620px;
+    width: 1639px;
 }
 
 .home-section {

@@ -56,7 +56,7 @@ function App() {
 
   return (
     <AnimatePresence>
-      <div className="w-100 h-auto flex flex-col ">
+      <div className="w-100 h-auto ">
         <Header />
         <main id='main' className="main-app">
           <Routes>

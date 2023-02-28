@@ -43,7 +43,7 @@ const Slider = () => {
     const shop = useSelector(state=>state.shop);
 
     return (
-        <div className='slider'>
+        <div className='slider '>
             {
                 shop.shop === null
                     ? (

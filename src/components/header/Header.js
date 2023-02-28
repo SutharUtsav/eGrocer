@@ -129,7 +129,6 @@ const Header = () => {
 
     return (
         <>
-
             {/* sidebar */}
             <div className="hide-desktop offcanvas offcanvas-start" tabIndex="-1" id="sidebaroffcanvasExample" aria-labelledby="sidebaroffcanvasExampleLabel">
                 <div className='site-scroll ps'>
@@ -273,13 +272,13 @@ const Header = () => {
             </div>
 
             {/* header */}
-            <header className='site-header desktop-shadow-disable mobile-shadow-enable mobile-nav-enable'>
+            <header className='site-header desktop-shadow-disable mobile-shadow-enable mobile-nav-enable border-bottom'>
 
 
                 {/* top header */}
                 <div className={`header-top header-wrapper hide-mobile ${(cssmode.cssmode === "dark") ? "dark-header-top" : ''}`}>
-                    <div className={`container`}>
-                        <div className='column column-left'>
+                    <div className={`d-flex align-items-center justify-content-between mx-140`}>
+                        <div className=''>
                             <Link to='/about' className={`p-2 border-end ${(cssmode.cssmode === "dark") ? "dark-header-1" : ''}`} > About us</Link>
                             <Link to='/contact' className={`p-2 border-end`} > Contact us</Link>
                             <Link to='/faq' className={`p-2 border-end`} > faq</Link>
@@ -311,8 +310,8 @@ const Header = () => {
 
 
                 {/* bottom header */}
-                <div className="header-main header-wrapper border-bottom">
-                    <div className='container'>
+                <div className="header-main header-wrapper  mx-140 ">
+                    <div className='d-flex justify-content-between'>
 
                         <div className='column column-left '>
 
@@ -336,7 +335,7 @@ const Header = () => {
                         </div>
 
 
-                        <div className='column column-center'>
+                        <div className='d-flex align-items-center w-50'>
 
                             {/* location modal trigger button */}
                             <motion.button whileTap={{ scale: 0.6 }} type='buton' className='header-location site-location hide-mobile' data-bs-toggle="modal" data-bs-target="#locationModal" ref={locationModalTrigger}>
@@ -344,7 +343,7 @@ const Header = () => {
                                     <div className='icon location p-1 m-auto'>
                                         <GoLocation />
                                     </div>
-                                    <div className='d-flex flex-column flex-grow-1'>
+                                    <div className='d-flex flex-column flex-grow-1 align-items-start' >
                                         <span className='location-description'>Deliver to <IoMdArrowDropdown /></span>
                                         <span className='current-location'>{isLocationPresent
                                             ? (
@@ -366,12 +365,12 @@ const Header = () => {
                             </motion.button>
 
                             <></>
-                            <div className='header-search'>
+                            <div className='header-search rounded-3 '>
                                 <form onSubmit={(e) => {
                                     e.preventDefault()
                                     // console.log(document.getElementById('search-box').value)
                                 }} className='search-form'>
-                                    <input type="search" id="search-box" placeholder="What are you lookinh for..." />
+                                    <input type="search" id="search-box" placeholder="What are you lookinh for..." className='rounded-5'/>
 
                                     <button type='submit'>
                                         <MdSearch fill='white' />
@@ -383,8 +382,8 @@ const Header = () => {
                         </div>
 
 
-                        <div className='column column-right gap-5'>
-                            <motion.div whileTap={{ scale: 0.6 }} className='icon position-relative hide-mobile'>
+                        <div className='d-flex justify-content-center align-items-center'>
+                            <motion.div whileTap={{ scale: 0.6 }} className='icon position-relative hide-mobile mx-4'>
                                 <IoNotificationsOutline />
                                 <span className="position-absolute start-100 translate-middle badge rounded-pill fs-5 ">
                                     9+
@@ -393,7 +392,7 @@ const Header = () => {
                             </motion.div>
 
                             {city.city === null || cookies.get('jwt_token') === undefined
-                                ? <motion.button whileTap={{ scale: 0.6 }} className='icon position-relative hide-mobile-screen'
+                                ? <motion.button whileTap={{ scale: 0.6 }} className='icon mx-4 position-relative hide-mobile-screen'
                                     onClick={() => {
                                         if (cookies.get('jwt_token') === undefined) {
                                             toast.error("OOPS!You have to login first to see your cart!")
@@ -402,9 +401,9 @@ const Header = () => {
                                             toast.error("Please Select you delivery location first!")
                                         }
                                     }}>
-                                    <IoHeartOutline />
+                                    <IoHeartOutline className=''/>
                                 </motion.button>
-                                : <motion.button whileTap={{ scale: 0.6 }} className='icon position-relative hide-mobile-screen' data-bs-toggle="offcanvas" data-bs-target="#favoriteoffcanvasExample" aria-controls="favoriteoffcanvasExample"
+                                : <motion.button whileTap={{ scale: 0.6 }} className='icon mx-4 position-relative hide-mobile-screen' data-bs-toggle="offcanvas" data-bs-target="#favoriteoffcanvasExample" aria-controls="favoriteoffcanvasExample"
                                     onClick={() => {
                                         if (cookies.get('jwt_token') === undefined) {
                                             toast.error("OOPS!You have to login first to see your cart!")
@@ -413,7 +412,7 @@ const Header = () => {
                                             toast.error("Please Select you delivery location first!")
                                         }
                                     }}>
-                                    <IoHeartOutline />
+                                    <IoHeartOutline className=''/>
 
                                     {favorite.favorite !== null ?
                                         <span className="position-absolute start-100 translate-middle badge rounded-pill fs-5 ">
@@ -426,7 +425,7 @@ const Header = () => {
                             }
 
                             {city.city === null || cookies.get('jwt_token') === undefined
-                                ? <motion.button type='button' whileTap={{ scale: 0.6 }} className='icon position-relative'
+                                ? <motion.button type='button' whileTap={{ scale: 0.6 }} className='icon mx-4 position-relative'
 
                                     onClick={() => {
                                         if (cookies.get('jwt_token') === undefined) {
@@ -439,7 +438,7 @@ const Header = () => {
                                     <IoCartOutline />
                                 </motion.button>
 
-                                : <motion.button type='button' whileTap={{ scale: 0.6 }} className='icon position-relative' data-bs-toggle="offcanvas" data-bs-target="#cartoffcanvasExample" aria-controls="cartoffcanvasExample"
+                                : <motion.button type='button' whileTap={{ scale: 0.6 }} className='icon mx-4 position-relative' data-bs-toggle="offcanvas" data-bs-target="#cartoffcanvasExample" aria-controls="cartoffcanvasExample"
 
                                     onClick={() => {
                                         if (cookies.get('jwt_token') === undefined) {
@@ -462,7 +461,7 @@ const Header = () => {
 
                             {user.status === 'loading'
                                 ? (
-                                    <div className='hide-mobile-screen'>
+                                    <div className='hide-mobile-screen mx-5'>
                                         <motion.div whileTap={{ scale: 0.6 }} className='d-flex flex-row user-profile gap-1' data-bs-toggle="modal" data-bs-target="#loginModal">
                                             <div className='d-flex flex-column user-info my-auto'>
                                                 <span className='name'> Utsav Suthar</span>
@@ -476,7 +475,7 @@ const Header = () => {
                                     </div>
                                 )
                                 : (
-                                    <div className='hide-mobile-screen'>
+                                    <div className='hide-mobile-screen ms-5'>
                                         <Link to='/profile' className='d-flex flex-row user-profile gap-1' >
                                             <div className='d-flex flex-column user-info my-auto'>
                                                 <span className='name'> {user.user.name}</span>

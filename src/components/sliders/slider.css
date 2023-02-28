@@ -1,15 +1,16 @@
 .slider {
-    width: 100%;
+    width: 1120px;
     /* height: 100%; */
-    flex-grow: 1;
+    /* flex-grow: 1; */
 }
 
 .slider__flex {
-    display: inline-flex;
+    /* width: 1120px; */
+    display: flex;
 }
 
 .slider__images {
-    width: 850px;
+    width: 1120px;
     /* max-height: calc(400px - 20px); */
 }
 
@@ -42,11 +43,11 @@
 .slider__col {
     display: flex;
     align-items: center;
-    margin-left: 12px;
+    margin-left: 62px;
 }
 
 .swiper-container1 *.swiper-slide{
-    width: fit-content;
+    /* width: fit-content; */
 }
 
 .swiper-container1 *.slider__image {

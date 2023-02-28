@@ -3,8 +3,8 @@
     height: fit-content;
     max-height: 100%;
     overflow: auto;
-    width: 350px;
-    height: 100%;
+    width: 398px;
+    height: 620px;
     scrollbar-width: none;
 }
 
@@ -46,6 +46,11 @@
     flex-direction: column;
     background: #fff;
     width: 100%;
+    height: 620px;
+}
+
+.category-container button{
+    height: 57px;
 }
 
 

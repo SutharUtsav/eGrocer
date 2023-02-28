@@ -31,7 +31,7 @@ const MainContainer = () => {
     }, [city])
 
     return (
-        <div className='home-page content'>
+        <div className='home-page mx-140 content'>
             <HomeContainer />
             <ProductContainer />
             <Offers />
