@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from 'react-redux'
 import api from '../api/api'
 import { ActionTypes } from '../model/action-type'
 import HomeContainer from './homecontainer/HomeContainer'
-import Offers from './offer/Offers'
 import ProductContainer from './product/ProductContainer'
 
 
@@ -34,7 +33,6 @@ const MainContainer = () => {
         <div className='home-page mx-140 content'>
             <HomeContainer />
             <ProductContainer />
-            <Offers />
         </div>
     )
 }

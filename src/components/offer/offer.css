@@ -1,5 +1,6 @@
 #offers{
     padding-top: 30px;
+    margin-bottom: 30px;
 }
 
 .offer-container{
@@ -24,13 +25,15 @@
     font-weight: bolder;
     margin: 0;
 }
-.offer-container .offer-container-body{
-   height: fit-content;
-   width: 20vw;
-}
+/* .offer-container .offer-container-body{
+} */
 
 .offer-container .offer-container-body img{
+<<<<<<< HEAD
     height: 80%;
+=======
+    height: 400px;
+>>>>>>> a88e93c3500ef26b61d179be17a9f197e58c047f
     width: 100%;
     border-radius: 20px;
     position: relative ;
