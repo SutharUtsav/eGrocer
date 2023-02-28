@@ -7,16 +7,23 @@ import 'react-calendar/dist/Calendar.css'
 import api from '../../api/api'
 import rozerpay from '../../utils/payments/rozerpay.png'
 import paystack from '../../utils/payments/paystack.png'
+import Paytm from '../../utils/payments/Paytm.png'
+import Stripe from '../../utils/payments/Stripe.png'
 import cod from '../../utils/payments/cod.png'
 import { useSelector } from 'react-redux'
 import { FaRupeeSign } from "react-icons/fa";
 import Cookies from 'universal-cookie'
+import { toast } from 'react-toastify'
+import { useNavigate } from 'react-router-dom'
 
+//payment methods
+// import Razorpay from 'razorpay'
 
 const Checkout = () => {
 
     const cart = useSelector(state => (state.cart))
     const cookies = new Cookies();
+    const navigate = useNavigate()
 
     const fetchTimeSlot = () => {
         api.fetchTimeSlot()
@@ -41,14 +48,16 @@ const Checkout = () => {
     const [expectedTime, setexpectedTime] = useState(null)
     const [paymentMethod, setpaymentMethod] = useState("COD")
 
+    const [paymentSettings, setpaymentSettings] = useState(null)
 
-    const handlePlaceOrder = () => {
+
+    const handlePlaceOrder = async () => {
         console.log(selectedAddress)
         console.log(expectedDate)
         console.log(expectedTime)
         console.log(paymentMethod)
 
-        var delivery_time = `${expectedDate.getDate()}-${expectedDate.getMonth()+1}-${expectedDate.getFullYear()} ${expectedTime.title}`
+        var delivery_time = `${expectedDate.getDate()}-${expectedDate.getMonth() + 1}-${expectedDate.getFullYear()} ${expectedTime.title}`
         // api.placeOrder(cookies.get('jwt_token'), cart.checkout.product_variant_id, cart.checkout.quantity, cart.checkout.sub_total, cart.checkout.delivery_charge.total_delivery_charge, cart.checkout.total_amount, paymentMethod, delivery_time)
         //     .then(response => response.json())
         //     .then(result => {
@@ -56,6 +65,56 @@ const Checkout = () => {
         //     })
         //     .catch(error => console.log(error))
 
+        await api.getPaymentSettings(cookies.get('jwt_token'))
+            .then(response => response.json())
+            .then(result => {
+                if (result.status === 1) {
+                    setpaymentSettings(result.data)
+                }
+            })
+            .catch(error => console.log(error))
+
+        if (paymentMethod === 'COD') {
+
+        }
+        else if (paymentMethod === 'razorpay') {
+            // const razorpay = new Razorpay({
+            //     key_id: process.env.REACT_APP_RAZORPAY_KEY,
+            //     key_secret: process.env.REACT_APP_RAZORPAY_SECRET_KEY,
+            // });
+
+            // const options = {
+            //     amount: 1000,
+            //     currency: 'INR',
+            //     name: 'My Company Name',
+            //     description: 'Payment for Order #123',
+            //     handler: function (response) {
+            //         console.log(response)
+            //     },
+            //     prefill: {
+            //         name: 'John Doe',
+            //         email: 'john.doe@example.com',
+            //         contact: '9999999999',
+            //     },
+            //     notes: {
+            //         address: '123 Main St',
+            //     },
+            // };
+            // razorpay.orders.create(options, function (err, order) {
+            //     razorpay.createPayment(order, function (err, payment) {
+            //         razorpay.open();
+            //     });
+            // });
+        }
+        else if (paymentMethod === 'paystack') {
+
+        }
+        else if (paymentMethod === 'Stripe') {
+
+        }
+        else if (paymentMethod === 'Paytm') {
+
+        }
     }
 
     return (
@@ -80,7 +139,15 @@ const Checkout = () => {
                         <span className='heading'>preferred delivery day</span>
                         <div className='d-flex justify-content-center p-3'>
                             <Calendar value={expectedDate} onChange={(e) => {
-                                setexpectedDate(new Date(e))
+                                if (new Date(e) >= new Date()) {
+                                    setexpectedDate(new Date(e))
+                                }
+                                else if (new Date(e).getDate() === new Date().getDate() && new Date(e).getMonth() === new Date().getMonth() && new Date(e).getFullYear() === new Date().getFullYear()) {
+                                    setexpectedDate(new Date(e))
+                                }
+                                else {
+                                    toast.info('Please Select Valid Delivery Day')
+                                }
                             }} />
                         </div>
                     </div>
@@ -145,6 +212,24 @@ const Checkout = () => {
                             </label>
                             <input type="radio" name="payment-method" id='paystack' onChange={() => {
                                 setpaymentMethod("Paystack")
+                            }} />
+                        </div>
+                        <div>
+                            <label className="form-check-label" htmlFor='Stripe'>
+                                <img src={Stripe} alt='stripe' />
+                                <span>Stripe</span>
+                            </label>
+                            <input type="radio" name="payment-method" id='stripe' onChange={() => {
+                                setpaymentMethod("Stripe")
+                            }} />
+                        </div>
+                        <div>
+                            <label className="form-check-label" htmlFor='Paytm'>
+                                <img src={Paytm} alt='Paytm' />
+                                <span>Paytm</span>
+                            </label>
+                            <input type="radio" name="payment-method" id='Paytm' onChange={() => {
+                                setpaymentMethod("Paytm")
                             }} />
                         </div>
                     </div>
