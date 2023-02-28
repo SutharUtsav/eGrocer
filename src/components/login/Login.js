@@ -67,7 +67,7 @@ const Login = (props) => {
             else if (validator.isMobilePhone(phonenum)) {
 
                 setIsOTP(true);
-                setOTP("");
+                // setOTP("");
 
                 //OTP Generation
                 generateRecaptcha();
@@ -102,6 +102,7 @@ const Login = (props) => {
         await api.login(num, OTP, countrycode)
             .then(response => response.json())
             .then(result => {
+                console.log(result)
                 if (result.status === 1) {
 
                     const decoded = jwt(result.data.access_token)
@@ -141,8 +142,10 @@ const Login = (props) => {
             loginApiCall(num, OTP, countrycode)
         }
         else {
+            console.log(OTP)
             confirmationResult.confirm(OTP).then((result) => {
                 // User verified successfully.
+                console.log(result);
                 const countrycode = parsePhoneNumber(phonenum).countryCallingCode;
                 const num = parsePhoneNumber(phonenum).nationalNumber;
 

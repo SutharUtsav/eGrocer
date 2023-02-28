@@ -24,7 +24,7 @@ const api = {
             redirect: 'follow'
         };
 
-        return fetch(process.env.REACT_APP_URL + process.env.REACT_APP_SUBURL + "/login", requestOptions)
+        return fetch("https://egrocer.wrteam.in/customer/login", requestOptions)
     },
     logout() {
         var myHeaders = new Headers();
@@ -42,7 +42,7 @@ const api = {
             redirect: 'follow'
         };
 
-        return fetch(process.env.REACT_APP_URL + process.env.REACT_APP_SUBURL + "/logout", requestOptions)
+        return fetch("https://egrocer.wrteam.in/customer/logout", requestOptions)
     },
     getSettings() {
         var myHeaders = new Headers();
@@ -53,7 +53,7 @@ const api = {
             redirect: 'follow'
         };
 
-        return fetch(process.env.REACT_APP_URL + process.env.REACT_APP_SUBURL + "/settings", requestOptions)
+        return fetch("https://egrocer.wrteam.in/customer/settings", requestOptions)
     },
     getCity(city_name, latitude, longitude) {
         var myHeaders = new Headers();
@@ -69,7 +69,7 @@ const api = {
             latitude: latitude,
             longitude: longitude,
         }
-        var url = new URL(process.env.REACT_APP_URL + process.env.REACT_APP_SUBURL + "/city");
+        var url = new URL("https://egrocer.wrteam.in/customer/city");
         for (let k in params) {
             url.searchParams.append(k, params[k])
         };
@@ -88,7 +88,7 @@ const api = {
             redirect: 'follow'
         };
         var params = { city_id: city_id, latitude: latitiude, longitude: longitude };
-        var url = new URL(process.env.REACT_APP_URL + process.env.REACT_APP_SUBURL + "/shop");
+        var url = new URL("https://egrocer.wrteam.in/customer/shop");
         for (let k in params) {
             url.searchParams.append(k, params[k])
         };
@@ -108,7 +108,7 @@ const api = {
             redirect: 'follow'
         };
 
-        return fetch(process.env.REACT_APP_URL + process.env.REACT_APP_SUBURL + "/brands", requestOptions)
+        return fetch("https://egrocer.wrteam.in/customer/brands", requestOptions)
 
     },
     getCategory(id = 0) {
@@ -125,7 +125,7 @@ const api = {
             redirect: 'follow'
         };
         var params = { category_id: id };
-        var url = new URL(process.env.REACT_APP_URL + process.env.REACT_APP_SUBURL + "/categories");
+        var url = new URL("https://egrocer.wrteam.in/customer/categories");
         for (let k in params) {
             url.searchParams.append(k, params[k])
         };
@@ -145,7 +145,7 @@ const api = {
             redirect: 'follow'
         };
 
-        return fetch(process.env.REACT_APP_URL + process.env.REACT_APP_SUBURL + "/sliders", requestOptions)
+        return fetch("https://egrocer.wrteam.in/customer/sliders", requestOptions)
     },
     getOffer() {
         var myHeaders = new Headers();
@@ -158,7 +158,7 @@ const api = {
             redirect: 'follow'
         };
 
-        return fetch(process.env.REACT_APP_URL + process.env.REACT_APP_SUBURL + "/offers", requestOptions)
+        return fetch("https://egrocer.wrteam.in/customer/offers", requestOptions)
     },
     getSection(city_id, latitiude, longitude) {
         var myHeaders = new Headers();
@@ -171,7 +171,7 @@ const api = {
         };
 
         var params = { city_id: city_id, latitude: latitiude, longitude: longitude };
-        var url = new URL(process.env.REACT_APP_URL + process.env.REACT_APP_SUBURL + "/sections");
+        var url = new URL("https://egrocer.wrteam.in/customer/sections");
         for (let k in params) {
             url.searchParams.append(k, params[k])
         };
@@ -193,7 +193,7 @@ const api = {
             redirect: 'follow'
         };
 
-        return fetch(process.env.REACT_APP_URL + process.env.REACT_APP_SUBURL + "/user_details", requestOptions)
+        return fetch("https://egrocer.wrteam.in/customer/user_details", requestOptions)
     },
     editProfile(uname, email, selectedFile, token) {
         var myHeaders = new Headers();
@@ -215,7 +215,7 @@ const api = {
             redirect: 'follow'
         };
 
-        return fetch(process.env.REACT_APP_URL + process.env.REACT_APP_SUBURL + "/edit_profile", requestOptions)
+        return fetch("https://egrocer.wrteam.in/customer/edit_profile", requestOptions)
     },
     getProductbyFilter(city_id, latitude, longitude, filters) {
         var myHeaders = new Headers();
@@ -240,7 +240,7 @@ const api = {
             redirect: 'follow'
         };
 
-        return fetch(process.env.REACT_APP_URL + process.env.REACT_APP_SUBURL + "/products", requestOptions)
+        return fetch("https://egrocer.wrteam.in/customer/products", requestOptions)
     },
     getProductbyId(city_id, latitude, longitude, id) {
         var myHeaders = new Headers();
@@ -259,7 +259,7 @@ const api = {
             redirect: 'follow'
         };
 
-        return fetch(process.env.REACT_APP_URL + process.env.REACT_APP_SUBURL + "/product_by_id", requestOptions)
+        return fetch("https://egrocer.wrteam.in/customer/product_by_id", requestOptions)
 
     },
     getCart(token, latitude, longitude, checkout = 0) {
@@ -274,7 +274,7 @@ const api = {
         };
 
         var params = { latitude: latitude, longitude: longitude, is_checkout: checkout };
-        var url = new URL(process.env.REACT_APP_URL + process.env.REACT_APP_SUBURL + "/cart");
+        var url = new URL("https://egrocer.wrteam.in/customer/cart");
         for (let k in params) {
             url.searchParams.append(k, params[k])
         };
@@ -298,7 +298,7 @@ const api = {
             redirect: 'follow'
         };
 
-        return fetch(process.env.REACT_APP_URL + process.env.REACT_APP_SUBURL + "/cart/add", requestOptions)
+        return fetch("https://egrocer.wrteam.in/customer/cart/add", requestOptions)
     },
     removeFromCart(token, product_id, product_variant_id) {
         var myHeaders = new Headers();
@@ -317,7 +317,7 @@ const api = {
             redirect: 'follow'
         };
 
-        return fetch(process.env.REACT_APP_URL + process.env.REACT_APP_SUBURL + "/cart/remove", requestOptions)
+        return fetch("https://egrocer.wrteam.in/customer/cart/remove", requestOptions)
     },
     getFavorite(token, latitude, longitude) {
         var myHeaders = new Headers();
@@ -331,7 +331,7 @@ const api = {
         };
 
         var params = { latitude: latitude, longitude: longitude };
-        var url = new URL(process.env.REACT_APP_URL + process.env.REACT_APP_SUBURL + "/favorites");
+        var url = new URL("https://egrocer.wrteam.in/customer/favorites");
         for (let k in params) {
             url.searchParams.append(k, params[k])
         };
@@ -353,7 +353,7 @@ const api = {
             redirect: 'follow'
         };
 
-        return fetch(process.env.REACT_APP_URL + process.env.REACT_APP_SUBURL + "/favorites/add", requestOptions)
+        return fetch("https://egrocer.wrteam.in/customer/favorites/add", requestOptions)
     },
     removeFromFavorite(token, product_id) {
         var myHeaders = new Headers();
@@ -370,7 +370,7 @@ const api = {
             redirect: 'follow'
         };
 
-        return fetch(process.env.REACT_APP_URL + process.env.REACT_APP_SUBURL + "/favorites/remove", requestOptions)
+        return fetch("https://egrocer.wrteam.in/customer/favorites/remove", requestOptions)
     },
     getAddress(token) {
         var myHeaders = new Headers();
@@ -383,7 +383,7 @@ const api = {
             redirect: 'follow'
         };
 
-        return fetch(process.env.REACT_APP_URL + process.env.REACT_APP_SUBURL + "/address", requestOptions)
+        return fetch("https://egrocer.wrteam.in/customer/address", requestOptions)
     },
     addAddress(token, name, mobile, type, address, landmark, area, pincode, city, state, country, alternate_mobile, latitiude, longitude, is_default) {
         var myHeaders = new Headers();
@@ -413,7 +413,7 @@ const api = {
             redirect: 'follow'
         };
 
-        return fetch(process.env.REACT_APP_URL + process.env.REACT_APP_SUBURL + "/address/add", requestOptions)
+        return fetch("https://egrocer.wrteam.in/customer/address/add", requestOptions)
     },
     deleteAddress(token, address_id) {
         var myHeaders = new Headers();
@@ -430,7 +430,7 @@ const api = {
             redirect: 'follow'
         };
 
-        return fetch(process.env.REACT_APP_URL + process.env.REACT_APP_SUBURL + "/address/delete", requestOptions)
+        return fetch("https://egrocer.wrteam.in/customer/address/delete", requestOptions)
 
     },
     updateAddress(token, address_id, name, mobile, type, address, landmark, area, pincode, city, state, country, alternate_mobile, latitiude, longitude, is_default) {
@@ -462,7 +462,7 @@ const api = {
             redirect: 'follow'
         };
 
-        return fetch(process.env.REACT_APP_URL + process.env.REACT_APP_SUBURL + "/address/update", requestOptions)
+        return fetch("https://egrocer.wrteam.in/customer/address/update", requestOptions)
     },
     fetchTimeSlot() {
         var myHeaders = new Headers();
@@ -474,7 +474,7 @@ const api = {
             redirect: 'follow'
         };
 
-        return fetch(process.env.REACT_APP_URL + process.env.REACT_APP_SUBURL + "/settings/time_slots", requestOptions)
+        return fetch("https://egrocer.wrteam.in/customer/settings/time_slots", requestOptions)
     },
     placeOrder(token, product_variant_id, quantity, total, delivery_charge, final_total, payment_method, address_id, delivery_time, status = 2) {
         var myHeaders = new Headers();
@@ -499,7 +499,7 @@ const api = {
             redirect: 'follow'
         };
 
-        return fetch(process.env.REACT_APP_URL + process.env.REACT_APP_SUBURL + "/place_order", requestOptions)
+        return fetch("https://egrocer.wrteam.in/customer/place_order", requestOptions)
     },
     getOrders(token) {
         var myHeaders = new Headers();
@@ -512,7 +512,7 @@ const api = {
             redirect: 'follow'
         };
 
-        return fetch(process.env.REACT_APP_URL + process.env.REACT_APP_SUBURL + "/orders", requestOptions)
+        return fetch("https://egrocer.wrteam.in/customer/orders", requestOptions)
     },
     getTransactions(token) {
         var myHeaders = new Headers();
@@ -525,7 +525,24 @@ const api = {
             redirect: 'follow'
         };
 
-        return fetch(process.env.REACT_APP_URL + process.env.REACT_APP_SUBURL + "/get_user_transactions", requestOptions)
+        return fetch("https://egrocer.wrteam.in/customer/get_user_transactions", requestOptions)
     },
+    getInvoices(token, order_id) {
+        var myHeaders = new Headers();
+        myHeaders.append(access_key_param, access_key);
+        myHeaders.append("Authorization", token_prefix + token);
+
+        var requestOptions = {
+            method: 'POST',
+            headers: myHeaders,
+            body: formData,
+            redirect:'follow'
+        };
+
+        var formData = new FormData();
+        formData.append('order_id', order_id )
+
+        return fetch("https://egrocer.wrteam.in/customer/invoice", requestOptions)
+    }
 }
 export default api;

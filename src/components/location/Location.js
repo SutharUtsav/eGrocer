@@ -267,7 +267,7 @@ const Location = (props) => {
 
 
   return (
-    <LoadScript googleMapsApiKey={process.env.REACT_APP_GOOGLE_PLACE_API} libraries={libraries}>
+    <LoadScript googleMapsApiKey={'AIzaSyA0B2eTsnUMMG4SN6Agjz7JD3w_gCDj1lE'} libraries={libraries}>
 
       <div className="d-flex flex-row justify-content-between header">
         <h5>set delivery location</h5>

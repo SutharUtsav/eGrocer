@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react'
 import api from '../../api/api'
 import './offer.css'
 import Slider from 'react-slick'
-import { Shimmer } from 'react-shimmer'
 import { AiOutlineArrowRight } from 'react-icons/ai'
 import { useSelector } from 'react-redux'
 // import offer3 from '../../utils/offers/offer3.jpg'
@@ -118,7 +117,7 @@ const Offers = () => {
                             <Slider {...settings} className='p-2 container'>
                                 {shop.shop.offers.map((offer, index) => (
                                     <div key={index} className='offer-container-body'>
-                                        <img src={offer.image_url} alt="offers" />
+                                        <img src={offer.image_url}  alt="offers" />
                                         <button type='button'>shop now <AiOutlineArrowRight fill="#fff" /></button>
                                     </div>
                                 ))}

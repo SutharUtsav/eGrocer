@@ -171,7 +171,7 @@ const Header = () => {
                         </div>
 
                         <div className='all-categories locked'>
-                            {/* <motion.button whileTap={{ scale: 0.8 }} type="button" data-bs-toggle="collapse" data-bs-target="#collapseCategories" aria-expanded="false" aria-controls="collapseCategories">
+                            <motion.button whileTap={{ scale: 0.8 }} type="button" data-bs-toggle="collapse" data-bs-target="#collapseCategories" aria-expanded="false" aria-controls="collapseCategories">
                                 <FiMenu />
                                 <span className='text'>All categories</span>
                                 <IoIosArrowDown />
@@ -179,7 +179,7 @@ const Header = () => {
 
                             <div className="collapse" id="collapseCategories">
                                 Category
-                            </div> */}
+                            </div>
                             <Category />
 
                         </div>

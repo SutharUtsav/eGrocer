@@ -150,7 +150,7 @@ const ProductContainer = () => {
                 breakpoint: 1024,
                 settings: {
                     slidesToShow: 4,
-                    slidesToScroll: 1,
+                    slidesToScroll: 2,
 
                 }
             },
@@ -200,7 +200,7 @@ const ProductContainer = () => {
                         </div>
                         <Slider {...settings}>
                             {products.map((product, index) => (
-                                <div key={index} className='d-flex border flex-column product-card'>
+                                <div key={index} className='d-flex border flex-column product-card ms-0'>
 
                                     <div className='image-container' onClick={() => {
                                         // var prod = {

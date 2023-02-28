@@ -3,7 +3,6 @@ import './category.css'
 import api from '../../api/api'
 import { motion } from 'framer-motion'
 import { BsPlusCircle, BsGrid3X3GapFill } from "react-icons/bs";
-import { Shimmer } from 'react-shimmer';
 import CategoryChild from './CategoryChild';
 import { AiOutlineDown } from 'react-icons/ai';
 import { useDispatch, useSelector } from 'react-redux';

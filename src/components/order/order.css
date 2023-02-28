@@ -67,6 +67,6 @@
 .order-list .order-list-table tbody tr th.button-container button.track{
     background: var(--secondary-color);
 }
-.order-list .order-list-table tbody tr th.button-container button.cancel{
-    background: rgb(189, 37, 37);
+.order-list .order-list-table tbody tr th.button-container button.Invoice{
+    background: rgb(57, 151, 176);
 }

@@ -181,7 +181,7 @@ const ProfileDashboard = () => {
                         </div>
 
                         <div className='cover'>
-                            <img src={coverImg} className='img-fluid' alt="cover"></img>
+                            {/* <img src={coverImg} className='img-fluid' alt="cover"></img> */}
                         </div>
                         <div className='container py-5'>
                             <div className='content-container'>

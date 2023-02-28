@@ -7,7 +7,6 @@ import { AiOutlineEye } from 'react-icons/ai'
 import { TbCurrencyRupee } from "react-icons/tb";
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { Shimmer } from 'react-shimmer'
 
 
 
@@ -76,12 +75,7 @@ const ProductContainer = () => {
             {products === null
                 ? (
                     <div className='d-flex flex-column p-4 gap-3'>
-                        <Shimmer width={1200} height={60}></Shimmer>
-                        <div className='d-flex flex-row justify-content-center gap-4'>
-                            <Shimmer width={150} height={200}></Shimmer>
-                            <Shimmer width={150} height={200}></Shimmer>
-                            <Shimmer width={150} height={200}></Shimmer>
-                        </div>
+                        
                     </div>
 
                 )

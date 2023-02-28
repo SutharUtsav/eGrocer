@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import { Shimmer } from 'react-shimmer'
 import './slider.css'
 // Import Swiper React components
 import { Swiper, SwiperSlide } from "swiper/react";

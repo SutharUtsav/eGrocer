@@ -6,6 +6,7 @@ import { FaRupeeSign } from "react-icons/fa";
 
 const Order = () => {
 
+    const [orderId, setOrderId] = useState();
     //initialize Cookies
     const cookies = new Cookies();
 
@@ -14,6 +15,7 @@ const Order = () => {
             .then(response => response.json())
             .then(result => {
                 if (result.status === 1) {
+                    console.log(result.data)
                     setorders(result.data);
                 }
             })
@@ -22,6 +24,13 @@ const Order = () => {
     useEffect(() => {
         fetchOrders()
     }, [])
+    const getInvoice = (e) => {
+        console.log(orderId)
+        // var order_id = document.getElementById('invoice').value;
+        api.getInvoices(cookies.get('jwt_token'),orderId).then(response => response.json()).then(result => {
+            console.log(result)
+        })
+    }
 
     const [orders, setorders] = useState(null)
 
@@ -65,8 +74,8 @@ const Order = () => {
                                             <FaRupeeSign fontSize={'1.7rem'} /> {order.total}
                                         </th>
                                         <th className='button-container'>
-                                            <button type='button' className='track'>track order</button>
-                                            <button type='button' className='cancel'>cancel</button>
+                                            <button type='button' id={`track-${order.order_id}`} className='track' value={order.order_id}>track order</button>
+                                            <button type='button' id={`invoice-${order.order_id}`} className='Invoice' value={order.order_id} onClick={(e)=>{setOrderId(e.target.value);  getInvoice()}}>Get Invoice</button>
                                         </th>
                                     </tr>
                                 ))}
