@@ -170,11 +170,6 @@ const ProductContainer = () => {
                 breakpoint: 1024,
                 settings: {
                     slidesToShow: 4,
-<<<<<<< HEAD
-                    slidesToScroll: 2,
-
-=======
->>>>>>> a88e93c3500ef26b61d179be17a9f197e58c047f
                 }
             },
             {
@@ -210,21 +205,7 @@ const ProductContainer = () => {
 
                 )
                 : (
-<<<<<<< HEAD
-                    <div className='d-flex flex-column' style={{ gap: "30px" }}>
-                        <div className='d-flex flex-row justify-content-between align-items-center product-heading-container'>
-                            <div className='d-flex flex-column'>
-                                <span>eat healthy</span>
-                                <p>top picks today</p>
-                            </div>
-                            <Link to='/products'>see all</Link>
-                        </div>
-                        <Slider {...settings}>
-                            {products.map((product, index) => (
-                                <div key={index} className='d-flex border flex-column product-card ms-0'>
-=======
                     <>
->>>>>>> a88e93c3500ef26b61d179be17a9f197e58c047f
 
                         {shop.shop.sections.map((section, index0) => (
                             <div key={index0}>
@@ -252,7 +233,7 @@ const ProductContainer = () => {
 
                                                 }} data-bs-toggle="modal" data-bs-target="#quickviewModal">
 
-                                                    <Link to='/'><AiOutlineEye /></Link>
+                                                    <Link to='/' className='border border-light rounded-circle p-2 px-3'><AiOutlineEye /></Link>
                                                     <img src={product.image_url} alt={product.slug} className='card-img-top' />
                                                 </div>
 

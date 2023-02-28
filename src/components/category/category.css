@@ -3,13 +3,8 @@
     height: fit-content;
     max-height: 100%;
     overflow: auto;
-<<<<<<< HEAD
     width: 398px;
     height: 620px;
-=======
-    width: 350px;
-    max-height: 450px;
->>>>>>> a88e93c3500ef26b61d179be17a9f197e58c047f
     scrollbar-width: none;
 }
 

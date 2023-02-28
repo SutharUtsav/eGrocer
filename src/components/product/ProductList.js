@@ -197,6 +197,8 @@ const ProductList = () => {
             .then(response => response.json())
             .then(result => {
                 if (result.status === 1) {
+                    console.log(result.total_min_price)
+                    console.log(result.total_max_price)
                     setminmaxTotalPrice({
                         total_min_price: result.total_min_price,
                         total_max_price: result.total_max_price,
@@ -353,7 +355,7 @@ const ProductList = () => {
                                     trackClassName="track"
                                     min={minmaxTotalPrice.total_min_price}
                                     max={minmaxTotalPrice.total_max_price}
-                                    defaultValue={[minmaxTotalPrice.min_price, minmaxTotalPrice.max_price]}
+                                    defaultValue={[0, 10000]}
                                     ariaLabel={['Lower thumb', 'Upper thumb']}
                                     ariaValuetext={state => `Thumb value ${state.valueNow}`}
                                     renderThumb={(props, state) => <div {...props}>{state.valueNow}</div>}
