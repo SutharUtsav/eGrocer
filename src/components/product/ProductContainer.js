@@ -17,6 +17,7 @@ import { ActionTypes } from '../../model/action-type';
 // import { ActionTypes } from '../../model/action-type'
 // import ProductDetails from './ProductDetails'
 import QuickViewModal from './QuickViewModal'
+import Offers from '../offer/Offers'
 
 
 
@@ -36,7 +37,7 @@ function SampleNextArrow(props) {
     return (
         <div
             className={className}
-            style={window.innerWidth > 450 ? { ...style, display: "flex", alignItems: "center", justifyContent: "center", background: "var(--secondary-color)", borderRadius: "50%", width: "30px", height: "30px" } : { display: "none" }}
+            style={window.innerWidth > 450 ? { ...style, display: "flex", alignItems: "center", justifyContent: "center", margin:"0 -10px", background: "var(--secondary-color)", borderRadius: "50%", width: "30px", height: "30px" } : { display: "none" }}
             onClick={onClick}
         />
     );
@@ -49,31 +50,51 @@ const ProductContainer = () => {
     const dispatch = useDispatch()
 
     const city = useSelector(state => state.city);
+    const shop = useSelector(state => state.shop);
+    const sizes = useSelector(state => state.productSizes);
 
     // const shop = useSelector(state=>state.shop);
 
     useEffect(() => {
-        if (city.status === 'fulfill') {
-            fetchSection(city.city.id, city.city.latitude, city.city.longitude)
+        if (sizes.sizes === null || sizes.status === 'loading') {
+            if (city.city !== null) {
+                api.getProductbyFilter(city.city.id, city.city.latitude, city.city.longitude)
+                    .then(response => response.json())
+                    .then(result => {
+                        if (result.status === 1) {
+                            setproductSizes(result.sizes)
+                            dispatch({ type: ActionTypes.SET_PRODUCT_SIZES, payload: result.sizes })
+                        }
+                    })
+            }
         }
-    }, [city])
+        else {
+            setproductSizes(sizes.sizes)
+        }
+    }, [city, sizes])
 
 
-    const [products, setproducts] = useState(null)
+
     const [selectedProduct, setselectedProduct] = useState({})
+    const [productSizes, setproductSizes] = useState(null)
 
-    const fetchSection = (id, lat, lng) => {
-        api.getSection(id, lat, lng)
-            .then(response => response.json())
-            .then(result => {
-                if (result.status === 1) {
-                    setproducts(result.data);
-                }
-                else {
-                    console.log(result.message)
-                }
-            })
-            .catch(error => console.log("error ", error))
+    //for product variants dropdown in product card
+    const getProductSizeUnit = (variant) => {
+        return productSizes.map(psize => {
+            if (parseInt(psize.size) === parseInt(variant.measurement) && psize.short_code === variant.stock_unit_name) {
+                return psize.unit_id;
+            }
+        });
+
+    }
+
+
+    const getProductVariants = (product) => {
+        return product.variants.map((variant, ind) => (
+            <option key={ind} value={JSON.stringify(variant)} >
+                {getProductSizeUnit(variant)} {variant.stock_unit_name} Rs.{variant.price}
+            </option>
+        ))
     }
 
     //Add to Cart
@@ -141,7 +162,6 @@ const ProductContainer = () => {
     const settings = {
         infinite: false,
         slidesToShow: 5,
-        slidesToScroll: 1,
         initialSlide: 0,
         nextArrow: <SampleNextArrow />,
         prevArrow: <SamplePrevArrow />,
@@ -150,23 +170,18 @@ const ProductContainer = () => {
                 breakpoint: 1024,
                 settings: {
                     slidesToShow: 4,
-                    slidesToScroll: 1,
-
                 }
             },
             {
                 breakpoint: 768,
                 settings: {
                     slidesToShow: 3,
-                    slidesToScroll: 1,
-
                 }
             },
             {
                 breakpoint: 425,
                 settings: {
                     slidesToShow: 2,
-                    slidesToScroll: 1
                 }
             }
         ]
@@ -175,8 +190,8 @@ const ProductContainer = () => {
 
 
     return (
-        <section id="products" className='container'>
-            {products === null
+        <section id="products" >
+            {shop.shop === null || productSizes===null
                 ? (
                     <></>
                     // <div className='d-flex flex-column p-4 gap-3'>
@@ -190,127 +205,136 @@ const ProductContainer = () => {
 
                 )
                 : (
-                    <div className='d-flex flex-column' style={{ gap: "30px" }}>
-                        <div className='d-flex flex-row justify-content-between align-items-center product-heading-container'>
-                            <div className='d-flex flex-column'>
-                                <span>eat healthy</span>
-                                <p>top picks today</p>
-                            </div>
-                            <Link to='/products'>see all</Link>
-                        </div>
-                        <Slider {...settings}>
-                            {products.map((product, index) => (
-                                <div key={index} className='d-flex border flex-column product-card'>
+                    <>
 
-                                    <div className='image-container' onClick={() => {
-                                        // var prod = {
-                                        //     ...product,
-                                        //     selectedVariant: JSON.parse(document.getElementById(`select-product${index}-variant-section`).value)
-                                        // };
-
-                                        setselectedProduct(product)
-
-                                    }} data-bs-toggle="modal" data-bs-target="#quickviewModal">
-
-                                        <Link to='/'><AiOutlineEye /></Link>
-                                        <img src={product.image_url} alt={product.slug} className='card-img-top' />
+                        {shop.shop.sections.map((section, index0) => (
+                            <div key={index0}>
+                                <div className='d-flex flex-column container' style={{ gap: "30px",marginTop:"30px" }}  >
+                                    <div className='d-flex flex-row justify-content-between align-items-center product-heading-container'>
+                                        <div className='d-flex flex-column'>
+                                            <span>{section.short_description}</span>
+                                            <p>{section.title}</p>
+                                        </div>
+                                        <Link to='/products'>see all</Link>
                                     </div>
+                                    <Slider {...settings}>
+                                        {section.products.map((product, index) => (
 
-                                    <div className="card-body product-card-body p-3">
-                                        <span>{product.name}</span>
-                                        <div className='d-flex flex-row justify-content-between'>
-                                            <select id={`select-product${index}-variant-section`} onChange={(e) => {
-                                                document.getElementById(`price${index}-section`).innerHTML = parseFloat(JSON.parse(e.target.value).price);
+                                            <div key={index} className='d-flex border flex-column product-card'>
 
-                                                if (document.getElementById(`input-cart-section${index}`).classList.contains('active')) {
-                                                    document.getElementById(`input-cart-section${index}`).classList.remove('active')
-                                                    document.getElementById(`Add-to-cart-section${index}`).classList.add('active')
+                                                <div className='image-container' onClick={() => {
 
-                                                }
+                                                    // var prod = {
+                                                    //     ...product,
+                                                    //     selectedVariant: JSON.parse(document.getElementById(`select-product${index}-variant-section`).value)
+                                                    // };
 
-                                            }} defaultValue={JSON.stringify(product.variants[0])} >
+                                                    setselectedProduct(product)
 
-                                                {product.variants.map((x, ind) => (
-                                                    <option key={ind} value={JSON.stringify(x)} >{x.stock_unit_id} {x.stock_unit_name} Rs.{x.price}</option>
-                                                ))}
+                                                }} data-bs-toggle="modal" data-bs-target="#quickviewModal">
 
-                                            </select>
+                                                    <Link to='/'><AiOutlineEye /></Link>
+                                                    <img src={product.image_url} alt={product.slug} className='card-img-top' />
+                                                </div>
 
-                                            <div className='price d-flex flex-row align-items-center'>
-                                                <FaRupeeSign fill='var(--secondary-color)' />
-                                                <span id={`price${index}-section`}>{parseFloat(product.price)}</span>
+                                                <div className="card-body product-card-body p-3">
+                                                    <span>{product.name}</span>
+                                                    <div className='d-flex flex-row justify-content-between'>
+                                                        <select id={`select-product${index}-variant-section`} onChange={(e) => {
+                                                            document.getElementById(`price${index}-section`).innerHTML = parseFloat(JSON.parse(e.target.value).price);
+
+                                                            if (document.getElementById(`input-cart-section${index}`).classList.contains('active')) {
+                                                                document.getElementById(`input-cart-section${index}`).classList.remove('active')
+                                                                document.getElementById(`Add-to-cart-section${index}`).classList.add('active')
+
+                                                            }
+
+                                                        }} defaultValue={JSON.stringify(product.variants[0])} >
+
+                                                            {/* {product.variants.map((x, ind) => (
+                                                                <option key={ind} value={JSON.stringify(x)} >{x.stock_unit_id} {x.stock_unit_name} Rs.{x.price}</option>
+                                                            ))} */}
+
+                                                            {getProductVariants(product)}
+
+                                                        </select>
+
+                                                        <div className='price d-flex flex-row align-items-center'>
+                                                            <FaRupeeSign fill='var(--secondary-color)' />
+                                                            <span id={`price${index}-section`}>{product.variants[0].price}</span>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+
+                                                <div className='d-flex flex-row border-top product-card-footer'>
+                                                    <div className='border-end '>
+                                                        <button type="button" className='w-100 h-100' onClick={() => addToFavorite(product.id)}><BsHeart /></button>
+                                                    </div>
+
+                                                    <div className='border-end' style={{ flexGrow: "1" }} >
+                                                        <button type="button" id={`Add-to-cart-section${index}`} className='w-100 h-100 add-to-cart active' onClick={() => {
+                                                            if (cookies.get('jwt_token') !== undefined) {
+                                                                document.getElementById(`Add-to-cart-section${index}`).classList.remove('active')
+                                                                document.getElementById(`input-cart-section${index}`).classList.add('active')
+                                                                document.getElementById(`input-section${index}`).innerHTML = 1
+                                                                addtoCart(product.id, JSON.parse(document.getElementById(`select-product${index}-variant-section`).value).id, document.getElementById(`input-section${index}`).innerHTML)
+                                                            }
+                                                            else {
+                                                                toast.error("OOps! You need to login first to access the cart!")
+                                                            }
+
+                                                        }} >add to cart</button>
+
+                                                        <div id={`input-cart-section${index}`} className="w-100 h-100 input-to-cart" >
+                                                            <button type='button' onClick={() => {
+
+                                                                var val = parseInt(document.getElementById(`input-section${index}`).innerHTML);
+                                                                if (val === 1) {
+                                                                    document.getElementById(`input-section${index}`).innerHTML = 0;
+                                                                    document.getElementById(`input-cart-section${index}`).classList.remove('active')
+                                                                    document.getElementById(`Add-to-cart-section${index}`).classList.add('active')
+                                                                    removefromCart(product.id, JSON.parse(document.getElementById(`select-product${index}-variant-section`).value).id)
+
+                                                                }
+                                                                else {
+                                                                    document.getElementById(`input-section${index}`).innerHTML = val - 1;
+                                                                    addtoCart(product.id, JSON.parse(document.getElementById(`select-product${index}-variant-section`).value).id, document.getElementById(`input-section${index}`).innerHTML)
+                                                                }
+
+
+                                                            }}><BiMinus /></button>
+                                                            <span id={`input-section${index}`} ></span>
+                                                            <button type='button' onClick={() => {
+
+                                                                var val = document.getElementById(`input-section${index}`).innerHTML;
+                                                                if (val < product.total_allowed_quantity) {
+                                                                    document.getElementById(`input-section${index}`).innerHTML = parseInt(val) + 1;
+                                                                    addtoCart(product.id, JSON.parse(document.getElementById(`select-product${index}-variant-section`).value).id, document.getElementById(`input-section${index}`).innerHTML)
+                                                                }
+
+
+                                                            }}><BsPlus /> </button>
+
+
+                                                        </div>
+
+                                                    </div>
+
+                                                    <div className=''>
+                                                        <button type="button" className='w-100 h-100'><BsShare /></button>
+                                                    </div>
+                                                </div>
                                             </div>
-
-                                        </div>
-                                    </div>
-
-                                    <div className='d-flex flex-row border-top product-card-footer'>
-                                        <div className='border-end '>
-                                            <button type="button" className='w-100 h-100' onClick={() => addToFavorite(product.id)}><BsHeart /></button>
-                                        </div>
-
-                                        <div className='border-end' style={{ flexGrow: "1" }} >
-                                            <button type="button" id={`Add-to-cart-section${index}`} className='w-100 h-100 add-to-cart active' onClick={() => {
-                                                if (cookies.get('jwt_token') !== undefined) {
-                                                    document.getElementById(`Add-to-cart-section${index}`).classList.remove('active')
-                                                    document.getElementById(`input-cart-section${index}`).classList.add('active')
-                                                    document.getElementById(`input-section${index}`).innerHTML = 1
-                                                    addtoCart(product.id, JSON.parse(document.getElementById(`select-product${index}-variant-section`).value).id, document.getElementById(`input-section${index}`).innerHTML)
-                                                }
-                                                else {
-                                                    toast.error("OOps! You need to login first to access the cart!")
-                                                }
-
-                                            }} >add to cart</button>
-
-                                            <div id={`input-cart-section${index}`} className="w-100 h-100 input-to-cart" >
-                                                <button type='button' onClick={() => {
-
-                                                    var val = parseInt(document.getElementById(`input-section${index}`).innerHTML);
-                                                    if (val === 1) {
-                                                        document.getElementById(`input-section${index}`).innerHTML = 0;
-                                                        document.getElementById(`input-cart-section${index}`).classList.remove('active')
-                                                        document.getElementById(`Add-to-cart-section${index}`).classList.add('active')
-                                                        removefromCart(product.id, JSON.parse(document.getElementById(`select-product${index}-variant-section`).value).id)
-
-                                                    }
-                                                    else {
-                                                        document.getElementById(`input-section${index}`).innerHTML = val - 1;
-                                                        addtoCart(product.id, JSON.parse(document.getElementById(`select-product${index}-variant-section`).value).id, document.getElementById(`input-section${index}`).innerHTML)
-                                                    }
-
-
-                                                }}><BiMinus /></button>
-                                                <span id={`input-section${index}`} ></span>
-                                                <button type='button' onClick={() => {
-
-                                                    var val = document.getElementById(`input-section${index}`).innerHTML;
-                                                    if (val < product.total_allowed_quantity) {
-                                                        document.getElementById(`input-section${index}`).innerHTML = parseInt(val) + 1;
-                                                        addtoCart(product.id, JSON.parse(document.getElementById(`select-product${index}-variant-section`).value).id, document.getElementById(`input-section${index}`).innerHTML)
-                                                    }
-
-
-                                                }}><BsPlus /> </button>
-
-
-                                            </div>
-
-                                        </div>
-
-                                        <div className=''>
-                                            <button type="button" className='w-100 h-100'><BsShare /></button>
-                                        </div>
-                                    </div>
-
+                                        ))}
+                                    </Slider>
                                 </div>
-                            ))}
+                                {index0 === 1 ? <Offers /> : null}
 
-                        </Slider>
-
+                            </div>
+                        ))}
                         <QuickViewModal selectedProduct={selectedProduct} setselectedProduct={setselectedProduct} />
-
-                    </div>
+                    </>
 
 
                 )}
