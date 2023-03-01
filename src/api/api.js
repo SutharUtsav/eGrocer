@@ -475,7 +475,7 @@ const api = {
 
         return fetch("https://egrocer.wrteam.in/customer/settings/time_slots", requestOptions)
     },
-    placeOrder(token, product_variant_id, quantity, total, delivery_charge, final_total, payment_method, address_id, delivery_time, status = 2) {
+        placeOrder(token, product_variant_id, quantity, total, delivery_charge, final_total, payment_method, address_id, delivery_time, status = 2) {
         var myHeaders = new Headers();
         myHeaders.append(access_key_param, access_key);
         myHeaders.append("Authorization", token_prefix + token);
@@ -543,16 +543,15 @@ const api = {
         var myHeaders = new Headers();
         myHeaders.append(access_key_param, access_key);
         myHeaders.append("Authorization", token_prefix + token);
+        var formData = new FormData();
+        formData.append('order_id', order_id )
 
         var requestOptions = {
             method: 'POST',
             headers: myHeaders,
             body: formData,
-            redirect:'follow'
         };
 
-        var formData = new FormData();
-        formData.append('order_id', order_id )
 
         return fetch("https://egrocer.wrteam.in/customer/invoice", requestOptions)
     }

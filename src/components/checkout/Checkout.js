@@ -52,14 +52,14 @@ const Checkout = () => {
 
 
     const handlePlaceOrder = async () => {
-        console.log(selectedAddress)
+        console.log(selectedAddress.id)
         console.log(expectedDate)
         console.log(expectedTime)
         console.log(paymentMethod)
         
         var delivery_time = `${expectedDate.getDate()}-${expectedDate.getMonth() + 1}-${expectedDate.getFullYear()} ${expectedTime.title}`
         console.log(delivery_time)
-        api.placeOrder(cookies.get('jwt_token'), cart.checkout.product_variant_id, cart.checkout.quantity, cart.checkout.sub_total, cart.checkout.delivery_charge.total_delivery_charge, cart.checkout.total_amount, paymentMethod, delivery_time)
+        api.placeOrder(cookies.get('jwt_token'), cart.checkout.product_variant_id, cart.checkout.quantity, cart.checkout.sub_total, cart.checkout.delivery_charge.total_delivery_charge, cart.checkout.total_amount, paymentMethod,selectedAddress.id, delivery_time)
             .then(response => response.json())
             .then(result => {
                 console.log(result)

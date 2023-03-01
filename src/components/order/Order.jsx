@@ -15,7 +15,7 @@ const Order = () => {
             .then(response => response.json())
             .then(result => {
                 if (result.status === 1) {
-                    console.log(result.data)
+                    // console.log(result.data)
                     setorders(result.data);
                 }
             })
@@ -28,7 +28,8 @@ const Order = () => {
         console.log(orderId)
         // var order_id = document.getElementById('invoice').value;
         api.getInvoices(cookies.get('jwt_token'),orderId).then(response => response.json()).then(result => {
-            console.log(result)
+            let invoicePage = result.data;
+            console.log(invoicePage)
         })
     }
 
@@ -75,7 +76,7 @@ const Order = () => {
                                         </th>
                                         <th className='button-container'>
                                             <button type='button' id={`track-${order.order_id}`} className='track' value={order.order_id}>track order</button>
-                                            <button type='button' id={`invoice-${order.order_id}`} className='Invoice' value={order.order_id} onClick={(e)=>{setOrderId(e.target.value);  getInvoice()}}>Get Invoice</button>
+                                            <button type='button' id={`invoice-${order.order_id}`} data-bs-toggle="modal" data-bs-target="#invoiceModal"  className='Invoice' value={order.order_id} onClick={(e)=>{setOrderId(e.target.value);  getInvoice()}}>Get Invoice</button>
                                         </th>
                                     </tr>
                                 ))}
@@ -84,6 +85,9 @@ const Order = () => {
 
                     </tbody>
                 </table>}
+                <div id="invoice">
+                    <h1>Hello</h1>
+                </div>
         </div>
     )
 }
