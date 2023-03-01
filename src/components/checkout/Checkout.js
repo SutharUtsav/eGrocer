@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import { Calendar } from 'react-calendar'
 import coverImg from '../../utils/cover-img.jpg'
 import Address from '../address/Address'
@@ -15,15 +15,16 @@ import { FaRupeeSign } from "react-icons/fa";
 import Cookies from 'universal-cookie'
 import { toast } from 'react-toastify'
 import { useNavigate } from 'react-router-dom'
+import logoPath from '../../utils/logo_egrocer.svg'
 
 //payment methods
-// import Razorpay from 'razorpay'
+import useRazorpay from 'react-razorpay'
 
 const Checkout = () => {
 
     const cart = useSelector(state => (state.cart))
+    const user = useSelector(state => (state.user))
     const cookies = new Cookies();
-    const navigate = useNavigate()
 
     const fetchTimeSlot = () => {
         api.fetchTimeSlot()
@@ -42,14 +43,61 @@ const Checkout = () => {
         fetchTimeSlot()
     }, [])
 
+
+
     const [timeslots, settimeslots] = useState(null)
     const [selectedAddress, setselectedAddress] = useState(null)
     const [expectedDate, setexpectedDate] = useState(new Date())
     const [expectedTime, setexpectedTime] = useState(null)
     const [paymentMethod, setpaymentMethod] = useState("COD")
+    // const [paymentSettings, setpaymentSettings] = useState(null)
 
-    const [paymentSettings, setpaymentSettings] = useState(null)
 
+    const Razorpay = useRazorpay()
+
+    const handleRozarpayPayment = useCallback(
+        (delivery_time) => {
+            const amount = cart.checkout.total_amount
+            const name = user.user.name
+            const email = user.user.email
+            const mobile = user.user.mobile
+            const options = {
+                key: process.env.REACT_APP_RAZORPAY_KEY,
+                amount: amount * 100,
+                currency: "INR",
+                name: "EGROCER",
+                description: "Test Transaction",
+                image: "https://egrocer.wrteam.in/storage/logo/1669957448_21176.png",
+                handler: (res) => {
+                    console.log(res.razorpay_payment_id);
+                    
+                    //place order
+
+                    // api.placeOrder(cookies.get('jwt_token'), cart.checkout.product_variant_id, cart.checkout.quantity, cart.checkout.sub_total, cart.checkout.delivery_charge.total_delivery_charge, cart.checkout.total_amount, paymentMethod, delivery_time)
+                    //     .then(response => response.json())
+                    //     .then(result => {
+
+                    //     })
+                    //     .catch(error => console.log(error))
+                },
+                prefill: {
+                    name: name,
+                    email: email,
+                    contact: mobile,
+                },
+                notes: {
+                    address: "Razorpay Corporate Office",
+                },
+                theme: {
+                    color: "#51BD88",
+                },
+            };
+
+            const rzpay = new Razorpay(options);
+            rzpay.open();
+        },
+        [Razorpay]
+    )
 
     const handlePlaceOrder = async () => {
         console.log(selectedAddress.id)
@@ -58,6 +106,7 @@ const Checkout = () => {
         console.log(paymentMethod)
         
         var delivery_time = `${expectedDate.getDate()}-${expectedDate.getMonth() + 1}-${expectedDate.getFullYear()} ${expectedTime.title}`
+<<<<<<< HEAD
         console.log(delivery_time)
         api.placeOrder(cookies.get('jwt_token'), cart.checkout.product_variant_id, cart.checkout.quantity, cart.checkout.sub_total, cart.checkout.delivery_charge.total_delivery_charge, cart.checkout.total_amount, paymentMethod,selectedAddress.id, delivery_time)
             .then(response => response.json())
@@ -65,47 +114,24 @@ const Checkout = () => {
                 console.log(result)
             })
             .catch(error => console.log(error))
+=======
 
-        await api.getPaymentSettings(cookies.get('jwt_token'))
-            .then(response => response.json())
-            .then(result => {
-                if (result.status === 1) {
-                    setpaymentSettings(result.data)
-                }
-            })
-            .catch(error => console.log(error))
+
+        // await api.getPaymentSettings(cookies.get('jwt_token'))
+        //     .then(response => response.json())
+        //     .then(result => {
+        //         if (result.status === 1) {
+        //             setpaymentSettings(result.data)
+        //         }
+        //     })
+        //     .catch(error => console.log(error))
+>>>>>>> bf0c23393f5bc3023959279ecf20d363c1885eb2
 
         if (paymentMethod === 'COD') {
 
         }
-        else if (paymentMethod === 'razorpay') {
-            // const razorpay = new Razorpay({
-            //     key_id: process.env.REACT_APP_RAZORPAY_KEY,
-            //     key_secret: process.env.REACT_APP_RAZORPAY_SECRET_KEY,
-            // });
-
-            // const options = {
-            //     amount: 1000,
-            //     currency: 'INR',
-            //     name: 'My Company Name',
-            //     description: 'Payment for Order #123',
-            //     handler: function (response) {
-            //         console.log(response)
-            //     },
-            //     prefill: {
-            //         name: 'John Doe',
-            //         email: 'john.doe@example.com',
-            //         contact: '9999999999',
-            //     },
-            //     notes: {
-            //         address: '123 Main St',
-            //     },
-            // };
-            // razorpay.orders.create(options, function (err, order) {
-            //     razorpay.createPayment(order, function (err, payment) {
-            //         razorpay.open();
-            //     });
-            // });
+        else if (paymentMethod === 'Razorpay') {
+            handleRozarpayPayment(delivery_time);
         }
         else if (paymentMethod === 'paystack') {
 
@@ -239,7 +265,7 @@ const Checkout = () => {
                         <span className='heading'>order summary</span>
 
                         <div className='order-details'>
-                            {cart.checkout === null
+                            {cart.checkout === null || user.user === null
                                 ? (<div className="d-flex justify-content-center">
                                     <div className="spinner-border" role="status">
                                         <span className="visually-hidden">Loading...</span>
