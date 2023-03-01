@@ -50,6 +50,7 @@ const Login = (props) => {
                 'size': 'invisible',
                 'callback': (response) => {
                     // reCAPTCHA solved, allow signInWithPhoneNumber.
+                    console.log(response)
                 },
             }, authentication);
         }
@@ -58,6 +59,7 @@ const Login = (props) => {
 
     const handleLogin = (e) => {
         e.preventDefault();
+        console.log(phonenum)
         if (!checkboxSelected) {
             setError("Accept Terms and Policies!");
         }
@@ -66,7 +68,7 @@ const Login = (props) => {
                 setError("Please enter phone number!")
             }
             else if (validator.isMobilePhone(phonenum)) {
-
+                console.log('success In')
                 setIsOTP(true);
                 // setOTP("");
 

@@ -1,38 +1,36 @@
-
-#profile{
+#profile {
     display: flex;
     flex-direction: column;
 }
 
-#profile .cover{
+#profile .cover {
     height: 200px;
 }
 
-#profile .cover::before{
+#profile .cover img {
     content: "";
-    background: url('../../utils/cover-img.jpg')center center/cover no-repeat;
-    height: 37%;
-    /* background-position: right; */
+    height: 100%;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover; /* Resize the background image to cover the entire container */
     width: 100% !important;
-    position: absolute;
+    position: sticky;
     top: 100px;
     left: 0;
-    opacity: 75%;
     filter: brightness(50%)
-    
 }
 
-#profile .content-container{
+#profile .content-container {
     margin-top: -70px;
     position: relative;
     font-size: 1.8rem;
-    display: flex;    
+    display: flex;
     flex-direction: row;
     gap: 20px;
     min-width: 100%;
 }
 
-#profile .sidebar{
+#profile .sidebar {
     background: #fff;
     padding: 5px;
     border-radius: 10px;
@@ -42,7 +40,7 @@
     min-width: 250px;
 }
 
-#profile .bar{
+#profile .bar {
     display: none;
 }
 
@@ -74,19 +72,20 @@
 
 #profile .sidebar button:hover {
     background: rgba(155, 151, 151, 0.205);
-    
-} 
-#profile .sidebar button:nth-last-child(1){
+
+}
+
+#profile .sidebar button:nth-last-child(1) {
     border-bottom: none;
 }
 
-#profile .content{
+#profile .content {
     display: flex;
     flex-direction: column;
     flex-grow: 1;
 }
 
-#profile .content h4{
+#profile .content h4 {
     font-size: 3rem;
     color: #fff;
     height: 60px;
@@ -96,7 +95,7 @@
     font-weight: bolder;
 }
 
-#profile .content .heading{
+#profile .content .heading {
     background: #fff;
     text-transform: uppercase;
     font-size: 2.5rem;
@@ -105,13 +104,13 @@
     border-radius: 5px;
 }
 
-#profile .content .actual-content{
+#profile .content .actual-content {
     padding-top: 20px;
     background: #fff;
     border-radius: 8px;
 }
 
-#profile .content .actual-content .inputs-container{
+#profile .content .actual-content .inputs-container {
     display: flex;
     flex-direction: column;
     gap: 15px;
@@ -119,7 +118,7 @@
     padding-bottom: 50px;
 }
 
-#profile .content .actual-content .inputs-container input{
+#profile .content .actual-content .inputs-container input {
     padding: 10px;
     background: rgba(155, 151, 151, 0.205);
     border-radius: 10px;
@@ -127,12 +126,12 @@
     text-transform: none;
 }
 
-#profile .content .actual-content .inputs-container input::placeholder{
+#profile .content .actual-content .inputs-container input::placeholder {
     font-size: 1.5rem;
     text-transform: capitalize;
 }
 
-#profile .content .actual-content form button{
+#profile .content .actual-content form button {
     background: var(--secondary-color);
     border-radius: 5px;
     padding: 5px 10px;
@@ -144,12 +143,12 @@
 }
 
 
-@media(max-width:48rem){
-    #profile .bar{
+@media(max-width:48rem) {
+    #profile .bar {
         display: block;
     }
 
-    #profile .content-container{
+    #profile .content-container {
         display: block;
     }
 

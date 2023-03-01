@@ -109,7 +109,7 @@ const Offers = () => {
                 : (
                     <>
                         <div className='d-flex flex-column offer-container'>
-                            <div className='container d-flex flex-column offer-container-heading'>
+                            <div className='container-fluid d-flex flex-column offer-container-heading'>
                                 <span>choose your offer</span>
                                 <p>one more offer for you!</p>
                             </div>

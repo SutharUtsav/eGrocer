@@ -13,6 +13,7 @@ const Transaction = () => {
             .then(response => response.json())
             .then(result => {
                 if (result.status === 1) {
+                    console.log(result)
                     settransactions(result.data)
                 }
             })

@@ -226,7 +226,7 @@ const ProductContainer = () => {
 
                                                     // var prod = {
                                                     //     ...product,
-                                                    //     selectedVariant: JSON.parse(document.getElementById(`select-product${index}-variant-section`).value)
+                                                    //     selectedVariant: JSON.parse(document.getElementById(`select-product${index}${index0}-variant-section`).value)
                                                     // };
 
                                                     setselectedProduct(product)
@@ -240,19 +240,19 @@ const ProductContainer = () => {
                                                 <div className="card-body product-card-body p-3">
                                                     <span>{product.name}</span>
                                                     <div className='d-flex flex-row justify-content-between'>
-                                                        <select className='form-select' id={`select-product${index}-variant-section`} onChange={(e) => {
-                                                            document.getElementById(`price${index}-section`).innerHTML = parseFloat(JSON.parse(e.target.value).price);
+                                                        <select style={{ fontSize: "8px !important"}}  className='form-select' id={`select-product${index}${index0}-variant-section`} onChange={(e) => {
+                                                            document.getElementById(`price${index}${index0}-section`).innerHTML = parseFloat(JSON.parse(e.target.value).price);
 
-                                                            if (document.getElementById(`input-cart-section${index}`).classList.contains('active')) {
-                                                                document.getElementById(`input-cart-section${index}`).classList.remove('active')
-                                                                document.getElementById(`Add-to-cart-section${index}`).classList.add('active')
+                                                            if (document.getElementById(`input-cart-section${index}${index0}`).classList.contains('active')) {
+                                                                document.getElementById(`input-cart-section${index}${index0}`).classList.remove('active')
+                                                                document.getElementById(`Add-to-cart-section${index}${index0}`).classList.add('active')
 
                                                             }
 
-                                                        }} defaultValue={JSON.stringify(product.variants[0])} >
+                                                        }} defaultValue={JSON.stringify(product.variants[0])}>
 
                                                             {/* {product.variants.map((x, ind) => (
-                                                                <option key={ind} value={JSON.stringify(x)} >{x.stock_unit_id} {x.stock_unit_name} Rs.{x.price}</option>
+                                                                <option className='form-option' key={ind} value={JSON.stringify(x)} >{x.stock_unit_id} {x.stock_unit_name} Rs.{x.price}</option>
                                                             ))} */}
 
                                                             {getProductVariants(product)}
@@ -261,7 +261,7 @@ const ProductContainer = () => {
 
                                                         <div className='price d-flex flex-row align-items-center'>
                                                             <FaRupeeSign fill='var(--secondary-color)' />
-                                                            <span id={`price${index}-section`}>{product.variants[0].price}</span>
+                                                            <span id={`price${index}${index0}-section`}>{product.variants[0].price}</span>
                                                         </div>
 
                                                     </div>
@@ -273,12 +273,12 @@ const ProductContainer = () => {
                                                     </div>
 
                                                     <div className='border-end' style={{ flexGrow: "1" }} >
-                                                        <button type="button" id={`Add-to-cart-section${index}`} className='w-100 h-100 add-to-cart active' onClick={() => {
+                                                        <button type="button" id={`Add-to-cart-section${index}${index0}`} className='w-100 h-100 add-to-cart active' onClick={() => {
                                                             if (cookies.get('jwt_token') !== undefined) {
-                                                                document.getElementById(`Add-to-cart-section${index}`).classList.remove('active')
-                                                                document.getElementById(`input-cart-section${index}`).classList.add('active')
-                                                                document.getElementById(`input-section${index}`).innerHTML = 1
-                                                                addtoCart(product.id, JSON.parse(document.getElementById(`select-product${index}-variant-section`).value).id, document.getElementById(`input-section${index}`).innerHTML)
+                                                                document.getElementById(`Add-to-cart-section${index}${index0}`).classList.remove('active')
+                                                                document.getElementById(`input-cart-section${index}${index0}`).classList.add('active')
+                                                                document.getElementById(`input-section${index}${index0}`).innerHTML = 1
+                                                                addtoCart(product.id, JSON.parse(document.getElementById(`select-product${index}${index0}-variant-section`).value).id, document.getElementById(`input-section${index}${index0}`).innerHTML)
                                                             }
                                                             else {
                                                                 toast.error("OOps! You need to login first to access the cart!")
@@ -286,31 +286,31 @@ const ProductContainer = () => {
 
                                                         }} >add to cart</button>
 
-                                                        <div id={`input-cart-section${index}`} className="w-100 h-100 input-to-cart" >
+                                                        <div id={`input-cart-section${index}${index0}`} className="w-100 h-100 input-to-cart" >
                                                             <button type='button' onClick={() => {
 
-                                                                var val = parseInt(document.getElementById(`input-section${index}`).innerHTML);
+                                                                var val = parseInt(document.getElementById(`input-section${index}${index0}`).innerHTML);
                                                                 if (val === 1) {
-                                                                    document.getElementById(`input-section${index}`).innerHTML = 0;
-                                                                    document.getElementById(`input-cart-section${index}`).classList.remove('active')
-                                                                    document.getElementById(`Add-to-cart-section${index}`).classList.add('active')
-                                                                    removefromCart(product.id, JSON.parse(document.getElementById(`select-product${index}-variant-section`).value).id)
+                                                                    document.getElementById(`input-section${index}${index0}`).innerHTML = 0;
+                                                                    document.getElementById(`input-cart-section${index}${index0}`).classList.remove('active')
+                                                                    document.getElementById(`Add-to-cart-section${index}${index0}`).classList.add('active')
+                                                                    removefromCart(product.id, JSON.parse(document.getElementById(`select-product${index}${index0}-variant-section`).value).id)
 
                                                                 }
                                                                 else {
-                                                                    document.getElementById(`input-section${index}`).innerHTML = val - 1;
-                                                                    addtoCart(product.id, JSON.parse(document.getElementById(`select-product${index}-variant-section`).value).id, document.getElementById(`input-section${index}`).innerHTML)
+                                                                    document.getElementById(`input-section${index}${index0}`).innerHTML = val - 1;
+                                                                    addtoCart(product.id, JSON.parse(document.getElementById(`select-product${index}${index0}-variant-section`).value).id, document.getElementById(`input-section${index}${index0}`).innerHTML)
                                                                 }
 
 
                                                             }}><BiMinus /></button>
-                                                            <span id={`input-section${index}`} ></span>
+                                                            <span id={`input-section${index}${index0}`} ></span>
                                                             <button type='button' onClick={() => {
 
-                                                                var val = document.getElementById(`input-section${index}`).innerHTML;
+                                                                var val = document.getElementById(`input-section${index}${index0}`).innerHTML;
                                                                 if (val < product.total_allowed_quantity) {
-                                                                    document.getElementById(`input-section${index}`).innerHTML = parseInt(val) + 1;
-                                                                    addtoCart(product.id, JSON.parse(document.getElementById(`select-product${index}-variant-section`).value).id, document.getElementById(`input-section${index}`).innerHTML)
+                                                                    document.getElementById(`input-section${index}${index0}`).innerHTML = parseInt(val) + 1;
+                                                                    addtoCart(product.id, JSON.parse(document.getElementById(`select-product${index}${index0}-variant-section`).value).id, document.getElementById(`input-section${index}${index0}`).innerHTML)
                                                                 }
 
 

@@ -21,6 +21,7 @@ import ProductDetails from './components/product/ProductDetails';
 import ViewCart from './components/cart/ViewCart';
 import Wishlist from './components/favorite/Wishlist';
 import Checkout from './components/checkout/Checkout';
+import Transaction from './components/transaction/Transaction';
 
 
 function App() {
@@ -67,6 +68,7 @@ function App() {
             <Route path='/categories' element={<ShowAllCategories />}></Route>
             <Route path='/products' element={<ProductList />}></Route>
             <Route path='/product' element={<ProductDetails />}></Route>
+            <Route path='/transactions' element={<Transaction />}></Route>
             <Route path="/*" element={<MainContainer />}></Route>
 
           </Routes>

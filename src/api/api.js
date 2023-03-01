@@ -513,6 +513,19 @@ const api = {
 
         return fetch("https://egrocer.wrteam.in/customer/orders", requestOptions)
     },
+    getPaymentSettings(token){
+        var myHeaders = new Headers();
+        myHeaders.append(access_key_param, access_key);
+        myHeaders.append("Authorization", token_prefix + token);
+
+        var requestOptions = {
+            method: 'GET',
+            headers: myHeaders,
+            redirect: 'follow'
+        };
+
+        return fetch(process.env.REACT_APP_URL + process.env.REACT_APP_SUBURL + "/settings/payment_methods", requestOptions)
+    },
     getTransactions(token) {
         var myHeaders = new Headers();
         myHeaders.append(access_key_param, access_key);
