@@ -29,11 +29,12 @@ import {
 } from '@stripe/react-stripe-js';
 import CheckoutForm from './CheckoutForm'
 import { PaymentElement } from '@stripe/react-stripe-js';
+import axios from 'axios'
 
-const Checkout = (props) => {
-    console.log(props)
-    const stripe = useStripe();
-    const elements = useElements();
+
+const Checkout = ({SK}) => {
+    const stripe = useStripe()
+    const elements = useElements()
     const cart = useSelector(state => (state.cart))
     const user = useSelector(state => (state.user))
     const cookies = new Cookies();
@@ -57,15 +58,34 @@ const Checkout = (props) => {
 
 
 
+    const [success, setsuccess] = useState(false)
     const [timeslots, settimeslots] = useState(null)
     const [selectedAddress, setselectedAddress] = useState(null)
     const [expectedDate, setexpectedDate] = useState(new Date())
     const [expectedTime, setexpectedTime] = useState(null)
     const [paymentMethod, setpaymentMethod] = useState("COD")
     // const [paymentSettings, setpaymentSettings] = useState(null)
-    const stripePromise = loadStripe('pk_test_6pRNASCoBOKtIshFeQd4XMUh');
 
     const Razorpay = useRazorpay()
+    const CARD_OPTIONS = {
+        iconStyle: "solid",
+        style: {
+            base: {
+                iconColor: "#c4f0ff",
+                fontWeight: 500,
+                fontFamily: "Roboto, Open Sans, Segoe UI, sans-serif",
+                fontSize: "16px",
+                fontSmoothing: "antialiased",
+                ":-webkit-autofill": { color: "#fce883" },
+                "::placeholder": { color: "#87bbfd" },
+                border: "2px solid black"
+            },
+            invalid: {
+                iconColor: "#ffc7ee",
+                color: "#ffc7ee"
+            }
+        }
+    };
     const handleRozarpayPayment = useCallback(
         (delivery_time) => {
             const amount = cart.checkout.total_amount
@@ -110,7 +130,8 @@ const Checkout = (props) => {
         [Razorpay]
     )
 
-    const handlePlaceOrder = async () => {
+    const handlePlaceOrder = async (e) => {
+        // e.preventDefault();
         console.log(selectedAddress.id)
         console.log(expectedDate)
         console.log(expectedTime)
@@ -137,47 +158,48 @@ const Checkout = (props) => {
         else if (paymentMethod === 'paystack') {
         }
         else if (paymentMethod === 'Stripe') {
-            console.log('stripe222');
-            handleSubmit();
+            
         }
         else if (paymentMethod === 'Paytm') {
 
         }
     }
-    
-    
 
+
+    const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
+    const [error, setError] = useState(null);
     const handleSubmit = async (event) => {
-        // We don't want to let default form submission happen here,
-        // which would refresh the page.
-        event.preventDefault();
-
+    
         if (!stripe || !elements) {
-            // Stripe.js has not yet loaded.
-            // Make sure to disable form submission until Stripe.js has loaded.
-            return;
+          // Stripe.js has not yet loaded.
+          // Make sure to disable form submission until Stripe.js has loaded.
+          return;
         }
-
-        const result = await stripe.confirmPayment({
-            //`Elements` instance that was used to create the Payment Element
-            elements,
-            confirmParams: {
-                return_url: "https://example.com/order/123/complete",
+    
+        // Confirm the PaymentIntent with the Payment Element
+        const { paymentIntent, error } = await stripe.confirmCardPayment(SK, {
+          payment_method: {
+            card: elements.getElement(CardElement),
+            billing_details: {
+              name,
+              email,
             },
+          },
         });
-
-        if (result.error) {
-            // Show error to your customer (for example, payment details incomplete)
-            console.log(result.error.message);
+    console.log(paymentIntent)
+        if (error) {
+          setError(error.message);
+        } else if (paymentIntent.status === 'succeeded') {
+          // Redirect the customer to a success page
+          window.location.href = '/success';
         } else {
-            // Your customer will be redirected to your `return_url`. For some payment
-            // methods like iDEAL, your customer will be redirected to an intermediate
-            // site first to authorize the payment, then redirected to the `return_url`.
+          // Handle other payment status scenarios
+          setError('Payment failed');
         }
-    }
+      };
     return (
         <section id='checkout'>
-            {paymentMethod === 'Stripe' ? <PaymentElement /> : console.log("null")}
             <div className='cover'>
                 <img src={coverImg} className='img-fluid' alt="cover"></img>
                 <div className='title'>
@@ -186,6 +208,24 @@ const Checkout = (props) => {
                 </div>
             </div>
 
+            {paymentMethod === 'Stripe' ? <>
+                <div className="container stripe-container d-flex flex-column p-0">
+                    <span className='heading fs-3'>Egrocers Payment</span>
+                    <form onSubmit={(e) => { e.preventDefault(); handleSubmit() }} id="stripe-form" className='row p-5 border-3'>
+
+                        <fieldset className='FormGroup p-4'>
+                            <div className="FormRow">
+
+                                <CardElement options={CARD_OPTIONS} />
+                            </div>
+                        </fieldset>
+                        <div className="col-lg-3 col-md-auto">
+
+                            <button className='btn btn-success btn-lg fs-2 mt-5 px-5'>Pay</button>
+                        </div>
+                    </form></div> </>
+                :
+                console.log("null")}
             <div className='checkout-container container'>
                 <div className='checkout-util-container'>
                     <div className='billibg-address-wrapper checkout-component'>
@@ -315,7 +355,7 @@ const Checkout = (props) => {
 
 
                                         <div className='button-container'>
-                                            <button type='button' className='checkout' onClick={() => { handlePlaceOrder()}}>place order</button>
+                                            <button type='button' className='checkout' onClick={(e) => { e.preventDefault(); handlePlaceOrder() }}>place order</button>
                                         </div>
 
                                     </div>)}

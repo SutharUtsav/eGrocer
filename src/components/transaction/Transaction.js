@@ -52,7 +52,7 @@ const Transaction = () => {
 
                         <tbody>
                             {transactions.length === 0
-                                ? <><div className='d-flex align-items-center p-4'>No Transactions Found</div></>
+                                ? <><tr><td><div className='d-flex align-items-center p-4'>No Transactions Found</div></td></tr></>
                                 : <>
                                     {transactions.map((transaction, index) => (
                                         <tr key={index} className={index === transactions.length - 1 ? 'last-column' : ''}>
