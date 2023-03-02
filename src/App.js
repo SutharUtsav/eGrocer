@@ -23,9 +23,15 @@ import Wishlist from './components/favorite/Wishlist';
 import Checkout from './components/checkout/Checkout';
 import Transaction from './components/transaction/Transaction';
 
+import { Elements } from '@stripe/react-stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
+import CheckoutForm from './components/checkout/CheckoutForm';
 
+// Make sure to call `loadStripe` outside of a component’s render to avoid
+// recreating the `Stripe` object on every render.
 function App() {
 
+  const stripePromise = loadStripe('pk_test_51BTUDGJAJfZb9HEBwDg86TN1KNprHjkfipXmEDMb0gSCassK5T3ZfxsAbcgKVmAIXF7oZ6ItlZZbXO6idTHE67IM007EwQ4uN3');
 
 
   //initialize cookies
@@ -45,7 +51,12 @@ function App() {
       })
   }
 
-
+  //paymentgateway-stripe
+  const options = {
+    // passing the client secret obtained from the server
+    clientSecret: '{{ sk_test_tR3PYbcVNZZ796tH88S4VQ2u }}'
+  };
+console.log(options)
 
   //authenticate current user
   useEffect(() => {
@@ -62,7 +73,7 @@ function App() {
         <main id='main' className="main-app">
           <Routes>
             <Route path="/cart" element={<ViewCart />}></Route>
-            <Route path="/checkout" element={<Checkout />}></Route>
+            <Route path="/checkout" element={<Elements stripe={stripePromise} options={options}><Checkout /></Elements>}></Route>
             <Route path='/wishlist' element={<Wishlist />}></Route>
             <Route path="/profile" element={<ProfileDashboard />}></Route>
             <Route path='/categories' element={<ShowAllCategories />}></Route>

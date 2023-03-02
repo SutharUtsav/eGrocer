@@ -16,12 +16,24 @@ import Cookies from 'universal-cookie'
 import { toast } from 'react-toastify'
 import { useNavigate } from 'react-router-dom'
 import logoPath from '../../utils/logo_egrocer.svg'
+import ReactDOM from 'react-dom';
 
 //payment methods
 import useRazorpay from 'react-razorpay'
+import { loadStripe } from '@stripe/stripe-js';
+import {
+    CardElement,
+    Elements,
+    useStripe,
+    useElements,
+} from '@stripe/react-stripe-js';
+import CheckoutForm from './CheckoutForm'
+import { PaymentElement } from '@stripe/react-stripe-js';
 
-const Checkout = () => {
-
+const Checkout = (props) => {
+    console.log(props)
+    const stripe = useStripe();
+    const elements = useElements();
     const cart = useSelector(state => (state.cart))
     const user = useSelector(state => (state.user))
     const cookies = new Cookies();
@@ -51,10 +63,9 @@ const Checkout = () => {
     const [expectedTime, setexpectedTime] = useState(null)
     const [paymentMethod, setpaymentMethod] = useState("COD")
     // const [paymentSettings, setpaymentSettings] = useState(null)
-
+    const stripePromise = loadStripe('pk_test_6pRNASCoBOKtIshFeQd4XMUh');
 
     const Razorpay = useRazorpay()
-
     const handleRozarpayPayment = useCallback(
         (delivery_time) => {
             const amount = cart.checkout.total_amount
@@ -62,15 +73,15 @@ const Checkout = () => {
             const email = user.user.email
             const mobile = user.user.mobile
             const options = {
-                key: process.env.REACT_APP_RAZORPAY_KEY,
+                key: 'rzp_test_nrzk0huxwp56ro',
                 amount: amount * 100,
                 currency: "INR",
-                name: "EGROCER",
+                name: name,
                 description: "Test Transaction",
                 image: "https://egrocer.wrteam.in/storage/logo/1669957448_21176.png",
                 handler: (res) => {
                     console.log(res.razorpay_payment_id);
-                    
+
                     //place order
 
                     // api.placeOrder(cookies.get('jwt_token'), cart.checkout.product_variant_id, cart.checkout.quantity, cart.checkout.sub_total, cart.checkout.delivery_charge.total_delivery_charge, cart.checkout.total_amount, paymentMethod, delivery_time)
@@ -104,17 +115,8 @@ const Checkout = () => {
         console.log(expectedDate)
         console.log(expectedTime)
         console.log(paymentMethod)
-        
+
         var delivery_time = `${expectedDate.getDate()}-${expectedDate.getMonth() + 1}-${expectedDate.getFullYear()} ${expectedTime.title}`
-<<<<<<< HEAD
-        console.log(delivery_time)
-        api.placeOrder(cookies.get('jwt_token'), cart.checkout.product_variant_id, cart.checkout.quantity, cart.checkout.sub_total, cart.checkout.delivery_charge.total_delivery_charge, cart.checkout.total_amount, paymentMethod,selectedAddress.id, delivery_time)
-            .then(response => response.json())
-            .then(result => {
-                console.log(result)
-            })
-            .catch(error => console.log(error))
-=======
 
 
         // await api.getPaymentSettings(cookies.get('jwt_token'))
@@ -125,7 +127,6 @@ const Checkout = () => {
         //         }
         //     })
         //     .catch(error => console.log(error))
->>>>>>> bf0c23393f5bc3023959279ecf20d363c1885eb2
 
         if (paymentMethod === 'COD') {
 
@@ -134,18 +135,49 @@ const Checkout = () => {
             handleRozarpayPayment(delivery_time);
         }
         else if (paymentMethod === 'paystack') {
-
         }
         else if (paymentMethod === 'Stripe') {
-
+            console.log('stripe222');
+            handleSubmit();
         }
         else if (paymentMethod === 'Paytm') {
 
         }
     }
+    
+    
 
+    const handleSubmit = async (event) => {
+        // We don't want to let default form submission happen here,
+        // which would refresh the page.
+        event.preventDefault();
+
+        if (!stripe || !elements) {
+            // Stripe.js has not yet loaded.
+            // Make sure to disable form submission until Stripe.js has loaded.
+            return;
+        }
+
+        const result = await stripe.confirmPayment({
+            //`Elements` instance that was used to create the Payment Element
+            elements,
+            confirmParams: {
+                return_url: "https://example.com/order/123/complete",
+            },
+        });
+
+        if (result.error) {
+            // Show error to your customer (for example, payment details incomplete)
+            console.log(result.error.message);
+        } else {
+            // Your customer will be redirected to your `return_url`. For some payment
+            // methods like iDEAL, your customer will be redirected to an intermediate
+            // site first to authorize the payment, then redirected to the `return_url`.
+        }
+    }
     return (
         <section id='checkout'>
+            {paymentMethod === 'Stripe' ? <PaymentElement /> : console.log("null")}
             <div className='cover'>
                 <img src={coverImg} className='img-fluid' alt="cover"></img>
                 <div className='title'>
@@ -232,15 +264,7 @@ const Checkout = () => {
                                 setpaymentMethod("Razorpay")
                             }} />
                         </div>
-                        <div>
-                            <label className="form-check-label" htmlFor='paystack'>
-                                <img src={paystack} alt='cod' />
-                                <span>Paystack</span>
-                            </label>
-                            <input type="radio" name="payment-method" id='paystack' onChange={() => {
-                                setpaymentMethod("Paystack")
-                            }} />
-                        </div>
+
                         <div>
                             <label className="form-check-label" htmlFor='Stripe'>
                                 <img src={Stripe} alt='stripe' />
@@ -250,15 +274,7 @@ const Checkout = () => {
                                 setpaymentMethod("Stripe")
                             }} />
                         </div>
-                        <div>
-                            <label className="form-check-label" htmlFor='Paytm'>
-                                <img src={Paytm} alt='Paytm' />
-                                <span>Paytm</span>
-                            </label>
-                            <input type="radio" name="payment-method" id='Paytm' onChange={() => {
-                                setpaymentMethod("Paytm")
-                            }} />
-                        </div>
+
                     </div>
 
                     <div className='order-summary-wrapper checkout-component'>
@@ -299,7 +315,7 @@ const Checkout = () => {
 
 
                                         <div className='button-container'>
-                                            <button type='button' className='checkout' onClick={() => handlePlaceOrder()}>place order</button>
+                                            <button type='button' className='checkout' onClick={() => { handlePlaceOrder()}}>place order</button>
                                         </div>
 
                                     </div>)}
