@@ -139,6 +139,15 @@ const QuickViewModal = (props) => {
                             if (res.status === 1)
                                 dispatch({ type: ActionTypes.SET_CART, payload: res })
                         })
+                    await api.getCart(cookies.get('jwt_token'), city.city.latitude, city.city.longitude, 1)
+                        .then(resp => resp.json())
+                        .then(res => {
+                            if (res.status === 1)
+                                dispatch({ type: ActionTypes.SET_CART_CHECKOUT, payload: res.data })
+
+
+                        })
+                        .catch(error => console.log(error))
                 }
                 else {
                     toast.error(result.message)
@@ -161,6 +170,15 @@ const QuickViewModal = (props) => {
                             else
                                 dispatch({ type: ActionTypes.SET_CART, payload: null })
                         })
+                    await api.getCart(cookies.get('jwt_token'), city.city.latitude, city.city.longitude, 1)
+                        .then(resp => resp.json())
+                        .then(res => {
+                            if (res.status === 1)
+                                dispatch({ type: ActionTypes.SET_CART_CHECKOUT, payload: res.data })
+
+
+                        })
+                        .catch(error => console.log(error))
                 }
                 else {
                     toast.error(result.message)
@@ -204,7 +222,7 @@ const QuickViewModal = (props) => {
                         </div>
 
                         <div className="modal-body">
-                            {Object.keys(product).length === 0 || productSizes===null
+                            {Object.keys(product).length === 0 || productSizes === null
                                 ? (
                                     <div className="d-flex justify-content-center">
                                         <div className="spinner-border" role="status">

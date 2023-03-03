@@ -23,7 +23,7 @@ const ProductList = () => {
 
     const dispatch = useDispatch()
     const navigate = useNavigate()
-    const cookies = new Cookies() 
+    const cookies = new Cookies()
 
     // const navigate = useNavigate();
     // let query = new URLSearchParams(useLocation().search)
@@ -432,6 +432,15 @@ const ProductList = () => {
                             if (res.status === 1)
                                 dispatch({ type: ActionTypes.SET_CART, payload: res })
                         })
+                    await api.getCart(cookies.get('jwt_token'), city.city.latitude, city.city.longitude, 1)
+                        .then(resp => resp.json())
+                        .then(res => {
+                            if (res.status === 1)
+                                dispatch({ type: ActionTypes.SET_CART_CHECKOUT, payload: res.data })
+
+
+                        })
+                        .catch(error => console.log(error))
                 }
                 else {
                     toast.error(result.message)
@@ -454,6 +463,15 @@ const ProductList = () => {
                             else
                                 dispatch({ type: ActionTypes.SET_CART, payload: null })
                         })
+                    await api.getCart(cookies.get('jwt_token'), city.city.latitude, city.city.longitude, 1)
+                        .then(resp => resp.json())
+                        .then(res => {
+                            if (res.status === 1)
+                                dispatch({ type: ActionTypes.SET_CART_CHECKOUT, payload: res.data })
+
+
+                        })
+                        .catch(error => console.log(error))
                 }
                 else {
                     toast.error(result.message)
@@ -461,8 +479,8 @@ const ProductList = () => {
             })
     }
 
-     //Add to favorite
-     const addToFavorite = async (product_id) => {
+    //Add to favorite
+    const addToFavorite = async (product_id) => {
         await api.addToFavotite(cookies.get('jwt_token'), product_id)
             .then(response => response.json())
             .then(async (result) => {
@@ -583,7 +601,7 @@ const ProductList = () => {
                                                                     <select id={`selectedVariant${index}-productlist`} onChange={(e) => {
                                                                         document.getElementById(`price${index}-productlist`).innerHTML = parseFloat(JSON.parse(e.target.value).price);
 
-                                                                        if(document.getElementById(`input-cart-productlist${index}`).classList.contains('active')){
+                                                                        if (document.getElementById(`input-cart-productlist${index}`).classList.contains('active')) {
                                                                             document.getElementById(`input-cart-productlist${index}`).classList.remove('active')
                                                                             document.getElementById(`Add-to-cart-productlist${index}`).classList.add('active')
                                                                         }
@@ -601,7 +619,7 @@ const ProductList = () => {
                                                             </div>
                                                             <div className='d-flex flex-row border-top product-card-footer'>
                                                                 <div className='border-end'>
-                                                                    <button type="button" className='w-100 h-100' onClick={()=>addToFavorite(product.id)}><BsHeart /></button>
+                                                                    <button type="button" className='w-100 h-100' onClick={() => addToFavorite(product.id)}><BsHeart /></button>
                                                                 </div>
                                                                 <div className='border-end' style={{ flexGrow: "1" }}>
                                                                     <button type="button" id={`Add-to-cart-productlist${index}`} className='w-100 h-100 add-to-cart active' style={{ fontSize: "1.6rem" }}
@@ -610,7 +628,7 @@ const ProductList = () => {
                                                                                 document.getElementById(`Add-to-cart-productlist${index}`).classList.remove('active')
                                                                                 document.getElementById(`input-cart-productlist${index}`).classList.add('active')
                                                                                 document.getElementById(`input-productlist${index}`).innerHTML = 1
-                                                                                addtoCart(product.id,JSON.parse(document.getElementById(`selectedVariant${index}-productlist`).value).id, document.getElementById(`input-productlist${index}`).innerHTML)
+                                                                                addtoCart(product.id, JSON.parse(document.getElementById(`selectedVariant${index}-productlist`).value).id, document.getElementById(`input-productlist${index}`).innerHTML)
                                                                             }
                                                                             else {
                                                                                 toast.error("OOps! You need to login first to access the cart!")
@@ -629,10 +647,10 @@ const ProductList = () => {
                                                                                 document.getElementById(`Add-to-cart-productlist${index}`).classList.add('active')
                                                                                 removefromCart(product.id, JSON.parse(document.getElementById(`selectedVariant${index}-productlist`).value).id)
                                                                             }
-                                                                            else{
+                                                                            else {
                                                                                 document.getElementById(`input-productlist${index}`).innerHTML = val - 1;
-                                                                                addtoCart(product.id,JSON.parse(document.getElementById(`selectedVariant${index}-productlist`).value).id, document.getElementById(`input-productlist${index}`).innerHTML)
-                                                                        
+                                                                                addtoCart(product.id, JSON.parse(document.getElementById(`selectedVariant${index}-productlist`).value).id, document.getElementById(`input-productlist${index}`).innerHTML)
+
                                                                             }
 
                                                                         }}><BiMinus /></button>

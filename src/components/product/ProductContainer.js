@@ -37,7 +37,7 @@ function SampleNextArrow(props) {
     return (
         <div
             className={className}
-            style={window.innerWidth > 450 ? { ...style, display: "flex", alignItems: "center", justifyContent: "center", margin:"0 -10px", background: "var(--secondary-color)", borderRadius: "50%", width: "30px", height: "30px" } : { display: "none" }}
+            style={window.innerWidth > 450 ? { ...style, display: "flex", alignItems: "center", justifyContent: "center", margin: "0 -10px", background: "var(--secondary-color)", borderRadius: "50%", width: "30px", height: "30px" } : { display: "none" }}
             onClick={onClick}
         />
     );
@@ -110,6 +110,15 @@ const ProductContainer = () => {
                             if (res.status === 1)
                                 dispatch({ type: ActionTypes.SET_CART, payload: res })
                         })
+                    await api.getCart(cookies.get('jwt_token'), city.city.latitude, city.city.longitude, 1)
+                        .then(resp => resp.json())
+                        .then(res => {
+                            if (res.status === 1)
+                                dispatch({ type: ActionTypes.SET_CART_CHECKOUT, payload: res.data })
+
+
+                        })
+                        .catch(error => console.log(error))
                 }
                 else {
                     toast.error(result.message)
@@ -132,6 +141,15 @@ const ProductContainer = () => {
                             else
                                 dispatch({ type: ActionTypes.SET_CART, payload: null })
                         })
+                    await api.getCart(cookies.get('jwt_token'), city.city.latitude, city.city.longitude, 1)
+                        .then(resp => resp.json())
+                        .then(res => {
+                            if (res.status === 1)
+                                dispatch({ type: ActionTypes.SET_CART_CHECKOUT, payload: res.data })
+
+
+                        })
+                        .catch(error => console.log(error))
                 }
                 else {
                     toast.error(result.message)
@@ -191,7 +209,7 @@ const ProductContainer = () => {
 
     return (
         <section id="products" >
-            {shop.shop === null || productSizes===null
+            {shop.shop === null || productSizes === null
                 ? (
                     <></>
                     // <div className='d-flex flex-column p-4 gap-3'>
@@ -209,7 +227,7 @@ const ProductContainer = () => {
 
                         {shop.shop.sections.map((section, index0) => (
                             <div key={index0}>
-                                <div className='d-flex flex-column' style={{ gap: "30px",marginTop:"30px" }}  >
+                                <div className='d-flex flex-column' style={{ gap: "30px", marginTop: "30px" }}  >
                                     <div className='d-flex flex-row justify-content-between align-items-center product-heading-container'>
                                         <div className='d-flex flex-column'>
                                             <span>{section.short_description}</span>
@@ -240,7 +258,7 @@ const ProductContainer = () => {
                                                 <div className="card-body product-card-body p-3">
                                                     <span>{product.name}</span>
                                                     <div className='d-flex flex-row justify-content-between'>
-                                                        <select style={{ fontSize: "8px !important"}}  className='form-select' id={`select-product${index}${index0}-variant-section`} onChange={(e) => {
+                                                        <select style={{ fontSize: "8px !important" }} className='form-select' id={`select-product${index}${index0}-variant-section`} onChange={(e) => {
                                                             document.getElementById(`price${index}${index0}-section`).innerHTML = parseFloat(JSON.parse(e.target.value).price);
 
                                                             if (document.getElementById(`input-cart-section${index}${index0}`).classList.contains('active')) {

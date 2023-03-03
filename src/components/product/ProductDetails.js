@@ -14,7 +14,7 @@ const ProductDetails = () => {
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const cookies = new Cookies() 
+    const cookies = new Cookies()
 
 
 
@@ -145,6 +145,15 @@ const ProductDetails = () => {
                             if (res.status === 1)
                                 dispatch({ type: ActionTypes.SET_CART, payload: res })
                         })
+                    await api.getCart(cookies.get('jwt_token'), city.city.latitude, city.city.longitude, 1)
+                        .then(resp => resp.json())
+                        .then(res => {
+                            if (res.status === 1)
+                                dispatch({ type: ActionTypes.SET_CART_CHECKOUT, payload: res.data })
+
+
+                        })
+                        .catch(error => console.log(error))
                 }
                 else {
                     toast.error(result.message)
@@ -167,6 +176,15 @@ const ProductDetails = () => {
                             else
                                 dispatch({ type: ActionTypes.SET_CART, payload: null })
                         })
+                    await api.getCart(cookies.get('jwt_token'), city.city.latitude, city.city.longitude, 1)
+                        .then(resp => resp.json())
+                        .then(res => {
+                            if (res.status === 1)
+                                dispatch({ type: ActionTypes.SET_CART_CHECKOUT, payload: res.data })
+
+
+                        })
+                        .catch(error => console.log(error))
                 }
                 else {
                     toast.error(result.message)
@@ -315,7 +333,7 @@ const ProductDetails = () => {
                                                         document.getElementById(`input-cart-productdetail`).classList.add('active')
                                                         document.getElementById(`input-productdetail`).innerHTML = 1
                                                         addtoCart(productdata.id, JSON.parse(document.getElementById(`select-product-variant-productdetail`).value).id, document.getElementById(`input-productdetail`).innerHTML)
-                                                            
+
                                                     }
                                                     else {
                                                         toast.error("OOps! You need to login first to access the cart!")
@@ -330,12 +348,12 @@ const ProductDetails = () => {
                                                         document.getElementById(`input-productdetail`).innerHTML = 0;
                                                         document.getElementById(`input-cart-productdetail`).classList.remove('active')
                                                         document.getElementById(`Add-to-cart-productdetail`).classList.add('active')
-                                                        removefromCart(productdata.id,JSON.parse(document.getElementById(`select-product-variant-productdetail`).value).id)
+                                                        removefromCart(productdata.id, JSON.parse(document.getElementById(`select-product-variant-productdetail`).value).id)
                                                     }
-                                                    else{
+                                                    else {
                                                         document.getElementById(`input-productdetail`).innerHTML = val - 1;
                                                         addtoCart(productdata.id, JSON.parse(document.getElementById(`select-product-variant-productdetail`).value).id, document.getElementById(`input-productdetail`).innerHTML)
-                                                        
+
                                                     }
 
                                                 }}><BiMinus fill='#fff' /></button>
@@ -343,7 +361,7 @@ const ProductDetails = () => {
                                                 <button type='button' onClick={() => {
 
                                                     var val = document.getElementById(`input-productdetail`).innerHTML;
-                                                    if(val < productdata.total_allowed_quantity){
+                                                    if (val < productdata.total_allowed_quantity) {
                                                         document.getElementById(`input-productdetail`).innerHTML = parseInt(val) + 1;
                                                         addtoCart(productdata.id, JSON.parse(document.getElementById(`select-product-variant-productdetail`).value).id, document.getElementById(`input-productdetail`).innerHTML)
                                                     }
@@ -353,7 +371,7 @@ const ProductDetails = () => {
                                             </div>
 
 
-                                            <button type='button' className='wishlist-product' onClick={()=>addToFavorite(productdata.id)}><BsHeart /></button>
+                                            <button type='button' className='wishlist-product' onClick={() => addToFavorite(productdata.id)}><BsHeart /></button>
                                             <button type='button' className='share-product' ><BsShare /></button>
                                         </div>
                                     </div>

@@ -109,6 +109,14 @@ const Cart = () => {
                             if (res.status === 1)
                                 dispatch({ type: ActionTypes.SET_CART, payload: res })
                         })
+                    await api.getCart(cookies.get('jwt_token'), city.city.latitude, city.city.longitude, 1)
+                        .then(resp => resp.json())
+                        .then(res => {
+                            if (res.status === 1)
+                                dispatch({ type: ActionTypes.SET_CART_CHECKOUT, payload: res.data })
+
+                        })
+                        .catch(error => console.log(error))
                 }
                 else {
                     toast.error(result.message)
@@ -130,6 +138,15 @@ const Cart = () => {
                                 dispatch({ type: ActionTypes.SET_CART, payload: res })
                             else
                                 dispatch({ type: ActionTypes.SET_CART, payload: null })
+
+                        })
+                        .catch(error => console.log(error))
+                    await api.getCart(cookies.get('jwt_token'), city.city.latitude, city.city.longitude, 1)
+                        .then(resp => resp.json())
+                        .then(res => {
+                            if (res.status === 1)
+                                dispatch({ type: ActionTypes.SET_CART_CHECKOUT, payload: res.data })
+                            
 
                         })
                         .catch(error => console.log(error))
@@ -274,7 +291,7 @@ const Cart = () => {
 
                                                 <div className='button-container'>
                                                     <Link to='/cart' className='view-cart'>view cart</Link>
-                                                    <Link to='/checkout'className='checkout'>go to checkout</Link>
+                                                    <Link to='/checkout' className='checkout'>go to checkout</Link>
                                                 </div>
                                             </>)}
 

@@ -395,7 +395,7 @@ const Header = () => {
                                 ? <motion.button whileTap={{ scale: 0.6 }} className='icon mx-4 position-relative hide-mobile-screen'
                                     onClick={() => {
                                         if (cookies.get('jwt_token') === undefined) {
-                                            toast.error("OOPS!You have to login first to see your cart!")
+                                            toast.error("OOPS!You have to login first to see saved products!")
                                         }
                                         else if (city.city === null) {
                                             toast.error("Please Select you delivery location first!")
@@ -406,7 +406,7 @@ const Header = () => {
                                 : <motion.button whileTap={{ scale: 0.6 }} className='icon mx-4 position-relative hide-mobile-screen' data-bs-toggle="offcanvas" data-bs-target="#favoriteoffcanvasExample" aria-controls="favoriteoffcanvasExample"
                                     onClick={() => {
                                         if (cookies.get('jwt_token') === undefined) {
-                                            toast.error("OOPS!You have to login first to see your cart!")
+                                            toast.error("OOPS!You have to login first to see saved products!")
                                         }
                                         else if (city.city === null) {
                                             toast.error("Please Select you delivery location first!")

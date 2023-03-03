@@ -475,7 +475,7 @@ const api = {
 
         return fetch("https://egrocer.wrteam.in/customer/settings/time_slots", requestOptions)
     },
-        placeOrder(token, product_variant_id, quantity, total, delivery_charge, final_total, payment_method, address_id, delivery_time, status = 2) {
+    placeOrder(token, product_variant_id, quantity, total, delivery_charge, final_total, payment_method, address_id, delivery_time, status = 2) {
         var myHeaders = new Headers();
         myHeaders.append(access_key_param, access_key);
         myHeaders.append("Authorization", token_prefix + token);
@@ -513,7 +513,7 @@ const api = {
 
         return fetch("https://egrocer.wrteam.in/customer/orders", requestOptions)
     },
-    getPaymentSettings(token){
+    getPaymentSettings(token) {
         var myHeaders = new Headers();
         myHeaders.append(access_key_param, access_key);
         myHeaders.append("Authorization", token_prefix + token);
@@ -544,7 +544,7 @@ const api = {
         myHeaders.append(access_key_param, access_key);
         myHeaders.append("Authorization", token_prefix + token);
         var formData = new FormData();
-        formData.append('order_id', order_id )
+        formData.append('order_id', order_id)
 
         var requestOptions = {
             method: 'POST',
@@ -554,6 +554,24 @@ const api = {
 
 
         return fetch("https://egrocer.wrteam.in/customer/invoice", requestOptions)
-    }
+    },
+    initiateTransaction(token, order_id) {
+        var myHeaders = new Headers();
+        myHeaders.append(access_key_param, access_key);
+        myHeaders.append("Authorization", token_prefix + token);
+
+        var formdata = new FormData();
+        formdata.append("payment_method", "Razorpay");
+        formdata.append("order_id", order_id)
+
+        var requestOptions = {
+            method: 'POST',
+            headers: myHeaders,
+            body: formdata,
+            redirect: 'follow'
+        };
+
+        return fetch("https://egrocer.wrteam.in/customer/initiate_transaction", requestOptions)
+    },
 }
 export default api;
