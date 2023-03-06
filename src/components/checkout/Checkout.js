@@ -29,8 +29,12 @@ import {
 } from '@stripe/react-stripe-js';
 // import CheckoutForm from './CheckoutForm'
 import { PaymentElement } from '@stripe/react-stripe-js';
+import axios from 'axios'
+import { usePaystackPayment } from 'react-paystack'
 
-const Checkout = ({SK}) => {
+
+const Checkout = ({ SK }) => {
+
     const stripe = useStripe()
     const elements = useElements()
     const cart = useSelector(state => (state.cart))
@@ -61,64 +65,87 @@ const Checkout = ({SK}) => {
     const [expectedDate, setexpectedDate] = useState(new Date())
     const [expectedTime, setexpectedTime] = useState(null)
     const [paymentMethod, setpaymentMethod] = useState("COD")
-    const [stripepayment, setstripepayment] = useState(false)
-    const [paymentSettings, setpaymentSettings] = useState(null)
-
-
-
-    // const stripePromise = loadStripe('pk_test_51BTUDGJAJfZb9HEBwDg86TN1KNprHjkfipXmEDMb0gSCassK5T3ZfxsAbcgKVmAIXF7oZ6ItlZZbXO6idTHE67IM007EwQ4uN3');
-
+    const [deliveryTime, setDeliveryTime] = useState("")
+    // const [paymentSettings, setpaymentSettings] = useState(null)
+    let config = {
+        publicKey: 'pk_test_05ee04d1597f21a3b1a2f8fe3b59ec657454c1c0',
+        reference: (new Date()).getTime().toString(),
+        email: 'moaez@demo.com',
+        amount: 10000,
+        currency: 'ZAR'
+    }
+    const initializePayment = usePaystackPayment(config);
     const Razorpay = useRazorpay()
-    const handleRozarpayPayment = (order_id,transaction_id) => {
-        const amount = cart.checkout.total_amount
-        const name = user.user.name
-        const email = user.user.email
-        const mobile = user.user.mobile
- 
-        const options = {
-            key: 'rzp_test_nrzk0huxwp56ro',
-            amount: amount * 100,
-            currency: "INR",
-            name: name,
-            description: "Test Transaction",
-            image: "https://egrocer.wrteam.in/storage/logo/1669957448_21176.png",
-            handler: (res) => {
-
-                if (typeof res.razorpay_payment_id === undefined || res.razorpay_payment_id < 1) {
-                    // unsuccessful payment
-                }
-                else {
-                    // payment successful
+    const CARD_OPTIONS = {
+        iconStyle: "solid",
+        style: {
+            base: {
+                iconColor: "#c4f0ff",
+                fontWeight: 500,
+                fontFamily: "Roboto, Open Sans, Segoe UI, sans-serif",
+                fontSize: "16px",
+                fontSmoothing: "antialiased",
+                ":-webkit-autofill": { color: "#fce883" },
+                "::placeholder": { color: "#87bbfd" },
+                border: "2px solid black"
+            },
+            invalid: {
+                iconColor: "#ffc7ee",
+                color: "#ffc7ee"
+            }
+        }
+    };
+    const handleRozarpayPayment = useCallback(
+        (delivery_time) => {
+            const amount = cart.checkout.total_amount
+            const name = user.user.name
+            const email = user.user.email
+            const mobile = user.user.mobile
+            const options = {
+                key: 'rzp_test_nrzk0huxwp56ro',
+                amount: amount * 100,
+                currency: "INR",
+                name: name,
+                description: "Test Transaction",
+                image: "https://egrocer.wrteam.in/storage/logo/1669957448_21176.png",
+                handler: (res) => {
                     console.log(res.razorpay_payment_id);
 
 
-                }
-            },
-            prefill: {
-                name: name,
-                email: email,
-                contact: mobile,
-            },
-            notes: {
-                address: "Razorpay Corporate Office",
-            },
-            theme: {
-                color: "#51BD88",
-            },
-        };
+                    // api.placeOrder(cookies.get('jwt_token'), cart.checkout.product_variant_id, cart.checkout.quantity, cart.checkout.sub_total, cart.checkout.delivery_charge.total_delivery_charge, cart.checkout.total_amount, paymentMethod, delivery_time)
+                    //     .then(response => response.json())
+                    //     .then(result => {
 
-        const rzpay = new Razorpay(options);
-        rzpay.open();
-    }
+                    //     })
+                    //     .catch(error => console.log(error))
+                },
+                prefill: {
+                    name: name,
+                    email: email,
+                    contact: mobile,
+                },
+                notes: {
+                    address: "Razorpay Corporate Office",
+                },
+                theme: {
+                    color: "#51BD88",
+                },
+            };
 
-    const handlePlaceOrder = async () => {
+            const rzpay = new Razorpay(options);
+            rzpay.open();
+        },
+        [Razorpay]
+    )
+
+    const HandlePlaceOrder = async (e) => {
+        // e.preventDefault();
         console.log(selectedAddress.id)
         console.log(expectedDate)
         console.log(expectedTime)
         console.log(paymentMethod)
 
-        var delivery_time = `${expectedDate.getDate()}-${expectedDate.getMonth() + 1}-${expectedDate.getFullYear()} ${expectedTime.title}`
-
+        setDeliveryTime(`${expectedDate.getDate()}-${expectedDate.getMonth() + 1}-${expectedDate.getFullYear()} ${expectedTime.title}`)
 
         // await api.getPaymentSettings(cookies.get('jwt_token'))
         //     .then(response => response.json())
@@ -135,227 +162,238 @@ const Checkout = ({SK}) => {
             .then(response => response.json())
             .then(result => {
                 console.log(result)
-                if(result.status === 1){
+                if (result.status === 1) {
                     if (paymentMethod === 'COD') {
 
                     }
                     else if (paymentMethod === 'Razorpay') {
-                        api.initiateTransaction(cookies.get('jwt_token'),result.data.order_id)
-                        .then(response2=>response2.json())
-                        .then(result2=>{
-                            console.log(result2)
-                            if(result2.status===1){
-                                handleRozarpayPayment(result.data.order_id,result2.data.transaction_id);
-                            }
-                        })
-                        .catch(error2=>console.log(error2))
+                        handleRozarpayPayment(delivery_time);
                     }
                     else if (paymentMethod === 'paystack') {
                     }
                     else if (paymentMethod === 'Stripe') {
-                        console.log('stripe222');
-                        setstripepayment(true)
-                        // handleSubmit();
+
                     }
                     else if (paymentMethod === 'Paytm') {
-            
+
                     }
                 }
-                else{
-                    console.log(result.message)
-                    toast.error("Cann't Place Order!")
-                }
-                
-                
             })
-            .catch(error => console.log(error))
-
-        
     }
 
 
+    const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
+    const [error, setError] = useState(null);
+    const handleSubmit = async (event) => {
 
-    // const handleSubmit = async (event) => {
-    //     // We don't want to let default form submission happen here,
-    //     // which would refresh the page.
+        if (!stripe || !elements) {
+            // Stripe.js has not yet loaded.
+            // Make sure to disable form submission until Stripe.js has loaded.
+            return;
+        }
 
-    //     if (!stripe || !elements) {
-    //         // Stripe.js has not yet loaded.
-    //         // Make sure to disable form submission until Stripe.js has loaded.
-    //         return;
-    //     }
+        // Confirm the PaymentIntent with the Payment Element
+        const { paymentIntent, error } = await stripe.confirmCardPayment(SK, {
+            payment_method: {
+                card: elements.getElement(CardElement),
+                billing_details: {
+                    name,
+                    email,
+                },
+            },
+        });
+        console.log(paymentIntent)
+        if (error) {
+            setError(error.message);
+        } else if (paymentIntent.status === 'succeeded') {
+            // Redirect the customer to a success page
+            window.location.href = '/success';
+        } else {
+            // Handle other payment status scenarios
+            setError('Payment failed');
+        }
 
-    //     const result = await stripe.confirmPayment({
-    //         //`Elements` instance that was used to create the Payment Element
-    //         elements,
-    //         confirmParams: {
-    //             return_url: "https://example.com/order/123/complete",
-    //         },
-    //     });
-
-    //     if (result.error) {
-    //         // Show error to your customer (for example, payment details incomplete)
-    //         console.log(result.error.message);
-    //     } else {
-    //         // Your customer will be redirected to your `return_url`. For some payment
-    //         // methods like iDEAL, your customer will be redirected to an intermediate
-    //         // site first to authorize the payment, then redirected to the `return_url`.
-    //     }
-    // }
-
-    return (
-        <section id='checkout'>
-            {stripepayment ? <PaymentElement /> : null}
-            <div className='cover'>
-                <img src={coverImg} className='img-fluid' alt="cover"></img>
-                <div className='title'>
-                    <h3>Checkout</h3>
-                    <span>home / </span><span className='active'>checkout</span>
+        return (
+            <section id='checkout'>
+                {stripepayment ? <PaymentElement /> : null}
+                <div className='cover'>
+                    <img src={coverImg} className='img-fluid' alt="cover"></img>
+                    <div className='title'>
+                        <h3>Checkout</h3>
+                        <span>home / </span><span className='active'>checkout</span>
+                    </div>
                 </div>
-            </div>
 
-            <div className='checkout-container container'>
-                <div className='checkout-util-container'>
-                    <div className='billibg-address-wrapper checkout-component'>
-                        <span className='heading'>billing address</span>
+                {paymentMethod === 'Stripe' ? <>
+                    <div className="container stripe-container d-flex flex-column p-0">
+                        <span className='heading fs-3'>Egrocers Payment</span>
+                        <form onSubmit={(e) => { e.preventDefault(); handleSubmit() }} id="stripe-form" className='row p-5 border-3'>
 
-                        <Address setselectedAddress={setselectedAddress} />
-                    </div>
+                            <fieldset className='FormGroup p-4'>
+                                <div className="FormRow">
 
-                    <div className='delivery-day-wrapper checkout-component'>
-                        <span className='heading'>preferred delivery day</span>
-                        <div className='d-flex justify-content-center p-3'>
-                            <Calendar value={expectedDate} onChange={(e) => {
-                                if (new Date(e) >= new Date()) {
-                                    setexpectedDate(new Date(e))
-                                }
-                                else if (new Date(e).getDate() === new Date().getDate() && new Date(e).getMonth() === new Date().getMonth() && new Date(e).getFullYear() === new Date().getFullYear()) {
-                                    setexpectedDate(new Date(e))
-                                }
-                                else {
-                                    toast.info('Please Select Valid Delivery Day')
-                                }
-                            }} />
-                        </div>
-                    </div>
-
-                    <div className='delivery-time-wrapper checkout-component'>
-                        <span className='heading'>preferred delivery time</span>
-                        <div className='d-flex p-3' style={{ flexWrap: "wrap" }}>
-                            {timeslots === null
-                                ? <div className="d-flex justify-content-center">
-                                    <div className="spinner-border" role="status">
-                                        <span className="visually-hidden">Loading...</span>
-                                    </div>
+                                    <CardElement options={CARD_OPTIONS} />
                                 </div>
-                                : (
-                                    <>
-                                        {timeslots.time_slots.map((timeslot, index) => (
-                                            <div key={index} className='time-slot-container'>
-                                                <div>
-                                                    <input type="radio" name="TimeSlotRadio" id={`TimeSlotRadioId${index}`} defaultChecked={index === 0 ? true : false} onChange={() => {
-                                                        setexpectedTime(timeslot);
-                                                    }} />
-                                                </div>
-                                                <div>
-                                                    {timeslot.title}
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </>
-                                )
-                            }
-                        </div>
-                    </div>
+                            </fieldset>
+                            <div className="col-lg-3 col-md-auto">
 
+                                <button className='btn btn-success btn-lg fs-2 mt-5 px-5'>Pay</button>
+                            </div>
+                        </form></div> </>
+                    :
+                    console.log("null")}
+                {/* <PaystackHookExample /> */}
+                <div className='checkout-container container'>
+                    <div className='checkout-util-container'>
+                        <div className='billibg-address-wrapper checkout-component'>
+                            <span className='heading'>billing address</span>
 
-                </div>
-
-                <div className='order-container'>
-                    <div className='payment-wrapper checkout-component'>
-                        <span className='heading'>payment-method</span>
-                        <div>
-                            <label className="form-check-label" htmlFor='cod'>
-                                <img src={cod} alt='cod' />
-                                <span>Cash On Delivery</span>
-                            </label>
-                            <input type="radio" name="payment-method" id='cod' defaultChecked={true} onChange={() => {
-                                setpaymentMethod("COD")
-                            }} />
-                        </div>
-                        <div>
-                            <label className="form-check-label" htmlFor='razorpay'>
-                                <img src={rozerpay} alt='cod' />
-                                <span>Razorpay</span>
-                            </label>
-                            <input type="radio" name="payment-method" id='razorpay' onChange={() => {
-                                setpaymentMethod("Razorpay")
-                            }} />
+                            <Address setselectedAddress={setselectedAddress} />
                         </div>
 
-                        <div>
-                            <label className="form-check-label" htmlFor='Stripe'>
-                                <img src={Stripe} alt='stripe' />
-                                <span>Stripe</span>
-                            </label>
-                            <input type="radio" name="payment-method" id='stripe' onChange={() => {
-                                setpaymentMethod("Stripe")
-                            }} />
+                        <div className='delivery-day-wrapper checkout-component'>
+                            <span className='heading'>preferred delivery day</span>
+                            <div className='d-flex justify-content-center p-3'>
+                                <Calendar value={expectedDate} onChange={(e) => {
+                                    if (new Date(e) >= new Date()) {
+                                        setexpectedDate(new Date(e))
+                                    }
+                                    else if (new Date(e).getDate() === new Date().getDate() && new Date(e).getMonth() === new Date().getMonth() && new Date(e).getFullYear() === new Date().getFullYear()) {
+                                        setexpectedDate(new Date(e))
+                                    }
+                                    else {
+                                        toast.info('Please Select Valid Delivery Day')
+                                    }
+                                }} />
+                            </div>
                         </div>
 
-                    </div>
-
-                    <div className='order-summary-wrapper checkout-component'>
-                        <span className='heading'>order summary</span>
-
-                        <div className='order-details'>
-                            {cart.checkout === null || user.user === null
-                                ? (<div className="d-flex justify-content-center">
-                                    <div className="spinner-border" role="status">
-                                        <span className="visually-hidden">Loading...</span>
+                        <div className='delivery-time-wrapper checkout-component'>
+                            <span className='heading'>preferred delivery time</span>
+                            <div className='d-flex p-3' style={{ flexWrap: "wrap" }}>
+                                {timeslots === null
+                                    ? <div className="d-flex justify-content-center">
+                                        <div className="spinner-border" role="status">
+                                            <span className="visually-hidden">Loading...</span>
+                                        </div>
                                     </div>
-                                </div>)
-                                : (
-                                    <div className='summary'>
-                                        <div className='d-flex justify-content-between'>
-                                            <span>Subtotal</span>
-                                            <div className='d-flex align-items-center'>
-                                                <FaRupeeSign />
-                                                <span>{parseFloat(cart.checkout.sub_total)}</span>
-                                            </div>
-                                        </div>
-
-                                        <div className='d-flex justify-content-between'>
-                                            <span>Delivery Charges</span>
-                                            <div className='d-flex align-items-center'>
-                                                <FaRupeeSign />
-                                                <span>{parseFloat(cart.checkout.delivery_charge.total_delivery_charge)}</span>
-                                            </div>
-                                        </div>
-
-                                        <div className='d-flex justify-content-between total'>
-                                            <span>Total</span>
-                                            <div className='d-flex align-items-center total-amount'>
-                                                <FaRupeeSign fill='var(--secondary-color)' />
-                                                <span>{parseFloat(cart.checkout.total_amount)}</span>
-                                            </div>
-                                        </div>
-
-
-                                        <div className='button-container'>
-                                            <button type='button' className='checkout' onClick={() => { handlePlaceOrder() }}>place order</button>
-                                        </div>
-
-                                    </div>)}
+                                    : (
+                                        <>
+                                            {timeslots.time_slots.map((timeslot, index) => (
+                                                <div key={index} className='time-slot-container'>
+                                                    <div>
+                                                        <input type="radio" name="TimeSlotRadio" id={`TimeSlotRadioId${index}`} defaultChecked={index === 0 ? true : false} onChange={() => {
+                                                            setexpectedTime(timeslot);
+                                                        }} />
+                                                    </div>
+                                                    <div>
+                                                        {timeslot.title}
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </>
+                                    )
+                                }
+                            </div>
                         </div>
 
+
+                    </div>
+
+                    <div className='order-container'>
+                        <div className='payment-wrapper checkout-component'>
+                            <span className='heading'>payment-method</span>
+                            <div>
+                                <label className="form-check-label" htmlFor='cod'>
+                                    <img src={cod} alt='cod' />
+                                    <span>Cash On Delivery</span>
+                                </label>
+                                <input type="radio" name="payment-method" id='cod' defaultChecked={true} onChange={() => {
+                                    setpaymentMethod("COD")
+                                }} />
+                            </div>
+                            <div>
+                                <label className="form-check-label" htmlFor='razorpay'>
+                                    <img src={rozerpay} alt='cod' />
+                                    <span>Razorpay</span>
+                                </label>
+                                <input type="radio" name="payment-method" id='razorpay' onChange={() => {
+                                    setpaymentMethod("Razorpay")
+                                }} />
+                            </div>
+                            <div>
+                                <label className="form-check-label" htmlFor='paystack'>
+                                    <img src={paystack} alt='cod' />
+                                    <span>Paystack</span>
+                                </label>
+                                <input type="radio" name="payment-method" id='paystack' onChange={() => {
+                                    setpaymentMethod("Paystack")
+                                }} />
+                            </div>
+                            <div>
+                                <label className="form-check-label" htmlFor='Stripe'>
+                                    <img src={Stripe} alt='stripe' />
+                                    <span>Stripe</span>
+                                </label>
+                                <input type="radio" name="payment-method" id='stripe' onChange={() => {
+                                    setpaymentMethod("Stripe")
+                                }} />
+                            </div>
+
+                        </div>
+
+                        <div className='order-summary-wrapper checkout-component'>
+                            <span className='heading'>order summary</span>
+
+                            <div className='order-details'>
+                                {cart.checkout === null || user.user === null
+                                    ? (<div className="d-flex justify-content-center">
+                                        <div className="spinner-border" role="status">
+                                            <span className="visually-hidden">Loading...</span>
+                                        </div>
+                                    </div>)
+                                    : (
+                                        <div className='summary'>
+                                            <div className='d-flex justify-content-between'>
+                                                <span>Subtotal</span>
+                                                <div className='d-flex align-items-center'>
+                                                    <FaRupeeSign />
+                                                    <span>{parseFloat(cart.checkout.sub_total)}</span>
+                                                </div>
+                                            </div>
+
+                                            <div className='d-flex justify-content-between'>
+                                                <span>Delivery Charges</span>
+                                                <div className='d-flex align-items-center'>
+                                                    <FaRupeeSign />
+                                                    <span>{parseFloat(cart.checkout.delivery_charge.total_delivery_charge)}</span>
+                                                </div>
+                                            </div>
+
+                                            <div className='d-flex justify-content-between total'>
+                                                <span>Total</span>
+                                                <div className='d-flex align-items-center total-amount'>
+                                                    <FaRupeeSign fill='var(--secondary-color)' />
+                                                    <span>{parseFloat(cart.checkout.total_amount)}</span>
+                                                </div>
+                                            </div>
+
+
+                                            <div className='button-container'>
+                                                <button type='button' className='checkout' onClick={(e) => { e.preventDefault(); HandlePlaceOrder() }}>place order</button>
+                                            </div>
+
+                                        </div>)}
+                            </div>
+
+                        </div>
                     </div>
                 </div>
-            </div>
 
 
-        </section>
-    )
+            </section>
+        )
+    }
 }
-
 export default Checkout

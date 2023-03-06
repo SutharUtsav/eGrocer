@@ -102,7 +102,7 @@ const Login = (props) => {
             })
     }
 //otp verification
-const verifyOTP = (e) => {
+const verifyOTP = async (e) => {
     e.preventDefault();
     setisLoading(true);
 

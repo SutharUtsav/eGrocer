@@ -251,7 +251,7 @@ const ProductContainer = () => {
 
                                                 }} data-bs-toggle="modal" data-bs-target="#quickviewModal">
 
-                                                    <Link to='/' className='border border-light rounded-circle p-2 px-3'><AiOutlineEye /></Link>
+                                                    <Link to='/' className='border border-light rounded-circle p-2 px-3' id='aiEye'><AiOutlineEye /></Link>
                                                     <img src={product.image_url} alt={product.slug} className='card-img-top' />
                                                 </div>
 
