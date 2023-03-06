@@ -20,13 +20,13 @@ import ReactDOM from 'react-dom';
 
 //payment methods
 import useRazorpay from 'react-razorpay'
-// import { loadStripe } from '@stripe/stripe-js';
-// import {
-//     CardElement,
-//     Elements,
-//     useStripe,
-//     useElements,
-// } from '@stripe/react-stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
+import {
+    CardElement,
+    Elements,
+    useStripe,
+    useElements,
+} from '@stripe/react-stripe-js';
 // import CheckoutForm from './CheckoutForm'
 import { PaymentElement } from '@stripe/react-stripe-js';
 
