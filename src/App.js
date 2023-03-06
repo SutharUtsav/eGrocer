@@ -66,7 +66,7 @@ function App() {
 
   return (
     <AnimatePresence>
-      <div className="w-100 h-auto ">
+      <div className=" h-auto ">
         <Header />
         <main id='main' className="main-app">
           <Routes>

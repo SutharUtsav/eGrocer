@@ -30,9 +30,11 @@ import {
 import CheckoutForm from './CheckoutForm'
 import { PaymentElement } from '@stripe/react-stripe-js';
 import axios from 'axios'
+import { usePaystackPayment } from 'react-paystack'
 
 
-const Checkout = ({SK}) => {
+const Checkout = ({ SK }) => {
+    
     const stripe = useStripe()
     const elements = useElements()
     const cart = useSelector(state => (state.cart))
@@ -64,8 +66,16 @@ const Checkout = ({SK}) => {
     const [expectedDate, setexpectedDate] = useState(new Date())
     const [expectedTime, setexpectedTime] = useState(null)
     const [paymentMethod, setpaymentMethod] = useState("COD")
+    const [deliveryTime, setDeliveryTime] = useState("")
     // const [paymentSettings, setpaymentSettings] = useState(null)
-
+    let config = {
+        publicKey :'pk_test_05ee04d1597f21a3b1a2f8fe3b59ec657454c1c0',
+        reference: (new Date()).getTime().toString(),
+        email: 'moaez@demo.com',
+        amount: 10000,
+        currency: 'ZAR'
+    }
+    const initializePayment = usePaystackPayment(config);
     const Razorpay = useRazorpay()
     const CARD_OPTIONS = {
         iconStyle: "solid",
@@ -87,7 +97,7 @@ const Checkout = ({SK}) => {
         }
     };
     const handleRozarpayPayment = useCallback(
-        (delivery_time) => {
+        (deliveryTime) => {
             const amount = cart.checkout.total_amount
             const name = user.user.name
             const email = user.user.email
@@ -104,7 +114,7 @@ const Checkout = ({SK}) => {
 
                     //place order
 
-                    // api.placeOrder(cookies.get('jwt_token'), cart.checkout.product_variant_id, cart.checkout.quantity, cart.checkout.sub_total, cart.checkout.delivery_charge.total_delivery_charge, cart.checkout.total_amount, paymentMethod, delivery_time)
+                    // api.placeOrder(cookies.get('jwt_token'), cart.checkout.product_variant_id, cart.checkout.quantity, cart.checkout.sub_total, cart.checkout.delivery_charge.total_delivery_charge, cart.checkout.total_amount, paymentMethod, deliveryTime)
                     //     .then(response => response.json())
                     //     .then(result => {
 
@@ -129,16 +139,36 @@ const Checkout = ({SK}) => {
         },
         [Razorpay]
     )
+    // you can call this function anything
+    const onSuccess = (reference) => {
+        // Implementation for whatever you want to do with reference and after success call.
+        console.log(reference);
+    };
 
-    const handlePlaceOrder = async (e) => {
+    // you can call this function anything
+    const onClose = () => {
+        // implementation for  whatever you want to do when the Paystack dialog closed.
+        console.log('closed')
+    }
+    const PaystackHookExample = () => {
+
+        return (
+            <div>
+                <button onClick={() => {
+                    initializePayment(onSuccess,onClose)
+                }}>Paystack Hooks Implementation</button>
+            </div>
+        );
+    };
+
+    const HandlePlaceOrder = async (e) => {
         // e.preventDefault();
         console.log(selectedAddress.id)
         console.log(expectedDate)
         console.log(expectedTime)
         console.log(paymentMethod)
 
-        var delivery_time = `${expectedDate.getDate()}-${expectedDate.getMonth() + 1}-${expectedDate.getFullYear()} ${expectedTime.title}`
-
+        setDeliveryTime (`${expectedDate.getDate()}-${expectedDate.getMonth() + 1}-${expectedDate.getFullYear()} ${expectedTime.title}`)
 
         // await api.getPaymentSettings(cookies.get('jwt_token'))
         //     .then(response => response.json())
@@ -153,12 +183,14 @@ const Checkout = ({SK}) => {
 
         }
         else if (paymentMethod === 'Razorpay') {
-            handleRozarpayPayment(delivery_time);
+            handleRozarpayPayment(deliveryTime);
         }
-        else if (paymentMethod === 'paystack') {
+        else if (paymentMethod === 'Paystack') {
+            initializePayment(onSuccess, onClose)
+
         }
         else if (paymentMethod === 'Stripe') {
-            
+
         }
         else if (paymentMethod === 'Paytm') {
 
@@ -170,34 +202,33 @@ const Checkout = ({SK}) => {
     const [email, setEmail] = useState('');
     const [error, setError] = useState(null);
     const handleSubmit = async (event) => {
-    
+
         if (!stripe || !elements) {
-          // Stripe.js has not yet loaded.
-          // Make sure to disable form submission until Stripe.js has loaded.
-          return;
+            // Stripe.js has not yet loaded.
+            // Make sure to disable form submission until Stripe.js has loaded.
+            return;
         }
-    
-        // Confirm the PaymentIntent with the Payment Element
+
         const { paymentIntent, error } = await stripe.confirmCardPayment(SK, {
-          payment_method: {
-            card: elements.getElement(CardElement),
-            billing_details: {
-              name,
-              email,
+            payment_method: {
+                card: elements.getElement(CardElement),
+                billing_details: {
+                    name,
+                    email,
+                },
             },
-          },
         });
-    console.log(paymentIntent)
+        console.log(paymentIntent)
         if (error) {
-          setError(error.message);
+            setError(error.message);
         } else if (paymentIntent.status === 'succeeded') {
-          // Redirect the customer to a success page
-          window.location.href = '/success';
+            // Redirect the customer to a success page
+            window.location.href = '/success';
         } else {
-          // Handle other payment status scenarios
-          setError('Payment failed');
+            // Handle other payment status scenarios
+            setError('Payment failed');
         }
-      };
+    };
     return (
         <section id='checkout'>
             <div className='cover'>
@@ -226,6 +257,7 @@ const Checkout = ({SK}) => {
                     </form></div> </>
                 :
                 console.log("null")}
+                {/* <PaystackHookExample /> */}
             <div className='checkout-container container'>
                 <div className='checkout-util-container'>
                     <div className='billibg-address-wrapper checkout-component'>
@@ -304,7 +336,15 @@ const Checkout = ({SK}) => {
                                 setpaymentMethod("Razorpay")
                             }} />
                         </div>
-
+                        <div>
+                            <label className="form-check-label" htmlFor='paystack'>
+                                <img src={paystack} alt='cod' />
+                                <span>Paystack</span>
+                            </label>
+                            <input type="radio" name="payment-method" id='paystack' onChange={() => {
+                                setpaymentMethod("Paystack")
+                            }} />
+                        </div>
                         <div>
                             <label className="form-check-label" htmlFor='Stripe'>
                                 <img src={Stripe} alt='stripe' />
@@ -355,7 +395,7 @@ const Checkout = ({SK}) => {
 
 
                                         <div className='button-container'>
-                                            <button type='button' className='checkout' onClick={(e) => { e.preventDefault(); handlePlaceOrder() }}>place order</button>
+                                            <button type='button' className='checkout' onClick={(e) => { e.preventDefault(); HandlePlaceOrder() }}>place order</button>
                                         </div>
 
                                     </div>)}
