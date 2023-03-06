@@ -30,9 +30,9 @@ import useRazorpay from 'react-razorpay'
 // import CheckoutForm from './CheckoutForm'
 import { PaymentElement } from '@stripe/react-stripe-js';
 
-const Checkout = (props) => {
-    // const stripe = useStripe();
-    // const elements = useElements();
+const Checkout = ({SK}) => {
+    const stripe = useStripe()
+    const elements = useElements()
     const cart = useSelector(state => (state.cart))
     const user = useSelector(state => (state.user))
     const cookies = new Cookies();

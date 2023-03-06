@@ -210,3 +210,19 @@
     background: var(--secondary-color);
 
 }
+.stripe-container {
+
+    background: #fff;
+}
+.stripe-container .heading{
+    background: var(--secondary-color);
+    color: #fff;
+    font-size: 1.755rem;
+    font-weight: 600;
+    padding: 8px 15px;
+    border-top-right-radius: 8px;
+    border-top-left-radius: 8px;
+}
+.FormRow div div input {
+    border: 5px solid black ;
+}
