@@ -290,8 +290,14 @@ const Cart = () => {
 
 
                                                 <div className='button-container'>
-                                                    <Link to='/cart' className='view-cart'>view cart</Link>
-                                                    <Link to='/checkout' className='checkout'>go to checkout</Link>
+                                                    <button type='button' className='view-cart' onClick={()=>{
+                                                        closeCanvas.current.click()
+                                                        navigate('/cart')
+                                                    }}>view cart</button>
+                                                    <button type='button' className='checkout' onClick={()=>{
+                                                        closeCanvas.current.click()
+                                                        navigate('/checkout')
+                                                    }}>go to checkout</button>
                                                 </div>
                                             </>)}
 

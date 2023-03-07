@@ -45,5 +45,7 @@ export const ActionTypes = {
     //favorites
     SET_FAVORITE : "SET_FAVORITE",
 
+    //notification
+    SET_NOTIFICATION : "SET_NOTIFICATION",
 
 }

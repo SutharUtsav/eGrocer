@@ -10,6 +10,7 @@ import {cartReducer} from './cartReducer';
 import {productSizesReducer} from './productSizesReducer'
 import { favotiteReducer } from "./favoriteReducer";
 import { shopReducer } from "./shopReducer";
+import { notificationReducer } from "./notificationReducer";
 
 const reducers = combineReducers({
     city:locationReducer,
@@ -23,6 +24,7 @@ const reducers = combineReducers({
     cart:cartReducer,
     favorite:favotiteReducer,
     productSizes:productSizesReducer,
+    notification: notificationReducer,
 })
 
 export default reducers;

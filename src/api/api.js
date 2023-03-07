@@ -573,5 +573,23 @@ const api = {
 
         return fetch("https://egrocer.wrteam.in/customer/initiate_transaction", requestOptions)
     },
+    getNotification(token,limit=10, offset=0) {
+        var myHeaders = new Headers();
+        myHeaders.append(access_key_param, access_key);
+        myHeaders.append("Authorization", token_prefix + token);
+
+        var requestOptions = {
+            method: 'GET',
+            headers: myHeaders,
+            redirect: 'follow'
+        };
+
+        var params = { limit: limit, offset: offset };
+        var url = new URL("https://egrocer.wrteam.in/customer/notifications");
+        for (let k in params) {
+            url.searchParams.append(k, params[k])
+        };
+        return fetch(url, requestOptions)
+    },
 }
 export default api;

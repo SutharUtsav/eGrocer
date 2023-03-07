@@ -9,7 +9,7 @@ import { GoLocation } from 'react-icons/go'
 import { FiMenu, FiFilter } from 'react-icons/fi'
 import { AiOutlineCloseCircle } from 'react-icons/ai'
 import { motion } from 'framer-motion'
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import Location from '../location/Location';
 import logoPath from '../../utils/logo_egrocer.svg'
 import { getLocation } from '../../utils/manageLocalStorage';
@@ -33,8 +33,11 @@ const Header = () => {
     // const [islocationclick, setislocationclick] = useState(false);
     // const [issearchClick, setissearchClick] = useState(false);
     const [isLocationPresent, setisLocationPresent] = useState(false);
+    const [totalNotification, settotalNotification] = useState(null)
+
 
     const locationModalTrigger = useRef();
+    const navigate = useNavigate();
 
     const dispatch = useDispatch();
 
@@ -111,10 +114,22 @@ const Header = () => {
             .catch(error => console.log(error))
     }
 
+    const fetchNotification = async (token) => {
+        await api.getNotification(token)
+            .then(response => response.json())
+            .then(result => {
+                if (result.status === 1) {
+                    settotalNotification(result.total)
+                }
+            })
+            .catch(error => console.log(error))
+    }
+
     useEffect(() => {
         if (city.city !== null && cookies.get('jwt_token') !== undefined && user.user !== null) {
             fetchCart(cookies.get('jwt_token'), city.city.latitude, city.city.longitude)
             fetchFavorite(cookies.get('jwt_token'), city.city.latitude, city.city.longitude)
+            fetchNotification(cookies.get('jwt_token'))
         }
     }, [city, user])
 
@@ -370,7 +385,7 @@ const Header = () => {
                                     e.preventDefault()
                                     // console.log(document.getElementById('search-box').value)
                                 }} className='search-form'>
-                                    <input type="search" id="search-box" placeholder="What are you lookinh for..." className='rounded-5'/>
+                                    <input type="search" id="search-box" placeholder="What are you lookinh for..." className='rounded-5' />
 
                                     <button type='submit'>
                                         <MdSearch fill='white' />
@@ -383,13 +398,23 @@ const Header = () => {
 
 
                         <div className='d-flex justify-content-center align-items-center'>
-                            <motion.div whileTap={{ scale: 0.6 }} className='icon position-relative hide-mobile mx-4'>
+
+                            <motion.button type='button' whileTap={{ scale: 0.6 }} className='icon position-relative hide-mobile mx-4' onClick={() => {
+                                if (cookies.get('jwt_token') === undefined) {
+                                    toast.error("OOPS!You have to login first to see notification!")
+                                }
+                                else{
+                                    navigate('/notification')
+                                }
+                            }}>
                                 <IoNotificationsOutline />
-                                <span className="position-absolute start-100 translate-middle badge rounded-pill fs-5 ">
-                                    9+
-                                    <span className="visually-hidden">unread messages</span>
-                                </span>
-                            </motion.div>
+                                {totalNotification === null ? null
+                                    : <span className="position-absolute start-100 translate-middle badge rounded-pill fs-5 ">
+                                        {totalNotification}
+                                        <span className="visually-hidden">unread messages</span>
+                                    </span>}
+
+                            </motion.button>
 
                             {city.city === null || cookies.get('jwt_token') === undefined
                                 ? <motion.button whileTap={{ scale: 0.6 }} className='icon mx-4 position-relative hide-mobile-screen'
@@ -401,7 +426,7 @@ const Header = () => {
                                             toast.error("Please Select you delivery location first!")
                                         }
                                     }}>
-                                    <IoHeartOutline className=''/>
+                                    <IoHeartOutline className='' />
                                 </motion.button>
                                 : <motion.button whileTap={{ scale: 0.6 }} className='icon mx-4 position-relative hide-mobile-screen' data-bs-toggle="offcanvas" data-bs-target="#favoriteoffcanvasExample" aria-controls="favoriteoffcanvasExample"
                                     onClick={() => {
@@ -412,7 +437,7 @@ const Header = () => {
                                             toast.error("Please Select you delivery location first!")
                                         }
                                     }}>
-                                    <IoHeartOutline className=''/>
+                                    <IoHeartOutline className='' />
 
                                     {favorite.favorite !== null ?
                                         <span className="position-absolute start-100 translate-middle badge rounded-pill fs-5 ">
@@ -616,7 +641,7 @@ const Header = () => {
                                             <IoHeartOutline />
 
                                             {favorite.favorite !== null ?
-                                                <span className="position-absolute translate-middle badge rounded-pill fs-5" style={{background:"var(--secondary-color)", borderRadius:"50%", color:"#fff", top:"1px",right:"-9px"}}>
+                                                <span className="position-absolute translate-middle badge rounded-pill fs-5" style={{ background: "var(--secondary-color)", borderRadius: "50%", color: "#fff", top: "1px", right: "-9px" }}>
                                                     {favorite.favorite.total}
                                                     <span className="visually-hidden">unread messages</span>
                                                 </span>

@@ -234,7 +234,7 @@
     margin-top: 30px;
 }
 
-.cart-sidebar-container .cart-sidebar-footer .button-container a {
+.cart-sidebar-container .cart-sidebar-footer .button-container button {
     padding: 5px 15px;
     text-decoration: none;
     text-transform: capitalize;

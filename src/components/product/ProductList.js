@@ -680,7 +680,9 @@ const ProductList = () => {
                                         )
                                         : <h3>No Products Found</h3>}
 
-                                    <div>
+
+                                    {productresult.length > 0
+                                        ?
                                         <Pagination
                                             activePage={currPage}
                                             itemsCountPerPage={total_products_per_page}
@@ -688,7 +690,7 @@ const ProductList = () => {
                                             pageRangeDisplayed={5}
                                             onChange={handlePageChange.bind(this)}
                                         />
-                                    </div>
+                                        : null}
 
                                 </>
 

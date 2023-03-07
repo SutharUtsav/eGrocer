@@ -22,12 +22,18 @@ import ViewCart from './components/cart/ViewCart';
 import Wishlist from './components/favorite/Wishlist';
 import Checkout from './components/checkout/Checkout';
 import Transaction from './components/transaction/Transaction';
+import Notification from './components/notification/Notification';
+// import CheckoutForm from './components/checkout/CheckoutForm';
 
+// import { Elements } from '@stripe/react-stripe-js';
+// import { loadStripe } from '@stripe/stripe-js';
 
+// Make sure to call `loadStripe` outside of a component’s render to avoid
+// recreating the `Stripe` object on every render.
 function App() {
-
-
-
+  // const PUBLIC_STIPE_KEY = "pk_test_51Mh61WSGE1GzOTGOyLFxb1d5ZLy5jae3jdXoHBjkWfrHhUOloFo48dSP5LaddrclqMoo4LcJONDn9mw1eBmcwrms00nOfYQraI"
+  // const stripeTestPromise = loadStripe(PUBLIC_STIPE_KEY)
+  // const SK='sk_test_51Mh61WSGE1GzOTGOcGVpbIEyBwqSfC6zs2SymfqWXBFkDMgAp8EOiiA0fy8omMVRflAflNB3j4RGhYqv3NzibTDc008QyNFV4S'
   //initialize cookies
   const cookies = new Cookies();
 
@@ -45,7 +51,11 @@ function App() {
       })
   }
 
+  //paymentgateway-stripe
 
+  // passing the client secret obtained from the server
+  
+  
 
   //authenticate current user
   useEffect(() => {
@@ -63,8 +73,11 @@ function App() {
           <Routes>
             <Route path="/cart" element={<ViewCart />}></Route>
             <Route path="/checkout" element={<Checkout />}></Route>
+            {/* <Route path="/checkout" element={<Elements stripe={stripeTestPromise} client_secret={SK}><Checkout /></Elements>}></Route> */}
+            {/* <Route path="/form" element={<Elements stripe={stripePromise} options={options}><CheckoutForm /></Elements>}></Route> */}
             <Route path='/wishlist' element={<Wishlist />}></Route>
             <Route path="/profile" element={<ProfileDashboard />}></Route>
+            <Route path="/notification" element={<Notification />}></Route>
             <Route path='/categories' element={<ShowAllCategories />}></Route>
             <Route path='/products' element={<ProductList />}></Route>
             <Route path='/product' element={<ProductDetails />}></Route>
